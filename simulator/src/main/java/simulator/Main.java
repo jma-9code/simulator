@@ -5,6 +5,7 @@ import model.component.Component;
 import model.component.ComponentI;
 import model.component.ComponentIO;
 import model.component.ComponentO;
+import model.mediator.HalfDuplexMediator;
 import model.strategies.CardStrategy;
 import model.strategies.TPEStrategy;
 
@@ -68,8 +69,9 @@ public class Main {
 		//Comportement de la tpe
 		tpe.setStrategy(new TPEStrategy(tpe));
 		
+		HalfDuplexMediator hfd = new HalfDuplexMediator(card, tpe);
 		
-		tpe.output(card, "debit:1000;commercant:blbla"); 
+		tpe.output(hfd, "debit:1000;commercant:blbla"); 
 		
 	}
 

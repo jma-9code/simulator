@@ -5,6 +5,7 @@ import org.slf4j.LoggerFactory;
 
 import model.component.Component;
 import model.component.ComponentIO;
+import model.mediator.Mediator;
 
 public class TPEStrategy implements IStrategy {
 
@@ -17,13 +18,12 @@ public class TPEStrategy implements IStrategy {
 	}
 
 	@Override
-	public String inputTreatment(Component c, String data) {
+	public void inputTreatment(Mediator c, String data) {
 		// TODO Auto-generated method stub
-		return null;
 	}
 
 	@Override
-	public void outputTreatment(Component c, String data) {
+	public void outputTreatment(Mediator c, String data) {
 		// TODO Auto-generated method stub
 		
 	}

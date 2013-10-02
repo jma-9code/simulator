@@ -1,9 +1,11 @@
 package model.component;
 
+import model.mediator.Mediator;
+
 
 public interface IInput {
 
 	//je recoie des donnees par c
-	public void input(Component c, String data);
+	public void input(Mediator m, String data);
 	
 }

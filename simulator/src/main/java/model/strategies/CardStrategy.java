@@ -9,6 +9,8 @@ import simulator.Main;
 import simulator.Utils;
 import model.component.Component;
 import model.component.ComponentIO;
+import model.mediator.HalfDuplexMediator;
+import model.mediator.Mediator;
 
 public class CardStrategy implements IStrategy {
 
@@ -33,29 +35,27 @@ public class CardStrategy implements IStrategy {
 		this.card = card;
 	}
 
+
 	@Override
-	public void outputTreatment(Component c, String data) {
-		// TODO Auto-generated method stub
+	public void inputTreatment(Mediator m, String data) {
+		HashMap<String, String> d = Utils.string2Hashmap(data);
+		int montant = Integer.parseInt(d.get("debit"));
+		log.info("tpe demande un debit de " + montant);
+		//j'ai une co en half-duplex...je peux repondre directement
+		if (m instanceof HalfDuplexMediator){
+			if (montant>1000){
+				card.output(m, "demande auth pour le debit");
+			}else{
+				card.output(m, "demande de saisie PIN");
+			}
+		}	
+		
 		
 	}
 
 	@Override
-	public String inputTreatment(Component c, String data) {
-		HashMap<String, String> d = Utils.string2Hashmap(data);
-		switch(c.getName()){
-			case "tpe":
-				int montant = Integer.parseInt(d.get("debit"));
-				log.info("tpe demande un debit de " + montant);
-				if (montant>1000){
-					card.output(c, "demande auth pour le debit");
-				}else{
-					card.output(c, "demande de saisie PIN");
-				}
-				break;
-			default:
-				break;
-		}
-		return null;
+	public void outputTreatment(Mediator m, String data) {
+		// TODO Auto-generated method stub
+		
 	}
-
 }

@@ -18,11 +18,12 @@ public class HalfDuplexMediator extends Mediator {
 		// TODO Auto-generated constructor stub
 	}
 	
-	public void send (Component c, String data){
+	public void send (IOutput c, String data){
 		if (c == sender){
-			((ComponentIO)receiver).input(this, data);
-		}else{
-			((ComponentIO)sender).input(this, data);
+			receiver.input(this, data);
+		}
+		else{
+			((IInput) sender).input(this, data);
 		}
 	}
 

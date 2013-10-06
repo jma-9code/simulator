@@ -14,14 +14,13 @@ public class SimplexMediator extends Mediator {
 
 	public SimplexMediator(IOutput _sender, IInput _receiver) {
 		super(_sender, _receiver);
-		// TODO Auto-generated constructor stub
 	}
 	
 	/**
 	 * Envoie d'un msg de A vers B
 	 * @param data
 	 */
-	public void send (Component c, String data){
+	public void send (IOutput c, String data){
 		receiver.input(this, data);
 	}
 }

@@ -18,5 +18,10 @@ public abstract class Mediator {
 		receiver = _receiver;
 	}
 	
-	public abstract void send (Component c, String data);
+	/**
+	 * Envoi des données à un récepteur connu par le médiateur.
+	 * @param sender Emetteur
+	 * @param data Données
+	 */
+	public abstract void send (IOutput sender, String data);
 }

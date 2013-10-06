@@ -5,7 +5,10 @@ import model.component.Component;
 import model.component.ComponentI;
 import model.component.ComponentIO;
 import model.component.ComponentO;
+import model.factory.MediatorFactory;
+import model.factory.MediatorFactory.EMediator;
 import model.mediator.HalfDuplexMediator;
+import model.mediator.Mediator;
 import model.strategies.CardStrategy;
 import model.strategies.TPEStrategy;
 
@@ -17,30 +20,14 @@ public class Main {
 	private static Logger log = LoggerFactory.getLogger(Main.class);
 	
 	public static void main(String[] args) {
-		log.info("Creation d'un porteur");
-		Component florent = new ComponentIO("personne");
-		florent.getProperties().put("nom", "moisson");
-		florent.getProperties().put("prenom", "florent");
-		florent.getProperties().put("age", "22");
-		florent.getProperties().put("adresse", "...........");
-		log.info(florent.toString());
-		
-		log.info("Creation d'une banque ac 1 compte");
-		Component bank = new ComponentIO("banque");
-		bank.getProperties().put("marque", "bnp");
-		Component account = new ComponentIO("compte");
-		account.getProperties().put("porteur", "florent moisson");
-		account.getProperties().put("montant", "1500");
-		account.getProperties().put("plafond", "9000");
-		bank.getComponents().add(account);
-		log.info(bank.toString());
-		
 		log.info("Creation d'une carte bancaire");
 		ComponentIO card = new ComponentIO("cb");
-		Component chip = new ComponentIO("puce");
-		Component magstrippe = new ComponentIO("piste magnetique");
+		ComponentIO chip = new ComponentIO("puce");
+		ComponentIO magstrippe = new ComponentIO("piste magnetique");
 		chip.getProperties().put("pan", "1111111111111111111111111");
 		chip.getProperties().put("bccs", "12421874");
+		card.getProperties().put("cipher", "RSA2048");
+		card.getProperties().put("protocol", "ISO7816");
 		card.getProperties().put("pan", "1111111111111111111111111");
 		card.getProperties().put("icvv", "000");
 		card.getProperties().put("genre", "M");
@@ -69,9 +56,13 @@ public class Main {
 		//Comportement de la tpe
 		tpe.setStrategy(new TPEStrategy(tpe));
 		
-		HalfDuplexMediator hfd = new HalfDuplexMediator(card, tpe);
+		//edition des liens
+		Mediator m = MediatorFactory.getInstance().getMediator(card, tpe, EMediator.HALFDUPLEX);
+		Mediator m1 = MediatorFactory.getInstance().getMediator(card, chip, EMediator.HALFDUPLEX);
+		Mediator m2 = MediatorFactory.getInstance().getMediator(card, magstrippe, EMediator.HALFDUPLEX);
 		
-		tpe.output(hfd, "debit:1000;commercant:blbla"); 
+		//TPE->CARTE : demande de secure channel
+		tpe.output(m, "content-type:iso7816;type:rq;msg:initco;protocols:B0',CB2A;ciphersetting:none,RSA2048");
 		
 	}
 

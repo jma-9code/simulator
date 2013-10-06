@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import model.mediator.Mediator;
+import model.memento.Guardian;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -23,8 +24,10 @@ public class ComponentI extends Component implements IInput {
 
 	@Override
 	public void input(Mediator m,String data) {
+		//Guardian.getInstance().addMemento(this, saveState());
 		//log.debug("[" + this.getName() + "] IN: " + data + " from [" + c.getName() + "]");
 		strategy.inputTreatment(m, data);
+		//Guardian.getInstance().addMemento(this, saveState());
 	}
 
 

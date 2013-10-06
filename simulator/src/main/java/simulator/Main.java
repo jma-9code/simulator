@@ -71,10 +71,7 @@ public class Main {
 		
 		HalfDuplexMediator hfd = new HalfDuplexMediator(card, tpe);
 		
-		AsyncSimulator simulator = SimulatorFactory.getAsyncSimulator();
-		simulator.start();
-		
-		//tpe.output(hfd, "debit:1000;commercant:blbla"); 
+		tpe.output(hfd, "debit:1000;commercant:blbla"); 
 		
 	}
 

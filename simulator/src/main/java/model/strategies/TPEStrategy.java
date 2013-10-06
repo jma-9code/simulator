@@ -40,7 +40,7 @@ public class TPEStrategy implements IStrategy {
 		
 		switch(d.get("msg")){
 			case "initco":
-				c.send(tpe,"content-type:iso7816;type:rq;msg:initco;protocols:B0',CB2A;ciphersetting:none,RSA2048");
+				//c.send(tpe,"content-type:iso7816;type:rq;msg:initco;protocols:B0',CB2A;ciphersetting:none,RSA2048");
 				break;
 			case "pin":
 				

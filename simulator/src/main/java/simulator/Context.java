@@ -1,9 +1,14 @@
 package simulator;
 
 import java.util.Calendar;
+import java.util.Comparator;
 import java.util.Date;
 import java.util.LinkedList;
+import java.util.PriorityQueue;
 import java.util.Queue;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import model.component.IOutput;
 import model.mediator.Mediator;
@@ -14,8 +19,10 @@ import model.mediator.Mediator;
  */
 public class Context {
 	
+	private static Logger log = LoggerFactory.getLogger(Context.class);
+	
 	/**
-	 * List of start points
+	 * List of start points sorted by date
 	 */
 	private Queue<StartPoint> startPoints;
 	
@@ -31,7 +38,7 @@ public class Context {
 	private short currentCounter = 0;
 	
 	public Context() {
-		this.startPoints = new LinkedList<>();
+		this.startPoints = new PriorityQueue(1, new StartPointComparator());
 	}
 	
 	/**
@@ -39,6 +46,7 @@ public class Context {
 	 * Note : invokable by UI or Component strategy
 	 */
 	public void addStartPoint(Date time, IOutput sender, Mediator mediator, String data) {
+		log.debug("Start point added on "+sender+" via "+mediator+" and scheduled on "+time);
 		StartPoint sp = new StartPoint(time, sender, mediator, data);
 		startPoints.add(sp);
 	}
@@ -109,6 +117,15 @@ public class Context {
 			this.sender = sender;
 			this.mediator = mediator;
 			this.data = data;
+		}
+		
+	}
+	
+	public final class StartPointComparator implements Comparator<StartPoint> {
+
+		@Override
+		public int compare(StartPoint o1, StartPoint o2) {
+			return o1.time != null ? o1.time.compareTo(o2.time) : -1;
 		}
 		
 	}

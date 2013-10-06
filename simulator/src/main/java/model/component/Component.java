@@ -6,6 +6,7 @@ import java.util.List;
 
 import model.mediator.Mediator;
 import model.strategies.IStrategy;
+import model.strategies.NullStrategy;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -20,7 +21,7 @@ public abstract class Component {
 	protected List<Mediator> mediators = new ArrayList<>();
 	protected List<Component> components = new ArrayList<>();
 	protected String name;
-	protected IStrategy strategy;
+	protected IStrategy strategy = new NullStrategy();
 	
 	public Component(){
 		

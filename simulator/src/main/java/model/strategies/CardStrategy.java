@@ -44,7 +44,7 @@ public class CardStrategy implements IStrategy {
 	}
 
 	@Override
-	public void inputTreatment(Mediator m, String data) {
+	public void process(Mediator m, String data) {
 		HashMap<String, String> d = Utils.string2Hashmap(data);
 		
 		if (!cmdOK(d)){
@@ -95,9 +95,4 @@ public class CardStrategy implements IStrategy {
 		
 	}
 
-	@Override
-	public void outputTreatment(Mediator m, String data) {
-		// TODO Auto-generated method stub
-		
-	}
 }

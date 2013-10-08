@@ -26,7 +26,7 @@ public class ComponentI extends Component implements IInput {
 	public void input(Mediator m,String data) {
 		//Guardian.getInstance().addMemento(this, saveState());
 		//log.debug("[" + this.getName() + "] IN: " + data + " from [" + c.getName() + "]");
-		strategy.inputTreatment(m, data);
+		strategy.process(m, data);
 		//Guardian.getInstance().addMemento(this, saveState());
 	}
 

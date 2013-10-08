@@ -11,13 +11,8 @@ public class NullStrategy implements IStrategy {
 	private static Logger log = LoggerFactory.getLogger(NullStrategy.class);
 	
 	@Override
-	public void inputTreatment(Mediator m, String data) {
+	public void process(Mediator m, String data) {
 		log.info("Input treatment with data = "+data);
-	}
-
-	@Override
-	public void outputTreatment(Mediator m, String data) {
-		log.info("Output treatment with data = "+data);
 	}
 
 }

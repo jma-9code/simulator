@@ -6,8 +6,6 @@ import model.mediator.Mediator;
 
 public interface IStrategy {
 
-	public void inputTreatment (Mediator m, String data);
-	
-	public void outputTreatment (Mediator m, String data);	
+	public void process(Mediator m, String data);
 	
 }

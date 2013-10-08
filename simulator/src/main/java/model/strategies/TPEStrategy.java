@@ -29,7 +29,7 @@ public class TPEStrategy implements IStrategy {
 	}
 
 	@Override
-	public void inputTreatment(Mediator c, String data) {
+	public void process(Mediator c, String data) {
 		HashMap<String, String> d = Utils.string2Hashmap(data);
 		
 		if (!cmdOK(d)){
@@ -49,12 +49,6 @@ public class TPEStrategy implements IStrategy {
 				
 				break;		
 		}
-	}
-
-	@Override
-	public void outputTreatment(Mediator c, String data) {
-		// TODO Auto-generated method stub
-		
-	}
+	} 
 
 }

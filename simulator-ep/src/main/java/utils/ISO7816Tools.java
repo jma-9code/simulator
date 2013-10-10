@@ -1,5 +1,7 @@
 package utils;
 
+import java.text.DecimalFormat;
+import java.text.DecimalFormatSymbols;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.HashMap;
@@ -14,13 +16,18 @@ public class ISO7816Tools {
 		TRANSACTION_VAL_ACK,
 		UNKNOWN_TYPE;
 	}
-	
+	//champs utilises dans la 7816
 	public static final String FIELD_POSID = "POS ID";
 	public static final String FIELD_PROTOCOLLIST = "PROTOCOL LIST";
 	public static final String FIELD_PROTOCOL = "PROTOCOL";
 	public static final String FIELD_DATETIME = "DATETIME";
 	public static final String FIELD_PROTOCOLPREFERRED = "PREFERRED";
-	
+	public static final String FIELD_AMOUNT = "AMOUNT";
+	public static final String FIELD_OPCODE = "OP CODE";
+	public static final String FIELD_PINDATA = "PIN DATA";
+	public static final String FIELD_PINVERIFICATION = "PIN VERIFICATION";
+	public static final String FIELD_CARDAGREEMENT = "CARD AGREEMENT";
+	public static final String FIELD_PAN = "PAN";
 	
 	/**
 	 * Ajoute le padding à gauche de 0 (max 16 caracteres).
@@ -28,7 +35,7 @@ public class ISO7816Tools {
 	 * @param tag
 	 * @return
 	 */
-	public static String formatTAG(String tag){
+	public static String writeTAG(String tag){
 		return ("0000000000000000" + tag).substring(tag.length());
 	}
 	
@@ -38,7 +45,7 @@ public class ISO7816Tools {
 	 * @param tag
 	 * @return
 	 */
-	public static String formatLen(int len){
+	public static String writeLEN(int len){
 		return String.format("%03d", len);
 	}
 	
@@ -47,15 +54,37 @@ public class ISO7816Tools {
 	 * @param d
 	 * @return
 	 */
-	public static String formatDateTime(Date d){
+	public static String writeDATETIME(Date d){
 		SimpleDateFormat sdf = new SimpleDateFormat("ddMMyyHHmmssSS");
 		return sdf.format(d);
 	}
 	
+	/**
+	 * Permet de recuperer la valeur du montant en double
+	 * @param d
+	 * @return
+	 */
+	public static double readAMOUNT(String d){
+		StringBuffer sb = new StringBuffer(d);
+		sb.insert(8, '.');
+		return Double.parseDouble(sb.toString());
+	}
+	
+	/**
+	 * Permet d'ecrire la valeur du montant en double en 7816
+	 * @param d
+	 * @return
+	 */
+	public static String writeAMOUNT(double d){
+		String r = String.format("%.2f%n", d);
+		r = r.replace(",", "");
+		return r;
+	}
+	
 	public static String createformatTLV(String tag, String value){
 		StringBuffer sb = new StringBuffer();
-		sb.append(formatTAG(tag));
-		sb.append(formatLen(value.length()));
+		sb.append(writeTAG(tag));
+		sb.append(writeLEN(value.length()));
 		sb.append(value);
 		
 		return sb.toString();
@@ -130,7 +159,7 @@ public class ISO7816Tools {
 	 * @return
 	 * @throws ISO7816Exception 
 	 */
-	public static HashMap<String, String> data2Hash(String data) throws ISO7816Exception{
+	public static HashMap<String, String> read(String data) throws ISO7816Exception{
 		HashMap<String, String> ret = new HashMap<>();
 		//head
 		String head = data.substring(0, 4);

@@ -63,6 +63,7 @@ public class CardTest {
 		tpe.setStrategy(new NullStrategy());
 		
 		m_tpe_card = MediatorFactory.getInstance().getMediator(card, tpe, EMediator.HALFDUPLEX);
+
 		m_card_chip = MediatorFactory.getInstance().getMediator(card, chip, EMediator.HALFDUPLEX);
 		m_card_magstrippe = MediatorFactory.getInstance().getMediator(card, magstrippe, EMediator.HALFDUPLEX);
 		
@@ -84,18 +85,14 @@ public class CardTest {
 	@Test
 	public void SecureChanneltest() {
 		//TPE SEND info for init sc
-		String data = "01010040000000000POS ID0100000623598000PROTOCOL LIST022ISO7816 ISO8583 CB2A-T0000000PREFERRED007ISO781600000000DATETIME0101008170100";
+		String tpe_sc = "01010040000000000POS ID0100000623598000PROTOCOL LIST022ISO7816 ISO8583 CB2A-T0000000PREFERRED007ISO781600000000DATETIME0101008170100";
 		//m_tpe_card.send(tpe, "01010030000000000POS ID0100000623598000PROTOCOL LIST022ISO7816 ISO8583 CB2A-T0000000PREFERRED007ISO781600000000DATETIME0101008170100");
-	
-		m_tpe_card.send(tpe, data);
-		/*HashMap<String, String> structdata;
-		try {
-			structdata = ISO7816Tools.data2Hash(data);
-		} catch (ISO7816Exception e1) {
-			// TODO Auto-generated catch block
-			e1.printStackTrace();
-		}*/
+		MediatorFactory.getInstance().getMediator(chip, tpe, EMediator.HALFDUPLEX).send(tpe, tpe_sc);;
+		//m_tpe_card.send(tpe, tpe_sc);
 		
+		String tpe_auth = "03010050000000000POS ID0100000623598000000000OP CODE002000000000000AMOUNT010000000800000000000PIN DATA004123400000000DATETIME0101008170934";
+		//m_tpe_card.send(tpe, tpe_auth);
+		MediatorFactory.getInstance().getMediator(chip, tpe, EMediator.HALFDUPLEX).send(tpe, tpe_auth);;
 		
 	}
 

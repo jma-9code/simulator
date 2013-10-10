@@ -30,7 +30,7 @@ public class ChipStrategy implements IStrategy{
 		//la carte ne comprend que du 7816
 		HashMap<String, String> sdata = null;;
 		try {
-			sdata = ISO7816Tools.data2Hash(data);
+			sdata = ISO7816Tools.read(data);
 		} catch (ISO7816Exception e) {
 			log.warn("Get unreadable msg", e);
 			return;
@@ -38,12 +38,14 @@ public class ChipStrategy implements IStrategy{
 		MessageType type = MessageType.valueOf(sdata.get("type"));
 		switch(type){
 			case SECURE_CHANNEL_RQ:
-				log.debug("SC RQ" + data);
+				log.debug("SC RQ" + sdata);
 				manageSC_RQ((ComponentIO)chip, m, sdata);
 				break;
 			case SECURE_CHANNEL_RP:
 				break;
 			case CARDHOLDER_AUTH_RQ:
+				log.debug("AUTH RQ" + sdata);
+				manageAUTH_RQ((ComponentIO)chip, m, sdata);
 				break;
 			case CARDHOLDER_AUTH_RP:
 				break;
@@ -56,6 +58,36 @@ public class ChipStrategy implements IStrategy{
 			case UNKNOWN_TYPE:
 				break;
 		}
+	}
+
+	private boolean pinVerify(String bccs){
+		return false;
+	}
+	
+	private void manageAUTH_RQ(ComponentIO chip, Mediator m,
+			HashMap<String, String> data) {
+		String posID = data.get(ISO7816Tools.FIELD_POSID);
+		String opcode = data.get(ISO7816Tools.FIELD_OPCODE);
+		String amount = data.get(ISO7816Tools.FIELD_AMOUNT);
+		String pan = chip.getProperties().get("pan");
+		String protocol = chip.getProperties().get(ISO7816Tools.FIELD_POSID+"-"+posID);
+		//TODO verif prot != null, sinn erreur
+		
+		
+		//Construction de la rp
+		StringBuffer sb = new StringBuffer();
+		//head
+		sb.append(ISO7816Tools.convertType2CodeMsg(MessageType.CARDHOLDER_AUTH_RP));
+		sb.append("007");
+		//data
+		sb.append(ISO7816Tools.createformatTLV(ISO7816Tools.FIELD_POSID, posID));
+		sb.append(ISO7816Tools.createformatTLV(ISO7816Tools.FIELD_OPCODE, opcode));
+		sb.append(ISO7816Tools.createformatTLV(ISO7816Tools.FIELD_AMOUNT, amount));
+		sb.append(ISO7816Tools.createformatTLV(ISO7816Tools.FIELD_PINVERIFICATION, "1"));
+		sb.append(ISO7816Tools.createformatTLV(ISO7816Tools.FIELD_CARDAGREEMENT, "1"));
+		sb.append(ISO7816Tools.createformatTLV(ISO7816Tools.FIELD_PAN, pan));
+		sb.append(ISO7816Tools.createformatTLV(ISO7816Tools.FIELD_DATETIME, ISO7816Tools.writeDATETIME(Calendar.getInstance().getTime())));
+		chip.output(m, sb.toString());
 	}
 
 	/**
@@ -86,7 +118,7 @@ public class ChipStrategy implements IStrategy{
 		}
 		
 		//stockage du protocol utilise avec le commercant
-		chip.getProperties().put(ISO7816Tools.FIELD_POSID+ "-"+posID, protocol_choice);
+		chip.getProperties().put(ISO7816Tools.FIELD_POSID+ "_"+posID, protocol_choice);
 		
 		//Construction de la rp
 		StringBuffer sb = new StringBuffer();
@@ -96,8 +128,8 @@ public class ChipStrategy implements IStrategy{
 		//data
 		sb.append(ISO7816Tools.createformatTLV(ISO7816Tools.FIELD_POSID, posID));
 		sb.append(ISO7816Tools.createformatTLV(ISO7816Tools.FIELD_PROTOCOL, protocol_choice));
-		sb.append(ISO7816Tools.createformatTLV(ISO7816Tools.FIELD_DATETIME, ISO7816Tools.formatDateTime(Calendar.getInstance().getTime())));
-		m.send(chip, sb.toString());
+		sb.append(ISO7816Tools.createformatTLV(ISO7816Tools.FIELD_DATETIME, ISO7816Tools.writeDATETIME(Calendar.getInstance().getTime())));
+		chip.output(m, sb.toString());
 	}
 
 }

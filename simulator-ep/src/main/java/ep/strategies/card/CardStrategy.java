@@ -38,7 +38,7 @@ public class CardStrategy implements IStrategy {
 				magstrippe = (ComponentO) c;
 			}
 		}
-		
+		System.out.println("COUCOU");
 		Mediator m_card_chip = MediatorFactory.getInstance().getMediator((ComponentIO)card, chip, EMediator.HALFDUPLEX);
 		chip.input(m_card_chip, data);
 		

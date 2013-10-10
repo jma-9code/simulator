@@ -5,6 +5,7 @@ import java.util.HashMap;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import model.component.Component;
 import model.component.ComponentIO;
 import model.mediator.Mediator;
 import model.strategies.IStrategy;
@@ -24,7 +25,7 @@ public class ChipStrategy implements IStrategy{
 	}
 	
 	@Override
-	public void process(Mediator m, String data) {
+	public void process(Component component, Mediator mediator, String data) {
 		//la carte ne comprend que du 7816
 		HashMap<String, String> sdata = null;;
 		try {

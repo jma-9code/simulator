@@ -13,8 +13,8 @@ import model.mediator.Mediator;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import ep.strategies.TPEStrategy;
 import ep.strategies.card.CardStrategy;
+import ep.strategies.ept.EPTStrategy;
 
 public class Main {
 
@@ -55,7 +55,7 @@ public class Main {
 		tpe.getComponents().add(core);
 		log.info(tpe.toString());
 		//Comportement de la tpe
-		tpe.setStrategy(new TPEStrategy(tpe));
+		tpe.setStrategy(new EPTStrategy());
 		
 		//edition des liens
 		Mediator m = MediatorFactory.getInstance().getMediator(card, tpe, EMediator.HALFDUPLEX);

@@ -29,7 +29,7 @@ public class TPEStrategy implements IStrategy {
 	}
 
 	@Override
-	public void process(Mediator c, String data) {
+	public void process(Component component, Mediator c, String data) {
 		HashMap<String, String> d = Utils.string2Hashmap(data);
 		
 		if (!cmdOK(d)){

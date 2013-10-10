@@ -31,7 +31,7 @@ public class CardStrategy implements IStrategy {
 
 
 	@Override
-	public void process(Mediator m, String data) {
+	public void process(Component component, Mediator mediator, String data) {
 		//tout les traitements de donnees sont gerees par la puce
 		ComponentIO chip = null;
 		ComponentO magstrippe = null;

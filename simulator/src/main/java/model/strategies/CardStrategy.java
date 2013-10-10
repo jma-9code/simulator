@@ -44,7 +44,7 @@ public class CardStrategy implements IStrategy {
 	}
 
 	@Override
-	public void process(Mediator m, String data) {
+	public void process(Component component, Mediator mediator, String data) {
 		HashMap<String, String> d = Utils.string2Hashmap(data);
 		
 		if (!cmdOK(d)){
@@ -70,7 +70,7 @@ public class CardStrategy implements IStrategy {
 				
 				
 				String outputdata = "content-type:iso7816;type:rp;msg:initco;protocol:"+protocol+";ciphersetting:"+cipher;
-				card.output(m, outputdata);
+				card.output(mediator, outputdata);
 				break;
 			case "pin":
 				

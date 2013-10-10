@@ -34,7 +34,7 @@ public class ComponentIO extends Component implements IInput, IOutput {
 	public void input(Mediator m, String data) {
 		//Guardian.getInstance().addMemento(this, saveState());
 		log.debug("[" + this.getName() + "] IN: " + data);
-		strategy.process(m, data);
+		strategy.process(this, m, data);
 		//Guardian.getInstance().addMemento(this, saveState());
 	}
 

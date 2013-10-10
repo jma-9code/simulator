@@ -17,6 +17,7 @@ import org.junit.BeforeClass;
 import org.junit.Test;
 
 import ep.strategies.card.CardStrategy;
+import ep.strategies.card.ChipStrategy;
 import utils.ISO7816Exception;
 import utils.ISO7816Tools;
 
@@ -57,6 +58,7 @@ public class CardTest {
 		card.getComponents().add(chip);
 		
 		card.setStrategy(new CardStrategy(card));
+		chip.setStrategy(new ChipStrategy(chip));
 		tpe.setStrategy(new NullStrategy());
 		
 		m_tpe_card = MediatorFactory.getInstance().getMediator(card, tpe, EMediator.HALFDUPLEX);

@@ -76,6 +76,9 @@ public class ISO7816Tools {
 		int c_index = 7;
 		while (c_index < data.length()){
 			tag = data.substring(c_index, c_index + 16);
+			//remove 0 left padding
+			tag = tag.replaceFirst("^0+(?!$)", "");
+			
 			c_index += 16;
 			
 			try{

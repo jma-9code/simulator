@@ -15,7 +15,7 @@ import utils.ISO7816Tools.MessageType;
 public class ChipStrategy implements IStrategy{
 
 
-	private static Logger log = LoggerFactory.getLogger(CardStrategy.class);
+	private static Logger log = LoggerFactory.getLogger(ChipStrategy.class);
 	
 	private ComponentIO chip;
 	

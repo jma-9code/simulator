@@ -39,7 +39,7 @@ public class Main {
 		card.getComponents().add(chip);
 		log.info(card.toString());
 		//Comportement de la carte
-		card.setStrategy(new CardStrategy(card));
+		card.setStrategy(new CardStrategy());
 		
 		
 		log.info("Creation d'un TPE");

@@ -39,26 +39,27 @@ public class CardTest {
 		tpe = new ComponentIO("tpe");
 		
 		card = new ComponentIO("cb");
-		card.getProperties().put("cipher", "RSA2048");
-		card.getProperties().put("protocol", "ISO7816");
+		
+		
 		card.getProperties().put("pan", "1111111111111111111111111");
 		card.getProperties().put("icvv", "000");
-		card.getProperties().put("genre", "M");
-		card.getProperties().put("nom porteur", "Florent Moisson");
+		card.getProperties().put("type", "M");
+		card.getProperties().put("name", "Florent Moisson");
 		card.getProperties().put("date expiration", "09/15");
 		
 		chip = new ComponentIO("puce");
+		chip.getProperties().put("protocol", "ISO7816");
 		chip.getProperties().put("pan", "1111111111111111111111111");
 		chip.getProperties().put("bccs", "12421874");
 		
 		magstrippe = new ComponentIO("piste magnetique");
-		magstrippe.getProperties().put("piste iso2", "59859595985888648468454684");
+		magstrippe.getProperties().put("iso2", "59859595985888648468454684");
 		
 		card.getComponents().add(magstrippe);
 		card.getComponents().add(chip);
 		
-		card.setStrategy(new CardStrategy(card));
-		chip.setStrategy(new ChipStrategy(chip));
+		card.setStrategy(new CardStrategy());
+		chip.setStrategy(new ChipStrategy());
 		tpe.setStrategy(new NullStrategy());
 		
 		m_tpe_card = MediatorFactory.getInstance().getMediator(card, tpe, EMediator.HALFDUPLEX);

@@ -22,16 +22,10 @@ import model.strategies.IStrategy;
 public class CardStrategy implements IStrategy {
 
 	private static Logger log = LoggerFactory.getLogger(CardStrategy.class);
-	
-	private ComponentIO card;
-
-	public CardStrategy(ComponentIO _card) {
-		card = _card;
-	}
 
 
 	@Override
-	public void process(Mediator m, String data) {
+	public void process(Component card, Mediator m, String data) {
 		//tout les traitements de donnees sont gerees par la puce
 		ComponentIO chip = null;
 		ComponentO magstrippe = null;
@@ -45,8 +39,9 @@ public class CardStrategy implements IStrategy {
 			}
 		}
 		
-		Mediator m_card_chip = MediatorFactory.getInstance().getMediator(card, chip, EMediator.HALFDUPLEX);
+		Mediator m_card_chip = MediatorFactory.getInstance().getMediator((ComponentIO)card, chip, EMediator.HALFDUPLEX);
 		chip.input(m_card_chip, data);
+		
 	}
 	
 }

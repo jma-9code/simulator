@@ -1,5 +1,7 @@
 package utils;
 
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.HashMap;
 
 public class ISO7816Tools {
@@ -11,6 +13,52 @@ public class ISO7816Tools {
 		TRANSCATION_VAL_NOTIF,
 		TRANSACTION_VAL_ACK,
 		UNKNOWN_TYPE;
+	}
+	
+	public static final String FIELD_POSID = "POS ID";
+	public static final String FIELD_PROTOCOLLIST = "PROTOCOL LIST";
+	public static final String FIELD_PROTOCOL = "PROTOCOL";
+	public static final String FIELD_DATETIME = "DATETIME";
+	public static final String FIELD_PROTOCOLPREFERRED = "PREFERRED";
+	
+	
+	/**
+	 * Ajoute le padding à gauche de 0 (max 16 caracteres).
+	 * ex : POS IS -> 0000000000POS ID
+	 * @param tag
+	 * @return
+	 */
+	public static String formatTAG(String tag){
+		return ("0000000000000000" + tag).substring(tag.length());
+	}
+	
+	/**
+	 * Ajoute le padding à gauche de 0 (max 3 caracteres).
+	 * ex : 2 -> 002
+	 * @param tag
+	 * @return
+	 */
+	public static String formatLen(int len){
+		return String.format("%03d", len);
+	}
+	
+	/**
+	 * Permet de formater le champ DATETIME de la norme
+	 * @param d
+	 * @return
+	 */
+	public static String formatDateTime(Date d){
+		SimpleDateFormat sdf = new SimpleDateFormat("ddMMyyHHmmssSS");
+		return sdf.format(d);
+	}
+	
+	public static String createformatTLV(String tag, String value){
+		StringBuffer sb = new StringBuffer();
+		sb.append(formatTAG(tag));
+		sb.append(formatLen(value.length()));
+		sb.append(value);
+		
+		return sb.toString();
 	}
 
 	/**
@@ -46,6 +94,34 @@ public class ISO7816Tools {
 			default : break;
 		}
 		return type;
+	}
+	
+	/**
+	 * Permet de convertir !(le code message vers le type du message).
+	 * Ex : 0101 <- SECURE_CHANNEL_RQ
+	 * @param head
+	 * @return
+	 */
+	public static String convertType2CodeMsg(MessageType type){
+		switch(type){
+			case SECURE_CHANNEL_RQ:
+				return "0101";
+			case SECURE_CHANNEL_RP:
+				return "0110";
+			case CARDHOLDER_AUTH_RQ:
+				return "0301";
+			case CARDHOLDER_AUTH_RP:
+				return "0310";
+			case AUTHORISATION_RP_CRYPTO:
+				return "0411";
+			case TRANSCATION_VAL_NOTIF:
+				return "0500";
+			case TRANSACTION_VAL_ACK:
+				return "0511";
+			case UNKNOWN_TYPE:
+				return null;
+		}
+		return null;
 	}
 	
 	/**

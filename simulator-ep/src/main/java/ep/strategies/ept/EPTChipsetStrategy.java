@@ -1,0 +1,49 @@
+package ep.strategies.ept;
+
+import java.util.HashMap;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import simulator.Utils;
+import model.component.Component;
+import model.component.ComponentIO;
+import model.mediator.Mediator;
+import model.strategies.IStrategy;
+
+public class EPTChipsetStrategy implements IStrategy {
+
+	private static Logger log = LoggerFactory.getLogger(EPTChipsetStrategy.class);
+	
+	private boolean cmdOK(HashMap<String, String> d){
+		if (d.get("content-type") != null){
+			
+			return d.get("content-type").equalsIgnoreCase("iso7816");
+		}
+		return false;
+	}
+
+	@Override
+	public void process(Component component, Mediator c, String data) {
+		HashMap<String, String> d = Utils.string2Hashmap(data);
+		
+		if (!cmdOK(d)){
+			log.warn(component.getName() + " impossible de gerer la donnee");
+			return;
+		}
+		//tpe.output(m, "content-type:iso7816;type:rq;msg:initco;protocols:B0',CB2A;ciphersetting:none,RSA2048")
+		
+		switch(d.get("msg")){
+			case "initco":
+				//c.send(tpe,"content-type:iso7816;type:rq;msg:initco;protocols:B0',CB2A;ciphersetting:none,RSA2048");
+				break;
+			case "pin":
+				
+				break;
+			case "arpc":
+				
+				break;		
+		}
+	} 
+
+}

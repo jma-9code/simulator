@@ -9,8 +9,6 @@ import model.memento.Guardian;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import simulator.Main;
-
 public class ComponentIO extends Component implements IInput, IOutput {
 	
 	private static Logger log = LoggerFactory.getLogger(ComponentIO.class);

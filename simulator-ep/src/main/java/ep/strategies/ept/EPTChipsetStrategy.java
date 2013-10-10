@@ -1,4 +1,4 @@
-package ep.strategies;
+package ep.strategies.ept;
 
 import java.util.HashMap;
 
@@ -11,15 +11,9 @@ import model.component.ComponentIO;
 import model.mediator.Mediator;
 import model.strategies.IStrategy;
 
-public class TPEStrategy implements IStrategy {
+public class EPTChipsetStrategy implements IStrategy {
 
-	private static Logger log = LoggerFactory.getLogger(TPEStrategy.class);
-	
-	private ComponentIO tpe;
-	
-	public TPEStrategy(ComponentIO _tpe) {
-		tpe = _tpe;
-	}
+	private static Logger log = LoggerFactory.getLogger(EPTChipsetStrategy.class);
 	
 	private boolean cmdOK(HashMap<String, String> d){
 		if (d.get("content-type") != null){
@@ -30,11 +24,11 @@ public class TPEStrategy implements IStrategy {
 	}
 
 	@Override
-	public void process(Component component, Mediator m, String data){
+	public void process(Component component, Mediator c, String data) {
 		HashMap<String, String> d = Utils.string2Hashmap(data);
 		
 		if (!cmdOK(d)){
-			log.warn(tpe.getName() + " impossible de gerer la donnee");
+			log.warn(component.getName() + " impossible de gerer la donnee");
 			return;
 		}
 		//tpe.output(m, "content-type:iso7816;type:rq;msg:initco;protocols:B0',CB2A;ciphersetting:none,RSA2048")

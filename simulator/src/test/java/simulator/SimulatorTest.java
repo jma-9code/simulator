@@ -142,10 +142,10 @@ public class SimulatorTest {
 		bank.setStrategy(new IStrategy() {
 			
 			@Override
-			public void process(Mediator m, String data) {
+			public void process(Component component, Mediator mediator, String data) {
 				Context ctx = Context.getInstance();
-				ctx.addStartPoint(new Date(System.currentTimeMillis() - 3600 * 4 * 1000), bank, m, "TEST CTX 3");
-				ctx.addStartPoint(new Date(System.currentTimeMillis() + 3600 * 4 * 1000), bank, m, "TEST CTX 4");
+				ctx.addStartPoint(new Date(System.currentTimeMillis() - 3600 * 4 * 1000), bank, mediator, "TEST CTX 3");
+				ctx.addStartPoint(new Date(System.currentTimeMillis() + 3600 * 4 * 1000), bank, mediator, "TEST CTX 4");
 			}
 		});
 		

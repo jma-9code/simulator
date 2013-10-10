@@ -11,7 +11,6 @@ import model.strategies.NullStrategy;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import simulator.Main;
 
 public abstract class Component {
 	

@@ -63,7 +63,7 @@ public class Main {
 		Mediator m2 = MediatorFactory.getInstance().getMediator(card, magstrippe, EMediator.HALFDUPLEX);
 		
 		//TPE->CARTE : demande de secure channel
-		tpe.output(m, "content-type:iso7816;type:rq;msg:initco;protocols:B0',CB2A;ciphersetting:none,RSA2048");
+		//tpe.output(m, "content-type:iso7816;type:rq;msg:initco;protocols:B0',CB2A;ciphersetting:none,RSA2048");
 		
 	}
 

@@ -23,11 +23,7 @@ public class ComponentO extends Component implements IOutput {
 	}
 
 	@Override
-	public void output(Mediator m, String data) {
-		//Guardian.getInstance().addMemento(this, saveState());
-		log.debug("[" + this.getName() + "] OUT: " + data);
-		m.send(this, data);
-		//Guardian.getInstance().addMemento(this, saveState());
+	public String toString() {
+		return "C[Output - "+name+"]";
 	}
-
 }

@@ -1,11 +1,25 @@
 package ept;
 
+import java.util.Date;
+
+import model.component.Component;
 import model.component.ComponentI;
 import model.component.ComponentIO;
+import model.component.ComponentO;
+import model.factory.MediatorFactory;
+import model.factory.MediatorFactory.EMediator;
+import model.mediator.Mediator;
+import model.response.IResponse;
+import model.response.VoidResponse;
 
 import org.junit.After;
+import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
+
+import simulator.Context;
+import simulator.SimulatorException;
+import simulator.SimulatorFactory;
 
 import ep.strategies.ept.EPTChipsetStrategy;
 import ep.strategies.ept.EPTStrategy;
@@ -33,6 +47,8 @@ import ep.strategies.ept.EPTStrategy;
  */
 public class EPTUnitTest {
 	
+	private static ComponentO testPerformer;
+	
 	private static ComponentIO paymentTerminal;
 	private static ComponentIO smartCardReader;
 	private static ComponentIO chipset;
@@ -42,6 +58,8 @@ public class EPTUnitTest {
 
 	@Before
 	public void init() throws Exception {
+		testPerformer = new ComponentO("Test performer");
+		
 		paymentTerminal = new ComponentIO("Payment terminal");
 		paymentTerminal.setStrategy(new EPTStrategy());
 		
@@ -67,6 +85,30 @@ public class EPTUnitTest {
 	}
 
 	@Test
-	public void SecureChanneltest() {
+	public void chipsetForwardTest() throws SimulatorException {
+		final String testData = "FORWARD:OK";
+		
+		// forward test
+		chipset.setStrategy(new EPTChipsetStrategy() {
+			@Override
+			public IResponse processMessage(ComponentIO component, Mediator c, String data) {
+				Assert.assertEquals(data, testData);
+				
+				return VoidResponse.build();
+			}
+		});
+		
+		simulate(paymentTerminal, testData);
+	}
+	
+	public void simulate(Component dst, String testData) throws SimulatorException {
+		// get test mediator
+		Mediator m = MediatorFactory.getInstance().getMediator(testPerformer, paymentTerminal, EMediator.SIMPLEX);
+		
+		// add start point for the simulator
+		Context.getInstance().addStartPoint(new Date(), testPerformer, m, testData);
+		
+		// execute simulation.
+		SimulatorFactory.getSimulator().start();
 	}
 }

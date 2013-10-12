@@ -4,7 +4,6 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
-import model.mediator.Mediator;
 import model.strategies.IStrategy;
 import model.strategies.NullStrategy;
 
@@ -16,17 +15,17 @@ public abstract class Component {
 	
 	private static Logger log = LoggerFactory.getLogger(Component.class);
 	
-	protected HashMap<String, String> properties = new HashMap<>();
-	protected List<Component> components = new ArrayList<>();
 	protected String name;
-	protected IStrategy strategy = new NullStrategy();
+	protected HashMap<String, String> properties = new HashMap<>();
+	
+	protected IStrategy<Component> strategy = new NullStrategy();
+	
+	protected List<Component> components = new ArrayList<>();
+	
 	
 	public Component(){
 		
-	}
-	
-	
-	
+	}	
 
 	public Component(String _name) {
 		name = _name;
@@ -160,5 +159,22 @@ public abstract class Component {
      */
     public void restoreState(Memento pMemento) {
         properties = pMemento.getProperties();
+    }
+    
+    /**
+     * Renvoi le composant enfant correspondant au nom donné.
+     * @param name Nom du composant
+     * @return Le composant ou null.
+     */
+    public <T extends Component> T getChild(String name, Class<T> type) {
+    	if(name != null) {
+	    	for(Component child : components) {
+	    		if(name.equalsIgnoreCase(child.getName()) && child.getClass() == type) {
+	    			return (T) child;
+	    		}
+	    	}
+    	}
+    	
+    	return null;
     }
 }

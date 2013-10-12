@@ -6,7 +6,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import simulator.Main;
-import simulator.Utils;
 import utils.ISO7816Exception;
 import utils.ISO7816Tools;
 import utils.ISO7816Tools.MessageType;

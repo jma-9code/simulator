@@ -8,6 +8,7 @@ import model.component.Component;
 import model.component.ComponentIO;
 import model.component.IInput;
 import model.component.IOutput;
+import model.response.IResponse;
 
 public abstract class Mediator {
 
@@ -28,7 +29,7 @@ public abstract class Mediator {
 	 * @param sender Emetteur
 	 * @param data Données
 	 */
-	public abstract void send (IOutput sender, String data);
+	public abstract IResponse send (IOutput sender, String data);
 
 	@Override
 	public int hashCode() {
@@ -68,5 +69,13 @@ public abstract class Mediator {
 
 	public void setProperties(HashMap<String, String> properties) {
 		this.properties = properties;
+	}
+
+	public IOutput getSender() {
+		return sender;
+	}
+
+	public IInput getReceiver() {
+		return receiver;
 	}
 }

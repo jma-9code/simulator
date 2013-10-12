@@ -12,7 +12,6 @@ import model.strategies.IStrategy;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import simulator.Utils;
 
 public class EPTChipsetStrategy implements IStrategy<ComponentIO> {
 
@@ -38,22 +37,7 @@ public class EPTChipsetStrategy implements IStrategy<ComponentIO> {
 		
 		
 		
-		HashMap<String, String> d = Utils.string2Hashmap(data);
-		
-
-		//tpe.output(m, "content-type:iso7816;type:rq;msg:initco;protocols:B0',CB2A;ciphersetting:none,RSA2048")
-		
-		switch(d.get("msg")){
-			case "initco":
-				//c.send(tpe,"content-type:iso7816;type:rq;msg:initco;protocols:B0',CB2A;ciphersetting:none,RSA2048");
-				break;	
-			case "pin":
-				
-				break;
-			case "arpc":
-				
-				break;		
-		}
+	
 		
 		return VoidResponse.build();
 	} 

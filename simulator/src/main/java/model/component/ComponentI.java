@@ -5,6 +5,7 @@ import java.util.List;
 
 import model.mediator.Mediator;
 import model.memento.Guardian;
+import model.response.VoidResponse;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -23,12 +24,17 @@ public class ComponentI extends Component implements IInput {
 	}
 
 	@Override
-	public void input(Mediator m,String data) {
+	public VoidResponse input(Mediator m,String data) {
 		//Guardian.getInstance().addMemento(this, saveState());
 		//log.debug("[" + this.getName() + "] IN: " + data + " from [" + c.getName() + "]");
-		strategy.process(this, m, data);
+		strategy.processMessage(this, m, data);
 		//Guardian.getInstance().addMemento(this, saveState());
+	
+		return VoidResponse.build();
 	}
 
-
+	@Override
+	public String toString() {
+		return "C[Input - "+name+"]";
+	}
 }

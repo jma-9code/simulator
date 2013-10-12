@@ -1,9 +1,9 @@
 package model.mediator;
 
-import model.component.Component;
-import model.component.ComponentIO;
 import model.component.IInput;
+import model.component.IInputOutput;
 import model.component.IOutput;
+import model.response.IResponse;
 
 /**
  * Permet d'envoyer un message dans un canal multi-directionnel entre deux composants
@@ -13,18 +13,23 @@ import model.component.IOutput;
  */
 public class HalfDuplexMediator extends Mediator {
 
-	public HalfDuplexMediator(ComponentIO a, ComponentIO b) {
+	public HalfDuplexMediator(IInputOutput a, IInputOutput b) {
 		super(a, b);
-		// TODO Auto-generated constructor stub
 	}
 	
-	public void send (IOutput c, String data){
+	@Override
+	public IResponse send (IOutput c, String data){
 		if (c == sender){
-			receiver.input(this, data);
+			return receiver.input(this, data);
 		}
 		else{
-			((IInput) sender).input(this, data);
+			return ((IInput) sender).input(this, data);
 		}
+	}
+	
+	@Override
+	public String toString() {
+		return "M[HalfDuplex - "+sender+" <--> "+receiver+"]";
 	}
 
 }

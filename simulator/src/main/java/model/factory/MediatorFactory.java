@@ -5,9 +5,12 @@ import java.util.Hashtable;
 import model.component.Component;
 import model.component.ComponentIO;
 import model.component.IInput;
+import model.component.IInputOutput;
 import model.component.IOutput;
+import model.mediator.ForwardMediator;
 import model.mediator.HalfDuplexMediator;
 import model.mediator.Mediator;
+import model.mediator.MediatorException;
 import model.mediator.SimplexMediator;
 
 public class MediatorFactory {
@@ -32,8 +35,8 @@ public class MediatorFactory {
         	switch(channel){
 	        	case HALFDUPLEX:
 	        		//verification des droits
-	            	if (src instanceof ComponentIO && dst instanceof ComponentIO){
-	            		mediator = new HalfDuplexMediator((ComponentIO)src, (ComponentIO)dst);
+	            	if (src instanceof IInputOutput && dst instanceof IInputOutput){
+	            		mediator = new HalfDuplexMediator((IInputOutput)src, (IInputOutput)dst);
 	            	}
 	        		break;
 	        	case SIMPLEX:
@@ -44,6 +47,17 @@ public class MediatorFactory {
         	}
             return mediator;
         }
+	}
+	
+	/**
+	 * Permet de récupérer le médiateur de transfert.
+	 * @param origin Médiateur d'origine
+	 * @param dst Destination
+	 * @return
+	 * @throws MediatorException
+	 */
+	public Mediator getForwardMediator(Mediator origin, IInput dst) {
+		return new ForwardMediator(origin, dst);
 	}
 
 	private static class MediatorFactoryHolder

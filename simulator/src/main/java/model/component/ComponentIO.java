@@ -3,13 +3,17 @@ package model.component;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.management.ReflectionException;
+
 import model.mediator.Mediator;
 import model.memento.Guardian;
+import model.response.IResponse;
+import model.response.DataResponse;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class ComponentIO extends Component implements IInput, IOutput {
+public class ComponentIO extends Component implements IInputOutput {
 	
 	private static Logger log = LoggerFactory.getLogger(ComponentIO.class);
 	
@@ -22,7 +26,7 @@ public class ComponentIO extends Component implements IInput, IOutput {
 		// TODO Auto-generated constructor stub
 	}
 
-	@Override
+	/*@Override
 	public void output(Mediator m, String data) {
 		//Guardian.getInstance().addMemento(this, saveState());
 		log.debug("[" + this.getName() + "] OUT: " + data);
@@ -33,9 +37,22 @@ public class ComponentIO extends Component implements IInput, IOutput {
 	@Override
 	public void input(Mediator m, String data) {
 		//Guardian.getInstance().addMemento(this, saveState());
-		log.debug("[" + this.getName() + "] IN: " + data);
-		strategy.process(this, m, data);
+		
 		//Guardian.getInstance().addMemento(this, saveState());
-	}
+	}*/
 
+	@Override
+	public IResponse input(Mediator m, String data) {
+		if(!"send".equals(Thread.currentThread().getStackTrace()[2].getMethodName())) {
+			log.error("Invalid call of input method, use mediator instead.");
+		}
+		
+		log.debug("[" + this.getName() + "] IN: '" + data+"'");
+		return strategy.processMessage(this, m, data);
+	}
+	
+	@Override
+	public String toString() {
+		return "C[Input, Output - "+name+"]";
+	}
 }

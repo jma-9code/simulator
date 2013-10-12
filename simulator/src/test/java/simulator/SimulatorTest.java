@@ -1,20 +1,19 @@
 package simulator;
 
 import java.util.Date;
-import java.util.concurrent.ExecutionException;
 
 import model.component.Component;
 import model.component.ComponentIO;
-import model.component.IOutput;
 import model.mediator.HalfDuplexMediator;
 import model.mediator.Mediator;
 import model.mediator.SimplexMediator;
+import model.response.IResponse;
+import model.response.VoidResponse;
 import model.strategies.IStrategy;
 import model.strategies.NullStrategy;
 
 import org.junit.Assert;
 import org.junit.Before;
-import org.junit.BeforeClass;
 import org.junit.Test;
 
 public class SimulatorTest {
@@ -142,10 +141,12 @@ public class SimulatorTest {
 		bank.setStrategy(new IStrategy() {
 			
 			@Override
-			public void process(Component component, Mediator mediator, String data) {
+			public IResponse processMessage(Component component, Mediator mediator, String data) {
 				Context ctx = Context.getInstance();
 				ctx.addStartPoint(new Date(System.currentTimeMillis() - 3600 * 4 * 1000), bank, mediator, "TEST CTX 3");
 				ctx.addStartPoint(new Date(System.currentTimeMillis() + 3600 * 4 * 1000), bank, mediator, "TEST CTX 4");
+				
+				return VoidResponse.build();
 			}
 		});
 		

@@ -51,6 +51,7 @@ public class CardTest {
 		chip.getProperties().put("protocol", "ISO7816");
 		chip.getProperties().put("pan", "1111111111111111111111111");
 		chip.getProperties().put("bccs", "12421874");
+		chip.getProperties().put("ceil", "400");
 		
 		magstrippe = new ComponentIO("piste magnetique");
 		magstrippe.getProperties().put("iso2", "59859595985888648468454684");

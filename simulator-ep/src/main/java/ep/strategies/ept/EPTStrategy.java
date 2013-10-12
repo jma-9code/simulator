@@ -1,23 +1,30 @@
 package ep.strategies.ept;
 
-import java.util.HashMap;
+import model.component.Component;
+import model.component.ComponentIO;
+import model.factory.MediatorFactory;
+import model.factory.MediatorFactory.EMediator;
+import model.mediator.Mediator;
+import model.response.IResponse;
+import model.strategies.IStrategy;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import simulator.Utils;
-import model.component.Component;
-import model.component.ComponentIO;
-import model.mediator.Mediator;
-import model.strategies.IStrategy;
-
-public class EPTStrategy implements IStrategy {
+public class EPTStrategy implements IStrategy<ComponentIO> {
 
 	private static Logger log = LoggerFactory.getLogger(EPTStrategy.class);
 
 	@Override
-	public void process(Component component, Mediator c, String data) {
+	public IResponse processMessage(ComponentIO _this, Mediator mediator, String data) {
+		// get chipset component reference
+		ComponentIO chipset = _this.getChild("Chipset", ComponentIO.class);
 		
+		// get mediator between chipset and ept
+		Mediator m_ept_chipset = MediatorFactory.getInstance().getForwardMediator(mediator, chipset);
+		
+		// forward to the chipset
+		return m_ept_chipset.send(_this, data);
 	} 
 
 }

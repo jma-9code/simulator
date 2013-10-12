@@ -55,7 +55,7 @@ public class ISO7816Tools {
 	 * @return
 	 */
 	public static String writeDATETIME(Date d){
-		SimpleDateFormat sdf = new SimpleDateFormat("ddMMyyHHmmssSS");
+		SimpleDateFormat sdf = new SimpleDateFormat("MMddHHmmss");
 		return sdf.format(d);
 	}
 	

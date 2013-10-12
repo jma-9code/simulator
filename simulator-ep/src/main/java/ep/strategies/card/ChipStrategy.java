@@ -11,12 +11,14 @@ import org.slf4j.LoggerFactory;
 import model.component.Component;
 import model.component.ComponentIO;
 import model.mediator.Mediator;
+import model.response.IResponse;
+import model.response.DataResponse;
 import model.strategies.IStrategy;
 import utils.ISO7816Exception;
 import utils.ISO7816Tools;
 import utils.ISO7816Tools.MessageType;
 
-public class ChipStrategy implements IStrategy{
+public class ChipStrategy implements IStrategy<ComponentIO> {
 
 
 	private static Logger log = LoggerFactory.getLogger(ChipStrategy.class);
@@ -26,14 +28,14 @@ public class ChipStrategy implements IStrategy{
 	}
 	
 	@Override
-	public void process(Component chip, Mediator m, String data){
+	public IResponse processMessage(ComponentIO chip, Mediator m, String data){
 		//la carte ne comprend que du 7816
 		HashMap<String, String> sdata = null;;
 		try {
 			sdata = ISO7816Tools.read(data);
 		} catch (ISO7816Exception e) {
 			log.warn("Get unreadable msg", e);
-			return;
+			return DataResponse.build(m, "UNREADABLE MSG");
 		}
 		MessageType type = MessageType.valueOf(sdata.get("type"));
 		switch(type){
@@ -58,6 +60,8 @@ public class ChipStrategy implements IStrategy{
 			case UNKNOWN_TYPE:
 				break;
 		}
+		
+		return DataResponse.build(m, "");
 	}
 
 	private boolean pinVerify(String bccs){
@@ -69,6 +73,7 @@ public class ChipStrategy implements IStrategy{
 		String posID = data.get(ISO7816Tools.FIELD_POSID);
 		String opcode = data.get(ISO7816Tools.FIELD_OPCODE);
 		String amount = data.get(ISO7816Tools.FIELD_AMOUNT);
+		String pinData = data.get(ISO7816Tools.FIELD_PINDATA);
 		String pan = chip.getProperties().get("pan");
 		String protocol = chip.getProperties().get(ISO7816Tools.FIELD_POSID+"-"+posID);
 		//TODO verif prot != null, sinn erreur
@@ -83,11 +88,18 @@ public class ChipStrategy implements IStrategy{
 		sb.append(ISO7816Tools.createformatTLV(ISO7816Tools.FIELD_POSID, posID));
 		sb.append(ISO7816Tools.createformatTLV(ISO7816Tools.FIELD_OPCODE, opcode));
 		sb.append(ISO7816Tools.createformatTLV(ISO7816Tools.FIELD_AMOUNT, amount));
+		//test plafond de la carte
+		if (ISO7816Tools.readAMOUNT(amount) > Integer.parseInt(chip.getProperties().get("ceil"))){
+			sb.append(ISO7816Tools.createformatTLV(ISO7816Tools.FIELD_CARDAGREEMENT, "0"));
+		}else{
+			sb.append(ISO7816Tools.createformatTLV(ISO7816Tools.FIELD_CARDAGREEMENT, "1"));
+		}
 		sb.append(ISO7816Tools.createformatTLV(ISO7816Tools.FIELD_PINVERIFICATION, "1"));
-		sb.append(ISO7816Tools.createformatTLV(ISO7816Tools.FIELD_CARDAGREEMENT, "1"));
 		sb.append(ISO7816Tools.createformatTLV(ISO7816Tools.FIELD_PAN, pan));
 		sb.append(ISO7816Tools.createformatTLV(ISO7816Tools.FIELD_DATETIME, ISO7816Tools.writeDATETIME(Calendar.getInstance().getTime())));
-		chip.output(m, sb.toString());
+		
+		m.send(chip, sb.toString());
+		//chip.output(m, sb.toString());
 	}
 
 	/**
@@ -129,7 +141,9 @@ public class ChipStrategy implements IStrategy{
 		sb.append(ISO7816Tools.createformatTLV(ISO7816Tools.FIELD_POSID, posID));
 		sb.append(ISO7816Tools.createformatTLV(ISO7816Tools.FIELD_PROTOCOL, protocol_choice));
 		sb.append(ISO7816Tools.createformatTLV(ISO7816Tools.FIELD_DATETIME, ISO7816Tools.writeDATETIME(Calendar.getInstance().getTime())));
-		chip.output(m, sb.toString());
+		
+		m.send(chip, sb.toString());
+		//chip.output(m, sb.toString());
 	}
 
 }

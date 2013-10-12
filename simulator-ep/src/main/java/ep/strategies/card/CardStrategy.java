@@ -17,13 +17,14 @@ import model.factory.MediatorFactory;
 import model.factory.MediatorFactory.EMediator;
 import model.mediator.HalfDuplexMediator;
 import model.mediator.Mediator;
+import model.response.IResponse;
 import model.strategies.IStrategy;
 
-public class CardStrategy implements IStrategy {
+public class CardStrategy implements IStrategy<ComponentIO> {
 
 	private static Logger log = LoggerFactory.getLogger(CardStrategy.class);
 	@Override
-	public void process(Component card, Mediator m, String data) {
+	public IResponse processMessage(ComponentIO card, Mediator m, String data) {
 		//tout les traitements de donnees sont gerees par la puce
 		ComponentIO chip = null;
 		ComponentO magstrippe = null;
@@ -41,19 +42,13 @@ public class CardStrategy implements IStrategy {
 		//le flux de la chip
 		if (m == m_card_chip){
 			
-		}else{
+		}
+		else{
 			
 		}
 		
 		
-		chip.input(m_card_chip, data);
-		
-		
-		
-		
-		
-				
-		
+		return chip.input(m_card_chip, data);
 	}
 	
 }

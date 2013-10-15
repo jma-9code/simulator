@@ -22,6 +22,7 @@ import model.strategies.IStrategy;
 public class CardStrategy implements IStrategy<ComponentIO> {
 
 	private static Logger log = LoggerFactory.getLogger(CardStrategy.class);
+	
 	@Override
 	public IResponse processMessage(ComponentIO card, Mediator m, String data) {
 		//tout les traitements de donnees sont gerees par la puce

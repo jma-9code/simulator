@@ -24,14 +24,6 @@ import model.response.IResponse;
  * Card <-----------------------> Proc M(Card, TPE) <--> M(TPE, Chipset) <-->
  * M(Chipset, Proc)
  * 
- * 3 3 3 3 3 3 3 3 3 3 3 3 3 3 3 3 3 3 3 3 3 3 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 3
- * 3 2 2 3 3 2 1 1 1 1 1 1 1 1 1 1 1 1 2 3 3 2 1 1 2 3 3 2 1 HalfDuplexMediator
- * 1 2 3 3 2 1 1 2 3 3 2 1 1 1 1 1 1 1 1 1 1 1 1 2 3 3 2 1 C1 1 1 C2 1 2 3 3 2 1
- * 1 1 1 1 1 1 1 1 1 1 1 2 3 3 2 2 3 3 2 Forward 2 3 3 2 2 3 3 2 2 2 2 2 2 2 2 2
- * 2 2 2 2 2 2 2 3 3 2 C1 2 2 C3 2 3 3 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 3 3 3 3
- * Forward 3 3 3 3 3 3 3 3 3 3 3 3 3 3 3 3 3 3 3 3 3 3 3 C1 3 3 C4 3 3 3 3 3 3 3
- * 3 3 3 3 3 3 3 3 3 3 3 3 3
- * 
  * @author Flo
  */
 public class ForwardMediator extends Mediator {

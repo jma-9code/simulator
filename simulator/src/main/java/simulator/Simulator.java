@@ -26,12 +26,13 @@ public class Simulator {
 			log.info("Context just moved to the next start point, the date is " + ctx.getTime());
 
 			// run simulation from start point defined
-			log.info("Simulation context " + ctx.currentCounter() + " from " + ctx.getSender() + " in the mediator "
-					+ ctx.getMediator() + " will start soon.");
+			log.info("Simulation context " + ctx.currentCounter() + " from " + ctx.getComponent() + " with event "
+					+ ctx.getEvent() + " will start soon.");
 
 			try {
-				ctx.getMediator().send(ctx.getSender(), ctx.getData());
-			} catch (Throwable e) {
+				ctx.getComponent().notifyEvent(ctx.getEvent());
+			}
+			catch (Throwable e) {
 				log.error("Error occured during simulation, throw an exception");
 				throw new SimulatorException(e);
 			}

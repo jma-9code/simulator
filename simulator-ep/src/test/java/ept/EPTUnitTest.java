@@ -2,11 +2,9 @@ package ept;
 
 import java.util.Date;
 
-import model.component.Component;
 import model.component.ComponentIO;
 import model.component.ComponentO;
-import model.factory.MediatorFactory;
-import model.factory.MediatorFactory.EMediator;
+import model.component.IOutput;
 import model.mediator.Mediator;
 import model.response.IResponse;
 import model.response.VoidResponse;
@@ -95,18 +93,15 @@ public class EPTUnitTest {
 
 		simulate(paymentTerminal, testData);
 	}
-	
+
 	@Test
 	public void secureChannelTest() {
 		chipset.notifyEvent("CARD_INSERTED");
 	}
 
-	public void simulate(Component dst, String testData) throws SimulatorException {
-		// get test mediator
-		Mediator m = MediatorFactory.getInstance().getMediator(testPerformer, paymentTerminal, EMediator.SIMPLEX);
-
+	public void simulate(IOutput dst, String event) throws SimulatorException {
 		// add start point for the simulator
-		Context.getInstance().addStartPoint(new Date(), testPerformer, m, testData);
+		Context.getInstance().addStartPoint(new Date(), dst, event);
 
 		// execute simulation.
 		SimulatorFactory.getSimulator().start();

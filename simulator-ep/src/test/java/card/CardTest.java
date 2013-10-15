@@ -89,8 +89,7 @@ public class CardTest {
 		String tpe_arqc = "04110070000000000POS ID0100000623598000000000OP CODE002000000000000AMOUNT0100000008000000APPROVAL CODE00607B56=000RESPONSE CODE002000000000000000PAN016497671002564213000000000DATETIME0101008173026";
 
 		// on insert la carte dans le tpe, le tpe envoie des donnees a la carte
-		Context.getInstance().addStartPoint(new Date(), tpe,
-				MediatorFactory.getInstance().getMediator(card, tpe, EMediator.HALFDUPLEX), tpe_arqc);
+		Context.getInstance().addStartPoint(new Date(), tpe, "CARD_INSERTED");
 		// execute simulation.
 		try {
 			SimulatorFactory.getSimulator().start();

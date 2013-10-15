@@ -7,7 +7,6 @@ import java.util.PriorityQueue;
 import java.util.Queue;
 
 import model.component.IOutput;
-import model.mediator.Mediator;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -38,16 +37,16 @@ public class Context {
 	private short currentCounter = 0;
 
 	public Context() {
-		this.startPoints = new PriorityQueue(1, new StartPointComparator());
+		this.startPoints = new PriorityQueue<>(1, new StartPointComparator());
 	}
 
 	/**
 	 * Allow to add a start point for the simulation Note : invokable by UI or
 	 * Component strategy
 	 */
-	public void addStartPoint(Date time, IOutput sender, Mediator mediator, String data) {
-		log.debug("Start point added on " + sender + " via " + mediator + " and scheduled on " + time);
-		StartPoint sp = new StartPoint(time, sender, mediator, data);
+	public void addStartPoint(Date time, IOutput component, String event) {
+		log.debug("Start point added on " + component + " with event " + event + " and scheduled on " + time);
+		StartPoint sp = new StartPoint(time, component, event);
 		this.startPoints.add(sp);
 	}
 
@@ -81,16 +80,12 @@ public class Context {
 		return this.current.time;
 	}
 
-	public IOutput getSender() {
-		return this.current.sender;
+	public IOutput getComponent() {
+		return this.current.component;
 	}
 
-	public Mediator getMediator() {
-		return this.current.mediator;
-	}
-
-	public String getData() {
-		return this.current.data;
+	public String getEvent() {
+		return this.current.event;
 	}
 
 	// Initialization on demand holder
@@ -106,16 +101,14 @@ public class Context {
 	public final static class StartPoint {
 
 		protected Date time;
-		protected IOutput sender;
-		protected Mediator mediator;
-		protected String data;
+		protected IOutput component;
+		protected String event;
 
-		public StartPoint(Date time, IOutput sender, Mediator mediator, String data) {
+		public StartPoint(Date time, IOutput component, String event) {
 			super();
 			this.time = time != null ? time : Calendar.getInstance().getTime();
-			this.sender = sender;
-			this.mediator = mediator;
-			this.data = data;
+			this.component = component;
+			this.event = event;
 		}
 
 	}

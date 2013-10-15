@@ -27,27 +27,28 @@ public class EPTChipsetStrategy implements IStrategy<ComponentIO> {
 	@Override
 	public void processEvent(ComponentIO _this, String event) {
 		switch (event) {
-		case "CARD_INSERTED":
-			// setting secure channel with the card
-			// prepare initialization message
-			String msg = prepareSecureChannelRQ(_this);
+			case "CARD_INSERTED":
+				// setting secure channel with the card
+				// prepare initialization message
+				String msg = prepareSecureChannelRQ(_this);
 
-			// get the card linked
-			Mediator m = new HalfDuplexMediator(null, null); // incorrect
-			DataResponse res = (DataResponse) m.send(_this, msg);
+				// get the card linked
+				Mediator m = new HalfDuplexMediator(null, null); // incorrect
+				DataResponse res = (DataResponse) m.send(_this, msg);
 
-			try {
-				Map<String, String> parsedData = ISO7816Tools.read(res.getData());
-				parsedData.put("current_protocol", parsedData.get(ISO7816Tools.FIELD_PROTOCOL));
-			} catch (ISO7816Exception e) {
-				log.error("Get unreadable message from card", e);
-				return; // ABORT
-			}
+				try {
+					Map<String, String> parsedData = ISO7816Tools.read(res.getData());
+					parsedData.put("current_protocol", parsedData.get(ISO7816Tools.FIELD_PROTOCOL));
+				}
+				catch (ISO7816Exception e) {
+					log.error("Get unreadable message from card", e);
+					return; // ABORT
+				}
 
-			break;
+				break;
 
-		default:
-			log.info("Event " + event + " not implemented.");
+			default:
+				log.info("Event " + event + " not implemented.");
 		}
 	}
 
@@ -55,25 +56,26 @@ public class EPTChipsetStrategy implements IStrategy<ComponentIO> {
 	public IResponse processMessage(ComponentIO _this, Mediator c, String data) {
 
 		HashMap<String, String> sdata = null;
-		;
+
 		try {
 			sdata = ISO7816Tools.read(data);
-		} catch (ISO7816Exception e) {
+		}
+		catch (ISO7816Exception e) {
 			log.warn("Get unreadable msg", e);
 			return DataResponse.build(c, "UNREADABLE MSG");
 		}
 		MessageType type = MessageType.valueOf(sdata.get("type"));
 		switch (type) {
-		case SECURE_CHANNEL_RP:
-			break;
-		case CARDHOLDER_AUTH_RP:
-			break;
-		case TRANSCATION_VAL_NOTIF:
-			break;
-		case TRANSACTION_VAL_ACK:
-			break;
-		case UNKNOWN_TYPE:
-			break;
+			case SECURE_CHANNEL_RP:
+				break;
+			case CARDHOLDER_AUTH_RP:
+				break;
+			case TRANSCATION_VAL_NOTIF:
+				break;
+			case TRANSACTION_VAL_ACK:
+				break;
+			case UNKNOWN_TYPE:
+				break;
 
 		}
 

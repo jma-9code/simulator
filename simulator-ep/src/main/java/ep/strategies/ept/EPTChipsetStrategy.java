@@ -6,6 +6,7 @@ import java.util.Map;
 
 import model.component.Component;
 import model.component.ComponentIO;
+import model.component.ComponentO;
 import model.mediator.HalfDuplexMediator;
 import model.mediator.Mediator;
 import model.response.DataResponse;
@@ -16,7 +17,6 @@ import model.strategies.IStrategy;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import tools.Utils;
 import utils.ISO7816Exception;
 import utils.ISO7816Tools;
 import utils.ISO7816Tools.MessageType;
@@ -24,11 +24,12 @@ import utils.ISO7816Tools.MessageType;
 public class EPTChipsetStrategy implements IStrategy<ComponentIO> {
 
 	private static Logger log = LoggerFactory.getLogger(EPTChipsetStrategy.class);
-
+	
+	
 	@Override
 	public void processEvent(ComponentIO _this, String event) {
-		switch (event) {
-		case "CARD_INSERTED":
+		switch(event) {
+			case "CARD_INSERTED":
 			// setting secure channel with the card
 			// prepare initialization message
 			String msg = prepareSecureChannelRQ(_this);
@@ -46,6 +47,7 @@ public class EPTChipsetStrategy implements IStrategy<ComponentIO> {
 				return; // ABORT
 			}
 
+		
 			break;
 
 		default:
@@ -55,22 +57,27 @@ public class EPTChipsetStrategy implements IStrategy<ComponentIO> {
 
 	@Override
 	public IResponse processMessage(ComponentIO _this, Mediator c, String data) {
+	
+		HashMap<String, String> sdata = null;;
+		try {
+			sdata = ISO7816Tools.read(data);
+		} catch (ISO7816Exception e) {
+			log.warn("Get unreadable msg", e);
+			return DataResponse.build(c, "UNREADABLE MSG");
+		}
+		MessageType type = MessageType.valueOf(sdata.get("type"));
+		switch(type){
+			case SECURE_CHANNEL_RP:
+				break;
+			case CARDHOLDER_AUTH_RP:
+				break;
+			case TRANSCATION_VAL_NOTIF:
+				break;
+			case TRANSACTION_VAL_ACK:
+				break;
+			case UNKNOWN_TYPE:
+				break;
 
-		HashMap<String, String> d = Utils.string2Hashmap(data);
-
-		// tpe.output(m,
-		// "content-type:iso7816;type:rq;msg:initco;protocols:B0',CB2A;ciphersetting:none,RSA2048")
-
-		switch (d.get("msg")) {
-		case "initco":
-			// c.send(tpe,"content-type:iso7816;type:rq;msg:initco;protocols:B0',CB2A;ciphersetting:none,RSA2048");
-			break;
-		case "pin":
-
-			break;
-		case "arpc":
-
-			break;
 		}
 
 		return VoidResponse.build();
@@ -113,5 +120,7 @@ public class EPTChipsetStrategy implements IStrategy<ComponentIO> {
 
 		return sb.toString();
 	}
+
+	
 
 }

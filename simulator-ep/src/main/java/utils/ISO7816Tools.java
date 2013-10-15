@@ -11,7 +11,7 @@ public class ISO7816Tools {
 	public enum MessageType{
 		SECURE_CHANNEL_RQ, SECURE_CHANNEL_RP, 
 		CARDHOLDER_AUTH_RQ, CARDHOLDER_AUTH_RP,
-		AUTHORISATION_RP_CRYPTO,
+		AUTHORIZATION_RP_CRYPTO,
 		TRANSCATION_VAL_NOTIF,
 		TRANSACTION_VAL_ACK,
 		UNKNOWN_TYPE;
@@ -114,7 +114,7 @@ public class ISO7816Tools {
 				type = MessageType.CARDHOLDER_AUTH_RP;
 				break;
 			case "0411":
-				type = MessageType.AUTHORISATION_RP_CRYPTO;
+				type = MessageType.AUTHORIZATION_RP_CRYPTO;
 				break;
 			case "0500":
 				type = MessageType.TRANSCATION_VAL_NOTIF;
@@ -143,7 +143,7 @@ public class ISO7816Tools {
 				return "0301";
 			case CARDHOLDER_AUTH_RP:
 				return "0310";
-			case AUTHORISATION_RP_CRYPTO:
+			case AUTHORIZATION_RP_CRYPTO:
 				return "0411";
 			case TRANSCATION_VAL_NOTIF:
 				return "0500";

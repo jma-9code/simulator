@@ -73,7 +73,6 @@ public class CardTest {
 		m_card_chip = MediatorFactory.getInstance().getMediator(card, chip, EMediator.HALFDUPLEX);
 		m_card_magstrippe = MediatorFactory.getInstance().getMediator(card, magstrippe, EMediator.HALFDUPLEX);
 		
-		
 	}
 
 	@AfterClass

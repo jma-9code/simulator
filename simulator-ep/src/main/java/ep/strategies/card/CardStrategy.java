@@ -25,29 +25,15 @@ public class CardStrategy implements IStrategy<ComponentIO> {
 	@Override
 	public IResponse processMessage(ComponentIO card, Mediator m, String data) {
 		//tout les traitements de donnees sont gerees par la puce
-		ComponentIO chip = null;
-		ComponentO magstrippe = null;
-		for (Component c : card.getComponents()){
-			//seul le composant chip est IO, la piste est consideree en lecture seule
-			if (c instanceof ComponentIO){
-				chip = (ComponentIO) c;
-			}
-			if (c instanceof ComponentO){
-				magstrippe = (ComponentO) c;
-			}
-		}
+		ComponentIO chip = card.getChild("chip", ComponentIO.class);
+		ComponentO magstrippe =  card.getChild("magstrippe", ComponentO.class);		
 		
-		Mediator m_card_chip = MediatorFactory.getInstance().getMediator((ComponentIO)card, chip, EMediator.HALFDUPLEX);
-		//le flux de la chip
-		if (m == m_card_chip){
-			
-		}
-		else{
-			
-		}
+		// get mediator between chip and card
+		Mediator m_card_chip = MediatorFactory.getInstance().getForwardMediator(m, chip);
+
 		
-		
-		return chip.input(m_card_chip, data);
+		// forward to the chip
+		return m_card_chip.send(card, data);
 	}
 	
 }

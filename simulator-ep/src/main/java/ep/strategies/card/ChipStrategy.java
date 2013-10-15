@@ -41,34 +41,64 @@ public class ChipStrategy implements IStrategy<ComponentIO> {
 		switch(type){
 			case SECURE_CHANNEL_RQ:
 				log.debug("SC RQ" + sdata);
-				manageSC_RQ((ComponentIO)chip, m, sdata);
-				break;
-			case SECURE_CHANNEL_RP:
-				break;
+				return manageSC_RQ((ComponentIO)chip, m, sdata);
 			case CARDHOLDER_AUTH_RQ:
 				log.debug("AUTH RQ" + sdata);
-				manageAUTH_RQ((ComponentIO)chip, m, sdata);
-				break;
-			case CARDHOLDER_AUTH_RP:
-				break;
+				return manageAUTH_RQ((ComponentIO)chip, m, sdata);
 			case AUTHORISATION_RP_CRYPTO:
-				break;
-			case TRANSCATION_VAL_NOTIF:
-				break;
-			case TRANSACTION_VAL_ACK:
-				break;
+				return manageARPC_RQ((ComponentIO)chip, m, sdata);
 			case UNKNOWN_TYPE:
 				break;
 		}
 		
 		return DataResponse.build(m, "");
 	}
+	
+	/**
+	 * Permet de gerer la validation de transaction
+	 * @param chip
+	 * @param m
+	 * @param data
+	 */
+	private IResponse manageARPC_RQ(ComponentIO chip, Mediator m, HashMap<String, String> data){		
+		String posID = data.get(ISO7816Tools.FIELD_POSID);
+		String opcode = data.get(ISO7816Tools.FIELD_OPCODE);
+		String amount = data.get(ISO7816Tools.FIELD_AMOUNT);
+		String apcode_tpe = data.get(ISO7816Tools.FIELD_APPROVALCODE);
+		String rpcode = data.get(ISO7816Tools.FIELD_RESPONSECODE);
+		String pan = chip.getProperties().get("pan");
+		String apcode_cb = chip.getProperties().get("approvalcode");
+		
+		//Construction de la rp
+		StringBuffer sb = new StringBuffer();
+		//head
+		sb.append(ISO7816Tools.convertType2CodeMsg(MessageType.TRANSCATION_VAL_NOTIF));
+		sb.append("007");
+		
+		//data
+		sb.append(ISO7816Tools.createformatTLV(ISO7816Tools.FIELD_POSID, posID));
+		sb.append(ISO7816Tools.createformatTLV(ISO7816Tools.FIELD_OPCODE, opcode));
+		sb.append(ISO7816Tools.createformatTLV(ISO7816Tools.FIELD_AMOUNT, amount));
+		if (apcode_tpe.equalsIgnoreCase(apcode_cb)){
+			sb.append(ISO7816Tools.createformatTLV(ISO7816Tools.FIELD_APPROVALCODE, apcode_cb));
+			sb.append(ISO7816Tools.createformatTLV(ISO7816Tools.FIELD_RESPONSECODE, rpcode));
+			sb.append(ISO7816Tools.createformatTLV(ISO7816Tools.FIELD_PAN, pan));
+			sb.append(ISO7816Tools.createformatTLV(ISO7816Tools.FIELD_DATETIME, ISO7816Tools.writeDATETIME(Calendar.getInstance().getTime())));
+		}else{
+			log.debug("chip can't verify the approval code : " + apcode_tpe );
+			return DataResponse.build(m, "");
+		}
 
-	private boolean pinVerify(String bccs){
-		return false;
+		return DataResponse.build(m, sb.toString());
 	}
 	
-	private void manageAUTH_RQ(ComponentIO chip, Mediator m,
+	/**
+	 * Permet de gerer la requete d'authentification, debut de la transaction
+	 * @param chip
+	 * @param m
+	 * @param data
+	 */
+	private IResponse manageAUTH_RQ(ComponentIO chip, Mediator m,
 			HashMap<String, String> data) {
 		String posID = data.get(ISO7816Tools.FIELD_POSID);
 		String opcode = data.get(ISO7816Tools.FIELD_OPCODE);
@@ -98,8 +128,7 @@ public class ChipStrategy implements IStrategy<ComponentIO> {
 		sb.append(ISO7816Tools.createformatTLV(ISO7816Tools.FIELD_PAN, pan));
 		sb.append(ISO7816Tools.createformatTLV(ISO7816Tools.FIELD_DATETIME, ISO7816Tools.writeDATETIME(Calendar.getInstance().getTime())));
 		
-		m.send(chip, sb.toString());
-		//chip.output(m, sb.toString());
+		return DataResponse.build(m, sb.toString());
 	}
 
 	/**
@@ -107,7 +136,7 @@ public class ChipStrategy implements IStrategy<ComponentIO> {
 	 * @param m
 	 * @param data
 	 */
-	private void manageSC_RQ(ComponentIO chip, Mediator m, HashMap<String, String> data){
+	private IResponse manageSC_RQ(ComponentIO chip, Mediator m, HashMap<String, String> data){
 		String protocol_choice = null;
 		List<String> protocols = Arrays.asList(chip.getProperties().get("protocol").split(" "));
 		String pref_protocol_tpe = data.get(ISO7816Tools.FIELD_PROTOCOLPREFERRED);
@@ -125,7 +154,7 @@ public class ChipStrategy implements IStrategy<ComponentIO> {
 				protocol_choice = protocols.get(0);
 			}else{
 				log.debug("chip can't communicate with TPE protocols : " + protocols_tpe );
-				return;
+				return DataResponse.build(m, "");
 			}
 		}
 		
@@ -142,8 +171,7 @@ public class ChipStrategy implements IStrategy<ComponentIO> {
 		sb.append(ISO7816Tools.createformatTLV(ISO7816Tools.FIELD_PROTOCOL, protocol_choice));
 		sb.append(ISO7816Tools.createformatTLV(ISO7816Tools.FIELD_DATETIME, ISO7816Tools.writeDATETIME(Calendar.getInstance().getTime())));
 		
-		m.send(chip, sb.toString());
-		//chip.output(m, sb.toString());
+		return DataResponse.build(m, sb.toString());
 	}
 
 }

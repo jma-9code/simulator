@@ -4,40 +4,41 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 public class Simulator {
-	
+
 	private static Logger log = LoggerFactory.getLogger(Simulator.class);
-	
+
 	/**
 	 * Use SimulatorFactory.getSimulator()
 	 */
-	Simulator() {}
-	
+	Simulator() {
+	}
+
 	public void start() throws SimulatorException {
-		
+
 		Context ctx = Context.getInstance();
-		if(!ctx.hasNext()) {
+		if (!ctx.hasNext()) {
 			throw new SimulatorException("No start point configured by user.");
 		}
-		
-		while(ctx.hasNext()) {
+
+		while (ctx.hasNext()) {
 			// change context
 			ctx.next();
-			log.info("Context just moved to the next start point, the date is "+ctx.getTime());
-			
+			log.info("Context just moved to the next start point, the date is " + ctx.getTime());
+
 			// run simulation from start point defined
-			log.info("Simulation context "+ctx.currentCounter()+" from "+ctx.getSender()+" in the mediator "+ctx.getMediator()+" will start soon.");
-			
+			log.info("Simulation context " + ctx.currentCounter() + " from " + ctx.getSender() + " in the mediator "
+					+ ctx.getMediator() + " will start soon.");
+
 			try {
 				ctx.getMediator().send(ctx.getSender(), ctx.getData());
-			}
-			catch(Throwable e) {
+			} catch (Throwable e) {
 				log.error("Error occured during simulation, throw an exception");
 				throw new SimulatorException(e);
 			}
-			
-			log.info("Simulation context "+ctx.currentCounter()+" ended");
+
+			log.info("Simulation context " + ctx.currentCounter() + " ended");
 		}
-		
+
 	}
 
 }

@@ -39,7 +39,7 @@ public class Main {
 		card.getComponents().add(chip);
 		log.info(card.toString());
 		//Comportement de la carte
-		card.setStrategy(new CardStrategy());
+		//card.setStrategy(new CardStrategy());
 		
 		
 		log.info("Creation d'un TPE");
@@ -55,7 +55,7 @@ public class Main {
 		tpe.getComponents().add(core);
 		log.info(tpe.toString());
 		//Comportement de la tpe
-		tpe.setStrategy(new EPTStrategy());
+		//tpe.setStrategy(new EPTStrategy());
 		
 		//edition des liens
 		Mediator m = MediatorFactory.getInstance().getMediator(card, tpe, EMediator.HALFDUPLEX);

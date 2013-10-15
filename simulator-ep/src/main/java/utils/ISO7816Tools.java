@@ -28,6 +28,8 @@ public class ISO7816Tools {
 	public static final String FIELD_PINVERIFICATION = "PIN VERIFICATION";
 	public static final String FIELD_CARDAGREEMENT = "CARD AGREEMENT";
 	public static final String FIELD_PAN = "PAN";
+	public static final String FIELD_APPROVALCODE = "APPROVAL CODE";
+	public static final String FIELD_RESPONSECODE = "RESPONSE CODE";
 	
 	/**
 	 * Ajoute le padding à gauche de 0 (max 16 caracteres).
@@ -55,7 +57,7 @@ public class ISO7816Tools {
 	 * @return
 	 */
 	public static String writeDATETIME(Date d){
-		SimpleDateFormat sdf = new SimpleDateFormat("ddMMyyHHmmssSS");
+		SimpleDateFormat sdf = new SimpleDateFormat("MMddHHmmss");
 		return sdf.format(d);
 	}
 	

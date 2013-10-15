@@ -2,6 +2,7 @@ package card;
 
 import static org.junit.Assert.*;
 
+import java.util.Date;
 import java.util.HashMap;
 
 import model.component.ComponentIO;
@@ -18,6 +19,9 @@ import org.junit.Test;
 
 import ep.strategies.card.CardStrategy;
 import ep.strategies.card.ChipStrategy;
+import simulator.Context;
+import simulator.SimulatorException;
+import simulator.SimulatorFactory;
 import utils.ISO7816Exception;
 import utils.ISO7816Tools;
 
@@ -47,12 +51,15 @@ public class CardTest {
 		card.getProperties().put("name", "Florent Moisson");
 		card.getProperties().put("date expiration", "09/15");
 		
-		chip = new ComponentIO("puce");
+		chip = new ComponentIO("chip");
 		chip.getProperties().put("protocol", "ISO7816");
 		chip.getProperties().put("pan", "1111111111111111111111111");
 		chip.getProperties().put("bccs", "12421874");
+		chip.getProperties().put("ceil", "400");
+		chip.getProperties().put("approvalcode", "07B56=");
 		
-		magstrippe = new ComponentIO("piste magnetique");
+		
+		magstrippe = new ComponentIO("magstrippe");
 		magstrippe.getProperties().put("iso2", "59859595985888648468454684");
 		
 		card.getComponents().add(magstrippe);
@@ -63,7 +70,6 @@ public class CardTest {
 		tpe.setStrategy(new NullStrategy());
 		
 		m_tpe_card = MediatorFactory.getInstance().getMediator(card, tpe, EMediator.HALFDUPLEX);
-
 		m_card_chip = MediatorFactory.getInstance().getMediator(card, chip, EMediator.HALFDUPLEX);
 		m_card_magstrippe = MediatorFactory.getInstance().getMediator(card, magstrippe, EMediator.HALFDUPLEX);
 		
@@ -84,16 +90,21 @@ public class CardTest {
 
 	@Test
 	public void SecureChanneltest() {
+		
 		//TPE SEND info for init sc
 		String tpe_sc = "01010040000000000POS ID0100000623598000PROTOCOL LIST022ISO7816 ISO8583 CB2A-T0000000PREFERRED007ISO781600000000DATETIME0101008170100";
-		//m_tpe_card.send(tpe, "01010030000000000POS ID0100000623598000PROTOCOL LIST022ISO7816 ISO8583 CB2A-T0000000PREFERRED007ISO781600000000DATETIME0101008170100");
-		MediatorFactory.getInstance().getMediator(chip, tpe, EMediator.HALFDUPLEX).send(tpe, tpe_sc);;
-		//m_tpe_card.send(tpe, tpe_sc);
-		
 		String tpe_auth = "03010050000000000POS ID0100000623598000000000OP CODE002000000000000AMOUNT010000000800000000000PIN DATA004123400000000DATETIME0101008170934";
-		//m_tpe_card.send(tpe, tpe_auth);
-		MediatorFactory.getInstance().getMediator(chip, tpe, EMediator.HALFDUPLEX).send(tpe, tpe_auth);;
+		String tpe_arqc = "04110070000000000POS ID0100000623598000000000OP CODE002000000000000AMOUNT0100000008000000APPROVAL CODE00607B56=000RESPONSE CODE002000000000000000PAN016497671002564213000000000DATETIME0101008173026";
 		
+		//on insert la carte dans le tpe, le tpe envoie des donnees a la carte
+		Context.getInstance().addStartPoint(new Date(), tpe, MediatorFactory.getInstance().getMediator(card, tpe, EMediator.HALFDUPLEX), tpe_arqc);
+		//execute simulation.
+		try {
+			SimulatorFactory.getSimulator().start();
+		} catch (SimulatorException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 	}
 
 }

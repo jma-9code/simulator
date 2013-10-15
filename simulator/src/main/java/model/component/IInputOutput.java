@@ -1,3 +1,4 @@
 package model.component;
 
-public interface IInputOutput extends IInput, IOutput {}
+public interface IInputOutput extends IInput, IOutput {
+}

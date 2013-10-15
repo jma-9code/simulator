@@ -1,7 +1,6 @@
 package simulator;
 
 import java.util.concurrent.ExecutionException;
-import java.util.concurrent.Executor;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
@@ -10,83 +9,84 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 public class AsyncSimulator extends Simulator {
-	
+
 	private static Logger log = LoggerFactory.getLogger(AsyncSimulator.class);
-	
+
 	private ExecutorService executor;
 	private Future transaction;
 	private SimulatorException exception;
-	
+
 	/**
 	 * Use SimulatorFactory.getAsyncSimulator()
 	 */
-	AsyncSimulator() {}
-	
+	AsyncSimulator() {
+	}
+
 	@Override
 	public void start() throws SimulatorException {
 		// resource availability check
-		if(executor == null || executor.isShutdown()) {
+		if (this.executor == null || this.executor.isShutdown()) {
 			log.debug("Fixed thread pool instanciation");
-			executor = Executors.newFixedThreadPool(1);
+			this.executor = Executors.newFixedThreadPool(1);
 		}
-		
+
 		// thread coherence check
-		if(transaction != null && !transaction.isDone() && !transaction.isCancelled()) {
+		if (this.transaction != null && !this.transaction.isDone() && !this.transaction.isCancelled()) {
 			throw new SimulatorException("A simulation is already running.");
 		}
-		
+
 		// construct the async task
 		Runnable task = new Runnable() {
 			@Override
 			public void run() {
 				try {
 					AsyncSimulator.this.realStart();
-				} 
-				catch (SimulatorException e) {
-					
-					if(e.getCause() instanceof InterruptedException) {
+				} catch (SimulatorException e) {
+
+					if (e.getCause() instanceof InterruptedException) {
 						log.info("Simulation stopped.");
-					}
-					else {
-						exception = e;
+					} else {
+						AsyncSimulator.this.exception = e;
 						log.error("Error occured during the simulation", e);
 					}
-					
+
 				}
 			}
 		};
-		
+
 		// submit the task, consider the transaction begins now.
-		transaction = executor.submit(task);
+		this.transaction = this.executor.submit(task);
 	}
-	
+
 	/**
 	 * Allow to stop the simulation.
 	 */
 	public void stop() {
-		if(transaction != null && !transaction.isDone()) {
+		if (this.transaction != null && !this.transaction.isDone()) {
 			log.info("Attempt to stop simulation");
-			transaction.cancel(true);
+			this.transaction.cancel(true);
 		}
 	}
-	
+
 	/**
 	 * Return the exception or null if no error occured.
+	 * 
 	 * @return
 	 */
 	public SimulatorException getException() {
-		return exception;
+		return this.exception;
 	}
-	
+
 	/**
 	 * Debug purposes
+	 * 
 	 * @throws InterruptedException
 	 * @throws ExecutionException
 	 */
 	void waitUntilEnd() throws InterruptedException, ExecutionException {
-		transaction.get();
+		this.transaction.get();
 	}
-	
+
 	/**
 	 * @throws SimulatorException
 	 */

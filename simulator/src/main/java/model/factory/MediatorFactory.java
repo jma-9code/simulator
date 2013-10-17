@@ -26,22 +26,24 @@ public class MediatorFactory {
 
 	public Mediator getMediator(Component src, Component dst, EMediator channel) {
 		String uid = src.hashCode() + " " + dst.hashCode() + channel;
+
 		if (this.mediators.containsKey(uid)) {
 			return this.mediators.get(uid);
-		} else {
+		}
+		else {
 			Mediator mediator = null;
 			switch (channel) {
-			case HALFDUPLEX:
-				// verification des droits
-				if (src instanceof IInputOutput && dst instanceof IInputOutput) {
-					mediator = new HalfDuplexMediator((IInputOutput) src, (IInputOutput) dst);
-				}
-				break;
-			case SIMPLEX:
-				if (src instanceof IOutput && dst instanceof IInput) {
-					mediator = new SimplexMediator((IOutput) src, (IInput) dst);
-				}
-				break;
+				case HALFDUPLEX:
+					// verification des droits
+					if (src instanceof IInputOutput && dst instanceof IInputOutput) {
+						mediator = new HalfDuplexMediator((IInputOutput) src, (IInputOutput) dst);
+					}
+					break;
+				case SIMPLEX:
+					if (src instanceof IOutput && dst instanceof IInput) {
+						mediator = new SimplexMediator((IOutput) src, (IInput) dst);
+					}
+					break;
 			}
 			return mediator;
 		}

@@ -3,6 +3,9 @@ package simulator;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import simulator.exception.SimulatorException;
+
+
 public class Simulator {
 
 	private static Logger log = LoggerFactory.getLogger(Simulator.class);

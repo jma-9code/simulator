@@ -8,6 +8,8 @@ import java.util.concurrent.Future;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import simulator.exception.SimulatorException;
+
 public class AsyncSimulator extends Simulator {
 
 	private static Logger log = LoggerFactory.getLogger(AsyncSimulator.class);

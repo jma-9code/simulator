@@ -15,8 +15,8 @@ import org.junit.BeforeClass;
 import org.junit.Test;
 
 import simulator.Context;
-import simulator.SimulatorException;
 import simulator.SimulatorFactory;
+import simulator.exception.SimulatorException;
 import ep.strategies.card.CardStrategy;
 import ep.strategies.card.ChipStrategy;
 

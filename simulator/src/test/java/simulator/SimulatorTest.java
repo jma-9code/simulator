@@ -16,6 +16,9 @@ import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 
+import simulator.exception.SimulatorException;
+
+
 public class SimulatorTest {
 
 	@Before

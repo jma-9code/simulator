@@ -8,6 +8,8 @@ import model.response.VoidResponse;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import simulator.Context;
+
 /**
  * Permet d'envoyer un message dans un seul sens (unidirectionnel) Rq :
  * Utilisable uniquement si le composant emeteur a une sortie, et que le
@@ -22,6 +24,9 @@ public class SimplexMediator extends Mediator {
 
 	public SimplexMediator(IOutput _sender, IInput _receiver) {
 		super(_sender, _receiver);
+
+		// auto register
+		Context.getInstance().registerMediator(this, true);
 	}
 
 	/**

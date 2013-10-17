@@ -4,6 +4,7 @@ import model.component.IInput;
 import model.component.IInputOutput;
 import model.component.IOutput;
 import model.response.IResponse;
+import simulator.Context;
 
 /**
  * Permet d'envoyer un message dans un canal multi-directionnel entre deux
@@ -16,13 +17,17 @@ public class HalfDuplexMediator extends Mediator {
 
 	public HalfDuplexMediator(IInputOutput a, IInputOutput b) {
 		super(a, b);
+
+		// auto register
+		Context.getInstance().registerMediator(this, true);
 	}
 
 	@Override
 	public IResponse send(IOutput c, String data) {
 		if (c == this.sender) {
 			return this.receiver.notifyMessage(this, data);
-		} else {
+		}
+		else {
 			return ((IInput) this.sender).notifyMessage(this, data);
 		}
 	}

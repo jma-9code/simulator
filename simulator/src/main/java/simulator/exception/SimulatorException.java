@@ -1,4 +1,4 @@
-package simulator;
+package simulator.exception;
 
 public class SimulatorException extends Exception {
 

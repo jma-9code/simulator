@@ -15,8 +15,8 @@ import org.junit.Before;
 import org.junit.Test;
 
 import simulator.Context;
-import simulator.SimulatorException;
 import simulator.SimulatorFactory;
+import simulator.exception.SimulatorException;
 import ep.strategies.ept.EPTChipsetStrategy;
 import ep.strategies.ept.EPTStrategy;
 

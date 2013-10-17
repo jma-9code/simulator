@@ -3,6 +3,7 @@ package model.component;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.UUID;
 
 import model.strategies.IStrategy;
 import model.strategies.NullStrategy;
@@ -18,10 +19,11 @@ public abstract class Component {
 
 	// attributes
 	protected String name;
+	protected String uuid;
 	protected HashMap<String, String> properties = new CaseInsensitiveMap();
 
 	// delegate
-	protected IStrategy<Component> strategy = new NullStrategy();
+	protected IStrategy strategy = new NullStrategy();
 
 	// sub-component
 	protected List<Component> components = new ArrayList<>();
@@ -81,12 +83,13 @@ public abstract class Component {
 		this.name = name;
 	}
 
-	public IStrategy getStrategy() {
+	public IStrategy<? extends Component> getStrategy() {
 		return this.strategy;
 	}
 
-	public void setStrategy(IStrategy strategy) {
+	public void setStrategy(IStrategy<? extends Component> strategy) {
 		this.strategy = strategy;
+		this.uuid = UUID.randomUUID().toString();
 	}
 
 	@Override
@@ -104,53 +107,39 @@ public abstract class Component {
 	public int hashCode() {
 		final int prime = 31;
 		int result = 1;
-		result = prime * result + ((this.components == null) ? 0 : this.components.hashCode());
-		result = prime * result + ((this.name == null) ? 0 : this.name.hashCode());
-		result = prime * result + ((this.properties == null) ? 0 : this.properties.hashCode());
-		result = prime * result + ((this.strategy == null) ? 0 : this.strategy.hashCode());
+		result = prime * result + ((name == null) ? 0 : name.hashCode());
+		result = prime * result + ((strategy == null) ? 0 : strategy.hashCode());
+		result = prime * result + ((uuid == null) ? 0 : uuid.hashCode());
 		return result;
 	}
 
 	@Override
 	public boolean equals(Object obj) {
-		if (this == obj) {
+		if (this == obj)
 			return true;
-		}
-		if (obj == null) {
+		if (obj == null)
 			return false;
-		}
-		if (getClass() != obj.getClass()) {
+		if (getClass() != obj.getClass())
 			return false;
-		}
 		Component other = (Component) obj;
-		if (this.components == null) {
-			if (other.components != null) {
+		if (name == null) {
+			if (other.name != null)
 				return false;
-			}
-		} else if (!this.components.equals(other.components)) {
-			return false;
 		}
-		if (this.name == null) {
-			if (other.name != null) {
+		else if (!name.equals(other.name))
+			return false;
+		if (strategy == null) {
+			if (other.strategy != null)
 				return false;
-			}
-		} else if (!this.name.equals(other.name)) {
-			return false;
 		}
-		if (this.properties == null) {
-			if (other.properties != null) {
+		else if (!strategy.equals(other.strategy))
+			return false;
+		if (uuid == null) {
+			if (other.uuid != null)
 				return false;
-			}
-		} else if (!this.properties.equals(other.properties)) {
-			return false;
 		}
-		if (this.strategy == null) {
-			if (other.strategy != null) {
-				return false;
-			}
-		} else if (!this.strategy.equals(other.strategy)) {
+		else if (!uuid.equals(other.uuid))
 			return false;
-		}
 		return true;
 	}
 

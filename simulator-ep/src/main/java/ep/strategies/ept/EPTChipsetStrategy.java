@@ -6,7 +6,6 @@ import java.util.Map;
 
 import model.component.Component;
 import model.component.ComponentIO;
-import model.mediator.HalfDuplexMediator;
 import model.mediator.Mediator;
 import model.response.DataResponse;
 import model.response.IResponse;
@@ -16,6 +15,8 @@ import model.strategies.IStrategy;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import simulator.Context;
+import simulator.exception.ContextException;
 import utils.ISO7816Exception;
 import utils.ISO7816Tools;
 import utils.ISO7816Tools.MessageType;
@@ -33,12 +34,16 @@ public class EPTChipsetStrategy implements IStrategy<ComponentIO> {
 				String msg = prepareSecureChannelRQ(_this);
 
 				// get the card linked
-				Mediator m = new HalfDuplexMediator(null, null); // incorrect
-				DataResponse res = (DataResponse) m.send(_this, msg);
-
 				try {
+					Mediator m = Context.getInstance().getFirstMediator(_this, "TPE");
+					DataResponse res = (DataResponse) m.send(_this, msg);
+
 					Map<String, String> parsedData = ISO7816Tools.read(res.getData());
 					parsedData.put("current_protocol", parsedData.get(ISO7816Tools.FIELD_PROTOCOL));
+				}
+				catch (ContextException e) {
+					log.error("Context error", e);
+					return; // ABORT (to think)
 				}
 				catch (ISO7816Exception e) {
 					log.error("Get unreadable message from card", e);

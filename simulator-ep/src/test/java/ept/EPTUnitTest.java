@@ -59,6 +59,7 @@ public class EPTUnitTest {
 		chipset = new ComponentIO("Chipset");
 		chipset.setStrategy(new EPTChipsetStrategy());
 		chipset.getProperties().put("pos_id", "0000623598");
+		chipset.getProperties().put("stan", "000001");
 		chipset.getProperties().put("protocol_list", "ISO7816 ISO8583 CB2A-T");
 		chipset.getProperties().put("protocol_prefered", "ISO7816");
 		paymentTerminal.getComponents().add(chipset);

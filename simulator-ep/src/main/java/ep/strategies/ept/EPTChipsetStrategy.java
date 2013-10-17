@@ -28,14 +28,14 @@ public class EPTChipsetStrategy implements IStrategy<ComponentIO> {
 	@Override
 	public void processEvent(ComponentIO _this, String event) {
 		switch (event) {
-			case "CARD_INSERTED":
+			case "SMART_CARD_INSERTED":
 				// setting secure channel with the card
 				// prepare initialization message
 				String msg = prepareSecureChannelRQ(_this);
 
 				// get the card linked
 				try {
-					Mediator m = Context.getInstance().getFirstMediator(_this, "TPE");
+					Mediator m = Context.getInstance().getFirstMediator(_this, "Smart Card Reader");
 					DataResponse res = (DataResponse) m.send(_this, msg);
 
 					Map<String, String> parsedData = ISO7816Tools.read(res.getData());

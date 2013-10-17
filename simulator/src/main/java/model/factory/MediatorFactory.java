@@ -10,6 +10,7 @@ import model.mediator.ForwardMediator;
 import model.mediator.HalfDuplexMediator;
 import model.mediator.Mediator;
 import model.mediator.MediatorException;
+import model.mediator.PipedMediator;
 import model.mediator.SimplexMediator;
 
 public class MediatorFactory {
@@ -61,6 +62,18 @@ public class MediatorFactory {
 	 */
 	public Mediator getForwardMediator(Mediator origin, IInput dst) {
 		return new ForwardMediator(origin, dst);
+	}
+
+	/**
+	 * Permet de récupérer un médiateur agissant comme pipe entre deux
+	 * médiateurs.
+	 * 
+	 * @param m1
+	 * @param m2
+	 * @return
+	 */
+	public Mediator getPipedMediator(Mediator m1, Mediator m2) {
+		return new PipedMediator(m1, m2);
 	}
 
 	private static class MediatorFactoryHolder {

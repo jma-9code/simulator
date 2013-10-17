@@ -3,14 +3,15 @@ package ept;
 import java.util.Date;
 
 import model.component.ComponentIO;
-import model.component.ComponentO;
 import model.component.IOutput;
+import model.factory.MediatorFactory;
+import model.factory.MediatorFactory.EMediator;
 import model.mediator.Mediator;
+import model.response.DataResponse;
 import model.response.IResponse;
-import model.response.VoidResponse;
+import model.strategies.IStrategy;
 
 import org.junit.After;
-import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -18,6 +19,7 @@ import simulator.Context;
 import simulator.SimulatorFactory;
 import simulator.exception.SimulatorException;
 import ep.strategies.ept.EPTChipsetStrategy;
+import ep.strategies.ept.EPTSmartCardReader;
 import ep.strategies.ept.EPTStrategy;
 
 /**
@@ -37,9 +39,9 @@ import ep.strategies.ept.EPTStrategy;
  */
 public class EPTUnitTest {
 
-	private static ComponentO testPerformer;
+	private static ComponentIO fakeSmartCard;
 
-	private static ComponentIO paymentTerminal;
+	private static ComponentIO ept;
 	private static ComponentIO smartCardReader;
 	private static ComponentIO chipset;
 	private static ComponentIO printer;
@@ -48,55 +50,61 @@ public class EPTUnitTest {
 
 	@Before
 	public void init() throws Exception {
-		testPerformer = new ComponentO("Test performer");
+		MediatorFactory factory = MediatorFactory.getInstance();
 
-		paymentTerminal = new ComponentIO("Payment terminal");
-		paymentTerminal.setStrategy(new EPTStrategy());
+		Context.getInstance().autoRegistrationMode();
+		fakeSmartCard = new ComponentIO("Smart Card");
 
-		smartCardReader = new ComponentIO("Smart card reader");
-		paymentTerminal.getComponents().add(smartCardReader);
+		ept = new ComponentIO("Electronic Payment Terminal");
+		ept.setStrategy(new EPTStrategy());
+
+		smartCardReader = new ComponentIO("Smart Card Reader");
+		smartCardReader.setStrategy(new EPTSmartCardReader());
+		ept.getComponents().add(smartCardReader);
+		factory.getMediator(ept, smartCardReader, EMediator.HALFDUPLEX);
 
 		chipset = new ComponentIO("Chipset");
 		chipset.setStrategy(new EPTChipsetStrategy());
 		chipset.getProperties().put("pos_id", "0000623598");
 		chipset.getProperties().put("protocol_list", "ISO7816 ISO8583 CB2A-T");
 		chipset.getProperties().put("protocol_prefered", "ISO7816");
-		paymentTerminal.getComponents().add(chipset);
+		ept.getComponents().add(chipset);
+		factory.getMediator(ept, chipset, EMediator.HALFDUPLEX);
 
 		printer = new ComponentIO("Printer");
-		paymentTerminal.getComponents().add(printer);
+		ept.getComponents().add(printer);
 
 		securePinPad = new ComponentIO("Secure pin pad");
-		paymentTerminal.getComponents().add(securePinPad);
+		ept.getComponents().add(securePinPad);
 
 		networkInterface = new ComponentIO("Network interface");
-		paymentTerminal.getComponents().add(networkInterface);
+		ept.getComponents().add(networkInterface);
+
+		// static mediators
+		factory.getMediator(ept, fakeSmartCard, EMediator.SIMPLEX);
 	}
 
 	@After
 	public void clean() throws Exception {
+		Context.getInstance().reset();
 	}
 
 	@Test
-	public void chipsetForwardTest() throws SimulatorException {
-		final String testData = "FORWARD:OK";
+	public void testPipedMediator() {
+		fakeSmartCard.setStrategy(new IStrategy<ComponentIO>() {
 
-		// forward test
-		chipset.setStrategy(new EPTChipsetStrategy() {
 			@Override
-			public IResponse processMessage(ComponentIO component, Mediator c, String data) {
-				Assert.assertEquals(data, testData);
-
-				return VoidResponse.build();
+			public void processEvent(ComponentIO _this, String event) {
 			}
+
+			@Override
+			public IResponse processMessage(ComponentIO _this, Mediator mediator, String data) {
+				return DataResponse.build(mediator, "TEST ANSWER CARD");
+			}
+
 		});
+		chipset.notifyEvent("SMART_CARD_INSERTED");
 
-		simulate(paymentTerminal, testData);
-	}
-
-	@Test
-	public void secureChannelTest() {
-		chipset.notifyEvent("CARD_INSERTED");
 	}
 
 	public void simulate(IOutput dst, String event) throws SimulatorException {

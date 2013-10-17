@@ -17,18 +17,6 @@ public class ComponentIO extends Component implements IInputOutput {
 		super(_name);
 	}
 
-	/*
-	 * @Override public void output(Mediator m, String data) {
-	 * //Guardian.getInstance().addMemento(this, saveState()); log.debug("[" +
-	 * this.getName() + "] OUT: " + data); m.send(this, data);
-	 * //Guardian.getInstance().addMemento(this, saveState()); }
-	 * 
-	 * @Override public void input(Mediator m, String data) {
-	 * //Guardian.getInstance().addMemento(this, saveState());
-	 * 
-	 * //Guardian.getInstance().addMemento(this, saveState()); }
-	 */
-
 	@Override
 	public IResponse notifyMessage(Mediator m, String data) {
 		if (!"send".equals(Thread.currentThread().getStackTrace()[2].getMethodName())) {

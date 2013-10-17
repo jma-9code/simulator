@@ -13,8 +13,10 @@ import java.util.Queue;
 
 import model.component.Component;
 import model.component.IOutput;
+import model.factory.MediatorFactory;
 import model.mediator.HalfDuplexMediator;
 import model.mediator.Mediator;
+import model.mediator.ReverseHalfDuplexMediator;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -140,27 +142,113 @@ public class Context {
 	 * @return Reference of mediator to use.
 	 */
 	public Mediator getFirstMediator(IOutput whoAreYou, String whoWantYou) throws ContextException {
-		Iterator<Mediator> ite = mediators.iterator();
+		Iterator<Mediator> ite1 = mediators.iterator();
+		List<Mediator> filteredWithDst = new LinkedList<Mediator>();
 
-		while (ite.hasNext()) {
-			Mediator mediator = ite.next();
+		// filter mediator with destination
+		while (ite1.hasNext()) {
+			Mediator mediator = ite1.next();
 
-			// simplex case
-			if (whoAreYou == mediator.getSender() && whoWantYou.equalsIgnoreCase(mediator.getReceiver().getName())) {
-
-				return mediator;
+			if (whoWantYou.equalsIgnoreCase(mediator.getReceiver().getName())
+					|| whoWantYou.equalsIgnoreCase(mediator.getSender().getName())) {
+				filteredWithDst.add(mediator);
+				log.debug("Mediator linking " + whoWantYou + " found : " + mediator);
 			}
+		}
 
-			// duplex case (inverse)
-			if (mediator instanceof HalfDuplexMediator
-					&& (whoAreYou == mediator.getReceiver() && whoWantYou.equalsIgnoreCase(mediator.getSender()
-							.getName()))) {
+		// try to find mediator with depth = 1
+		ite1 = filteredWithDst.iterator();
+		while (ite1.hasNext()) {
+			Mediator mediator = ite1.next();
+
+			if (mediator.getSender() == whoAreYou || mediator.getReceiver() == whoAreYou) {
+				log.debug("Direct mediator found : " + mediator);
 				return mediator;
 			}
 		}
 
-		throw new ContextException("No mediator between component named " + whoWantYou + " linked to "
-				+ whoAreYou.getName() + " in the context.");
+		// filter mediator with source
+		List<Mediator> filteredWithSrc = new LinkedList<Mediator>();
+		ite1 = mediators.iterator();
+		while (ite1.hasNext()) {
+			Mediator mediator = ite1.next();
+
+			if (whoAreYou == mediator.getSender() || whoAreYou == mediator.getReceiver()) {
+				filteredWithSrc.add(mediator);
+				log.debug("Mediator linked to " + whoAreYou.getName() + " found : " + mediator);
+			}
+		}
+
+		// not found, now try to find mediator with depth = 2
+		ite1 = filteredWithDst.iterator();
+		while (ite1.hasNext()) {
+			Mediator m1 = ite1.next();
+
+			Iterator<Mediator> ite2 = filteredWithSrc.iterator();
+			while (ite2.hasNext()) {
+				Mediator m2 = ite2.next();
+
+				log.debug("Is PipedMediator possible ? " + m1 + ", " + m2);
+
+				// cas simplex vers simplex
+				if (m1.getSender() == m2.getReceiver()) {
+					// m1 link the component to another
+					// m2 link this another to the component searched
+					log.info("PipedMediator(m1, m2)");
+					return MediatorFactory.getInstance().getPipedMediator(m1, m2);
+				}
+				// cas duplex vers simplex/duplex
+				else if (m1 instanceof HalfDuplexMediator && m1.getSender() == m2.getSender()) {
+					// m1 link another to the component
+					// m2 link the component searched to this another
+					log.info("PipedMediator(ReverseHalfDuplexMediator(m1), m2)");
+					return MediatorFactory.getInstance().getPipedMediator(
+							new ReverseHalfDuplexMediator((HalfDuplexMediator) m1), m2);
+				}
+				// cas duplex vers simplex/duplex
+				else if (m2 instanceof HalfDuplexMediator && m1.getSender() == m2.getSender()) {
+					// m1 link another to the component
+					// m2 link the component searched to this another
+					log.info("PipedMediator(ReverseHalfDuplexMediator(m2), m1)");
+					return MediatorFactory.getInstance().getPipedMediator(
+							new ReverseHalfDuplexMediator((HalfDuplexMediator) m2), m1);
+				}
+				// cas duplex vers duplex
+				else if (m1 instanceof HalfDuplexMediator && m1.getReceiver() == m2.getReceiver()) {
+					// m1 link another to the component
+					// m2 link the component searched to this another
+					log.info("PipedMediator(ReverseHalfDuplexMediator(m1), m2)");
+					return MediatorFactory.getInstance().getPipedMediator(
+							new ReverseHalfDuplexMediator((HalfDuplexMediator) m1), m2);
+				}
+				// cas duplex vers duplex
+				else if (m2 instanceof HalfDuplexMediator && m1.getReceiver() == m2.getReceiver()) {
+					// m1 link another to the component
+					// m2 link the component searched to this another
+					log.info("PipedMediator(ReverseHalfDuplexMediator(m2), m1)");
+					return MediatorFactory.getInstance().getPipedMediator(
+							new ReverseHalfDuplexMediator((HalfDuplexMediator) m2), m1);
+				}
+			}
+
+		}
+
+		// // simplex case
+		// if (whoAreYou == mediator.getSender() &&
+		// whoWantYou.equalsIgnoreCase(mediator.getReceiver().getName())) {
+		// return mediator;
+		// }
+		//
+		// // duplex case (inverse)
+		// if (mediator instanceof HalfDuplexMediator
+		// && (whoAreYou == mediator.getReceiver() &&
+		// whoWantYou.equalsIgnoreCase(mediator.getSender()
+		// .getName()))) {
+		// return mediator;
+		// }
+
+		throw new ContextException("No mediator between component named " + whoWantYou + " and " + whoAreYou.getName()
+				+ " in the context.");
 	}
 
 	/**
@@ -219,6 +307,18 @@ public class Context {
 	}
 
 	/**
+	 * Reset the context entirely.
+	 */
+	public void reset() {
+		startPoints.clear();
+		current = null;
+		currentCounter = 0;
+		components.clear();
+		mediators.clear();
+		autoRegistrationMode = false;
+	}
+
+	/**
 	 * Another start point available ? Note : invoke by simulator "only"
 	 * 
 	 * @return true or false
@@ -250,15 +350,15 @@ public class Context {
 	}
 
 	public Date getTime() {
-		return this.current.time;
+		return this.current != null ? this.current.time : null;
 	}
 
 	IOutput getComponent() {
-		return this.current.component;
+		return this.current != null ? this.current.component : null;
 	}
 
 	String getEvent() {
-		return this.current.event;
+		return this.current != null ? this.current.event : null;
 	}
 
 	// Initialization on demand holder

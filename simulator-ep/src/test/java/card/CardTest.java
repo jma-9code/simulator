@@ -6,7 +6,6 @@ import model.component.ComponentIO;
 import model.factory.MediatorFactory;
 import model.factory.MediatorFactory.EMediator;
 import model.mediator.Mediator;
-import model.strategies.NullStrategy;
 
 import org.junit.After;
 import org.junit.AfterClass;
@@ -18,7 +17,8 @@ import simulator.Context;
 import simulator.SimulatorFactory;
 import simulator.exception.SimulatorException;
 import ep.strategies.card.CardStrategy;
-import ep.strategies.card.ChipStrategy;
+import ep.strategies.card.CardChipStrategy;
+import ep.strategies.ept.EPTChipsetStrategy;
 
 public class CardTest {
 
@@ -59,9 +59,8 @@ public class CardTest {
 		card.getComponents().add(chip);
 
 		card.setStrategy(new CardStrategy());
-		chip.setStrategy(new ChipStrategy());
-		tpe.setStrategy(new NullStrategy());
-
+		chip.setStrategy(new CardChipStrategy());
+		tpe.setStrategy(new EPTChipsetStrategy());
 		m_tpe_card = MediatorFactory.getInstance().getMediator(card, tpe, EMediator.HALFDUPLEX);
 		m_card_chip = MediatorFactory.getInstance().getMediator(card, chip, EMediator.HALFDUPLEX);
 		m_card_magstrippe = MediatorFactory.getInstance().getMediator(card, magstrippe, EMediator.HALFDUPLEX);

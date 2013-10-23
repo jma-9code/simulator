@@ -18,7 +18,6 @@ import org.junit.Test;
 
 import simulator.exception.SimulatorException;
 
-
 public class SimulatorTest {
 
 	@Before
@@ -144,6 +143,9 @@ public class SimulatorTest {
 		bank.getProperties().put("marque", "bnp");
 		bank.setStrategy(new NullStrategy());
 		bank.setStrategy(new IStrategy() {
+			@Override
+			public void init(Context ctx) {
+			}
 
 			@Override
 			public IResponse processMessage(Component component, Mediator mediator, String data) {

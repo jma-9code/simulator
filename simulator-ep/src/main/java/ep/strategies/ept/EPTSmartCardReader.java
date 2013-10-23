@@ -16,6 +16,10 @@ public class EPTSmartCardReader implements IStrategy<ComponentIO> {
 	private static Logger log = LoggerFactory.getLogger(EPTSmartCardReader.class);
 
 	@Override
+	public void init(Context ctx) {
+	}
+
+	@Override
 	public void processEvent(ComponentIO _this, String event) {
 	}
 

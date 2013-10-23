@@ -31,6 +31,10 @@ public class CardChipStrategy implements IStrategy<ComponentIO> {
 	}
 
 	@Override
+	public void init(Context ctx) {
+	}
+
+	@Override
 	public IResponse processMessage(ComponentIO chip, Mediator m, String data) {
 		// la carte ne comprend que du 7816
 		Map<String, String> sdata = null;

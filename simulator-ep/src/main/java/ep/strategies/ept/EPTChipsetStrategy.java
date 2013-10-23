@@ -27,6 +27,10 @@ public class EPTChipsetStrategy implements IStrategy<ComponentIO> {
 	private static Logger log = LoggerFactory.getLogger(EPTChipsetStrategy.class);
 
 	@Override
+	public void init(Context ctx) {
+	}
+
+	@Override
 	public void processEvent(ComponentIO _this, String event) {
 		switch (event) {
 			case "SMART_CARD_INSERTED":

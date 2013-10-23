@@ -16,25 +16,60 @@ import org.junit.Test;
 import simulator.Context;
 import simulator.SimulatorFactory;
 import simulator.exception.SimulatorException;
-import ep.strategies.card.CardStrategy;
 import ep.strategies.card.CardChipStrategy;
+import ep.strategies.card.CardStrategy;
 import ep.strategies.ept.EPTChipsetStrategy;
+import ep.strategies.ept.EPTSmartCardReader;
+import ep.strategies.ept.EPTStrategy;
 
 public class CardTest {
 
-	private static ComponentIO tpe;
 	private static ComponentIO card;
 	private static ComponentIO chip;
 	private static ComponentIO magstrippe;
+	private static ComponentIO ept;
+	private static ComponentIO smartCardReader;
+	private static ComponentIO chipset;
+	private static ComponentIO printer;
+	private static ComponentIO securePinPad;
+	private static ComponentIO networkInterface;
+	private static ComponentIO fakeSmartCard;
+	private static MediatorFactory factory = MediatorFactory.getInstance();
 
-	private static Mediator m_tpe_card;
+	private static Mediator m_smartReader_card;
 	private static Mediator m_card_chip;
 	private static Mediator m_card_magstrippe;
 
 	@BeforeClass
 	public static void setUpBeforeClass() throws Exception {
 		// fake tpe
-		tpe = new ComponentIO("tpe");
+		fakeSmartCard = new ComponentIO("Smart Card");
+
+		ept = new ComponentIO("Electronic Payment Terminal");
+		ept.setStrategy(new EPTStrategy());
+
+		smartCardReader = new ComponentIO("Smart Card Reader");
+		smartCardReader.setStrategy(new EPTSmartCardReader());
+		ept.getComponents().add(smartCardReader);
+		factory.getMediator(ept, smartCardReader, EMediator.HALFDUPLEX);
+
+		chipset = new ComponentIO("Chipset");
+		chipset.setStrategy(new EPTChipsetStrategy());
+		chipset.getProperties().put("pos_id", "0000623598");
+		chipset.getProperties().put("stan", "000001");
+		chipset.getProperties().put("protocol_list", "ISO7816 ISO8583 CB2A-T");
+		chipset.getProperties().put("protocol_prefered", "ISO7816");
+		ept.getComponents().add(chipset);
+		factory.getMediator(ept, chipset, EMediator.HALFDUPLEX);
+
+		printer = new ComponentIO("Printer");
+		ept.getComponents().add(printer);
+
+		securePinPad = new ComponentIO("Secure pin pad");
+		ept.getComponents().add(securePinPad);
+
+		networkInterface = new ComponentIO("Network interface");
+		ept.getComponents().add(networkInterface);
 
 		card = new ComponentIO("cb");
 
@@ -60,8 +95,7 @@ public class CardTest {
 
 		card.setStrategy(new CardStrategy());
 		chip.setStrategy(new CardChipStrategy());
-		tpe.setStrategy(new EPTChipsetStrategy());
-		m_tpe_card = MediatorFactory.getInstance().getMediator(card, tpe, EMediator.HALFDUPLEX);
+		m_smartReader_card = MediatorFactory.getInstance().getMediator(card, smartCardReader, EMediator.HALFDUPLEX);
 		m_card_chip = MediatorFactory.getInstance().getMediator(card, chip, EMediator.HALFDUPLEX);
 		m_card_magstrippe = MediatorFactory.getInstance().getMediator(card, magstrippe, EMediator.HALFDUPLEX);
 
@@ -88,7 +122,7 @@ public class CardTest {
 		String tpe_arqc = "04110070000000000POS ID0100000623598000000000OP CODE002000000000000AMOUNT0100000008000000APPROVAL CODE00607B56=000RESPONSE CODE002000000000000000PAN016497671002564213000000000DATETIME0101008173026";
 
 		// on insert la carte dans le tpe, le tpe envoie des donnees a la carte
-		Context.getInstance().addStartPoint(new Date(), tpe, "CARD_INSERTED");
+		Context.getInstance().addStartPoint(new Date(), smartCardReader, "SMART_CARD_INSERTED");
 		// execute simulation.
 		try {
 			SimulatorFactory.getSimulator().start();

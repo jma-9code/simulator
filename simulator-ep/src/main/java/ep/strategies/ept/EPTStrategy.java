@@ -27,6 +27,9 @@ public class EPTStrategy implements IStrategy<ComponentIO> {
 
 	@Override
 	public void processEvent(ComponentIO _this, String event) {
+		if (event.equalsIgnoreCase("SMART_CARD_INSERTED")) {
+			ComponentIO smarcardreader = _this.getChild("Smart Card Reader", ComponentIO.class);
+			((EPTSmartCardReader) smarcardreader.getStrategy()).processEvent(smarcardreader, event);
+		}
 	}
-
 }

@@ -78,10 +78,6 @@ public class CardTest {
 		ept.setStrategy(new IStrategy<ComponentIO>() {
 
 			@Override
-			public void init(Context ctx) {
-			}
-
-			@Override
 			public void processEvent(ComponentIO _this, String event) {
 				DataResponse rp = (DataResponse) m_ept_card.send(_this, tpe_sc);
 				Assert.assertTrue(rp.getData().contains(
@@ -118,10 +114,6 @@ public class CardTest {
 	public void cardHoldertest() {
 		final String tpe_ch = "03010070000000000POS ID0100000623598000000000OP CODE002000000000000AMOUNT010000000800000000000PIN DATA00412340000RET REF NUMB012320012000001000000000000STAN00600000100000000DATETIME0101008170100";
 		ept.setStrategy(new IStrategy<ComponentIO>() {
-			@Override
-			public void init(Context ctx) {
-			}
-
 			@Override
 			public void processEvent(ComponentIO _this, String event) {
 
@@ -163,9 +155,6 @@ public class CardTest {
 	public void finalAgreementtest() {
 		final String tpe_finalagree = "04110090000000000POS ID0100000623598000000000OP CODE002000000000000AMOUNT0100000008000000APPROVAL CODE00607B56=000RESPONSE CODE002000000000000000PAN016497671002564213000000000DATETIME01010081730260000RET REF NUMB012320012000001000000000000STAN006000001";
 		ept.setStrategy(new IStrategy<ComponentIO>() {
-			@Override
-			public void init(Context ctx) {
-			}
 
 			@Override
 			public void processEvent(ComponentIO _this, String event) {

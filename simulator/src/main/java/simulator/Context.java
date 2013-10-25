@@ -142,52 +142,69 @@ public class Context {
 	 * @return Reference of mediator to use.
 	 */
 	public Mediator getFirstMediator(IOutput whoAreYou, String whoWantYou) throws ContextException {
-		Iterator<Mediator> ite1 = mediators.iterator();
-		List<Mediator> filteredWithDst = new LinkedList<Mediator>();
+		List<Mediator> matches = getMediators(whoAreYou, whoWantYou);
+		return matches != null && !matches.isEmpty() ? matches.get(0) : null;
+	}
+
+	/**
+	 * Returns mediators between the caller component and components with the
+	 * name given.
+	 * 
+	 * @param whoAreYou
+	 *            Reference of caller component
+	 * @param whoWantYou
+	 *            Name of wanted component
+	 * @return List of mediators with potential multiple components
+	 */
+	public List<Mediator> getMediators(IOutput whoAreYou, String whoWantYou) throws ContextException {
+		List<Mediator> matches = new LinkedList<>();
+
+		Iterator<Mediator> iMediators = mediators.iterator();
+		List<Mediator> dstFiltered = new LinkedList<Mediator>();
 
 		// filter mediator with destination
-		while (ite1.hasNext()) {
-			Mediator mediator = ite1.next();
+		while (iMediators.hasNext()) {
+			Mediator curMediator = iMediators.next();
 
-			if (whoWantYou.equalsIgnoreCase(mediator.getReceiver().getName())
-					|| whoWantYou.equalsIgnoreCase(mediator.getSender().getName())) {
-				filteredWithDst.add(mediator);
-				log.debug("Mediator linking " + whoWantYou + " found : " + mediator);
+			if (whoWantYou.equalsIgnoreCase(curMediator.getReceiver().getName())
+					|| whoWantYou.equalsIgnoreCase(curMediator.getSender().getName())) {
+				dstFiltered.add(curMediator);
+				log.debug("Mediator linking " + whoWantYou + " found : " + curMediator);
 			}
 		}
 
 		// try to find mediator with depth = 1
-		ite1 = filteredWithDst.iterator();
-		while (ite1.hasNext()) {
-			Mediator mediator = ite1.next();
+		iMediators = dstFiltered.iterator();
+		while (iMediators.hasNext()) {
+			Mediator curMediator = iMediators.next();
 
 			// half or simplex with whoAreYou in sender
 			// or halfduplex with whoAreYou in receiver (reversable)
-			if (mediator.getSender() == whoAreYou
-					|| (mediator.getReceiver() == whoAreYou && mediator instanceof HalfDuplexMediator)) {
-				log.debug("Direct mediator found : " + mediator);
-				return mediator;
+			if (curMediator.getSender() == whoAreYou
+					|| (curMediator.getReceiver() == whoAreYou && curMediator instanceof HalfDuplexMediator)) {
+				log.debug("Direct mediator found : " + curMediator);
+				matches.add(curMediator);
 			}
 		}
 
 		// filter mediator with source
-		List<Mediator> filteredWithSrc = new LinkedList<Mediator>();
-		ite1 = mediators.iterator();
-		while (ite1.hasNext()) {
-			Mediator mediator = ite1.next();
+		List<Mediator> srcFiltered = new LinkedList<Mediator>();
+		iMediators = mediators.iterator();
+		while (iMediators.hasNext()) {
+			Mediator curMediator = iMediators.next();
 
-			if (whoAreYou == mediator.getSender() || whoAreYou == mediator.getReceiver()) {
-				filteredWithSrc.add(mediator);
-				log.debug("Mediator linked to " + whoAreYou.getName() + " found : " + mediator);
+			if (whoAreYou == curMediator.getSender() || whoAreYou == curMediator.getReceiver()) {
+				srcFiltered.add(curMediator);
+				log.debug("Mediator linked to " + whoAreYou.getName() + " found : " + curMediator);
 			}
 		}
 
 		// not found, now try to find mediator with depth = 2
-		ite1 = filteredWithDst.iterator();
-		while (ite1.hasNext()) {
-			Mediator m1 = ite1.next();
+		iMediators = dstFiltered.iterator();
+		while (iMediators.hasNext()) {
+			Mediator m1 = iMediators.next();
 
-			Iterator<Mediator> ite2 = filteredWithSrc.iterator();
+			Iterator<Mediator> ite2 = srcFiltered.iterator();
 			while (ite2.hasNext()) {
 				Mediator m2 = ite2.next();
 
@@ -198,7 +215,7 @@ public class Context {
 					// m1 link the component to another
 					// m2 link this another to the component searched
 					log.info("PipedMediator(m1, m2)");
-					return MediatorFactory.getInstance().getPipedMediator(m1, m2);
+					matches.add(MediatorFactory.getInstance().getPipedMediator(m1, m2));
 				}
 				// cas duplex vers simplex/duplex
 				/*
@@ -214,8 +231,8 @@ public class Context {
 					// m1 link another to the component
 					// m2 link the component searched to this another
 					log.info("PipedMediator(ReverseHalfDuplexMediator(m2), m1)");
-					return MediatorFactory.getInstance().getPipedMediator(
-							new ReverseHalfDuplexMediator((HalfDuplexMediator) m2), m1);
+					matches.add(MediatorFactory.getInstance().getPipedMediator(
+							new ReverseHalfDuplexMediator((HalfDuplexMediator) m2), m1));
 				}
 				// cas duplex vers duplex
 				/*
@@ -231,63 +248,14 @@ public class Context {
 					// m1 link another to the component
 					// m2 link the component searched to this another
 					log.info("PipedMediator(ReverseHalfDuplexMediator(m2), m1)");
-					return MediatorFactory.getInstance().getPipedMediator(
-							new ReverseHalfDuplexMediator((HalfDuplexMediator) m2), m1);
+					matches.add(MediatorFactory.getInstance().getPipedMediator(
+							new ReverseHalfDuplexMediator((HalfDuplexMediator) m2), m1));
 				}
-			}
-
-		}
-
-		// // simplex case
-		// if (whoAreYou == mediator.getSender() &&
-		// whoWantYou.equalsIgnoreCase(mediator.getReceiver().getName())) {
-		// return mediator;
-		// }
-		//
-		// // duplex case (inverse)
-		// if (mediator instanceof HalfDuplexMediator
-		// && (whoAreYou == mediator.getReceiver() &&
-		// whoWantYou.equalsIgnoreCase(mediator.getSender()
-		// .getName()))) {
-		// return mediator;
-		// }
-
-		throw new ContextException("No mediator between component named " + whoWantYou + " and " + whoAreYou.getName()
-				+ " in the context.");
-	}
-
-	/**
-	 * Returns mediators between the caller component and components with the
-	 * name given.
-	 * 
-	 * @param whoAreYou
-	 *            Reference of caller component
-	 * @param whoWantYou
-	 *            Name of wanted component
-	 * @return List of mediators with potential multiple components
-	 */
-	public List<Mediator> getMediators(IOutput whoAreYou, String whoWantYou) throws ContextException {
-		List<Mediator> matches = new LinkedList<>();
-		Iterator<Mediator> ite = mediators.iterator();
-
-		while (ite.hasNext()) {
-			Mediator mediator = ite.next();
-
-			// simplex case
-			if (whoAreYou == mediator.getSender() && whoWantYou.equalsIgnoreCase(mediator.getReceiver().getName())) {
-				matches.add(mediator);
-			}
-
-			// duplex case (inverse)
-			if (mediator instanceof HalfDuplexMediator
-					&& (whoAreYou == mediator.getReceiver() && whoWantYou.equalsIgnoreCase(mediator.getSender()
-							.getName()))) {
-				matches.add(mediator);
 			}
 		}
 
 		if (matches.isEmpty()) {
-			throw new ContextException("No mediator between component named " + whoWantYou + " linked to "
+			throw new ContextException("No mediator between component named " + whoWantYou + " and "
 					+ whoAreYou.getName() + " in the context.");
 		}
 

@@ -13,6 +13,8 @@ import model.strategies.IStrategy;
 import org.junit.Assert;
 import org.junit.Test;
 
+import simulator.Context;
+
 public class ForwardMediatorTest {
 
 	public static class Counter {
@@ -70,13 +72,18 @@ public class ForwardMediatorTest {
 
 		c1.setStrategy(new IStrategy() {
 			@Override
+			public void init(Context ctx) {
+			}
+
+			@Override
 			public IResponse processMessage(Component _this, Mediator mediator, String data) {
 				System.out.println("PROCESS " + _this.getName());
 				System.out.println("data = " + data);
 				if (mediator == null) {
 					Mediator m = MediatorFactory.getInstance().getMediator(_this, c2, EMediator.HALFDUPLEX);
 					m.send((IOutput) _this, data); // c1 to c2
-				} else {
+				}
+				else {
 					Thread.currentThread();
 					Thread.dumpStack();
 					mediator.send((IOutput) _this, "ALLER2");
@@ -94,6 +101,10 @@ public class ForwardMediatorTest {
 		});
 
 		c2.setStrategy(new IStrategy() {
+			@Override
+			public void init(Context ctx) {
+			}
+
 			@Override
 			public IResponse processMessage(Component _this, Mediator mediator, String data) {
 				System.out.println("PROCESS " + _this.getName());
@@ -114,6 +125,10 @@ public class ForwardMediatorTest {
 
 		c3.setStrategy(new IStrategy() {
 			@Override
+			public void init(Context ctx) {
+			}
+
+			@Override
 			public IResponse processMessage(Component _this, Mediator mediator, String data) {
 				System.out.println("PROCESS " + _this.getName());
 				System.out.println("data = " + data);
@@ -132,6 +147,10 @@ public class ForwardMediatorTest {
 		});
 
 		c4.setStrategy(new IStrategy() {
+			@Override
+			public void init(Context ctx) {
+			}
+
 			@Override
 			public IResponse processMessage(Component _this, Mediator mediator, String data) {
 				System.out.println("PROCESS " + _this.getName());

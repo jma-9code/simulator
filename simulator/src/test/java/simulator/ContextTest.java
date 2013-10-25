@@ -56,6 +56,9 @@ public class ContextTest {
 		final Mediator mExpected = factory.getMediator(c1, c2, EMediator.HALFDUPLEX);
 
 		c1.setStrategy(new IStrategy<ComponentIO>() {
+			@Override
+			public void init(Context ctx) {
+			}
 
 			@Override
 			public void processEvent(ComponentIO _this, String event) {
@@ -84,6 +87,9 @@ public class ContextTest {
 		final Mediator m1 = factory.getMediator(c2, c1, EMediator.SIMPLEX);
 
 		c1.setStrategy(new IStrategy<ComponentIO>() {
+			@Override
+			public void init(Context ctx) {
+			}
 
 			@Override
 			public void processEvent(ComponentIO _this, String event) {
@@ -117,6 +123,9 @@ public class ContextTest {
 		final Mediator m2 = factory.getMediator(c1, c1s2, EMediator.HALFDUPLEX);
 
 		c1s1.setStrategy(new IStrategy<ComponentIO>() {
+			@Override
+			public void init(Context ctx) {
+			}
 
 			@Override
 			public void processEvent(ComponentIO _this, String event) {
@@ -150,6 +159,9 @@ public class ContextTest {
 		final Mediator m2 = factory.getMediator(c1, c1s2, EMediator.SIMPLEX);
 
 		c1s1.setStrategy(new IStrategy<ComponentIO>() {
+			@Override
+			public void init(Context ctx) {
+			}
 
 			@Override
 			public void processEvent(ComponentIO _this, String event) {
@@ -183,6 +195,9 @@ public class ContextTest {
 		final Mediator m2 = factory.getMediator(c1, c1s2, EMediator.SIMPLEX);
 
 		c1s1.setStrategy(new IStrategy<ComponentIO>() {
+			@Override
+			public void init(Context ctx) {
+			}
 
 			@Override
 			public void processEvent(ComponentIO _this, String event) {

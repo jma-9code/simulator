@@ -95,6 +95,10 @@ public class EPTUnitTest {
 		fakeSmartCard.setStrategy(new IStrategy<ComponentIO>() {
 
 			@Override
+			public void init(Context ctx) {
+			}
+
+			@Override
 			public void processEvent(ComponentIO _this, String event) {
 			}
 

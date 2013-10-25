@@ -9,9 +9,15 @@ import model.strategies.IStrategy;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import simulator.Context;
+
 public class EPTStrategy implements IStrategy<ComponentIO> {
 
 	private static Logger log = LoggerFactory.getLogger(EPTStrategy.class);
+
+	@Override
+	public void init(Context ctx) {
+	}
 
 	@Override
 	public IResponse processMessage(ComponentIO _this, Mediator mediator, String data) {

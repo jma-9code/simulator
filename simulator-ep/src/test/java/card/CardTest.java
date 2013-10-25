@@ -14,7 +14,6 @@ import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
-import org.junit.matchers.JUnitMatchers;
 
 import simulator.Context;
 import simulator.SimulatorFactory;
@@ -80,14 +79,21 @@ public class CardTest {
 
 			@Override
 			public void processEvent(ComponentIO _this, String event) {
-				card.notifyMessage(m_ept_card, tpe_sc);
+				DataResponse rp = (DataResponse) m_ept_card.send(_this, tpe_sc);
+				Assert.assertTrue(rp.getData().contains(
+						"01100050000000000POS ID010000062359800000000PROTOCOL007ISO7816000000000000STAN006000002"));
 			}
 
 			@Override
 			public IResponse processMessage(ComponentIO _this, Mediator mediator, String data) {
-				Assert.assertThat(data, JUnitMatchers
-						.containsString("01100020000000000POS ID010000062359800000000PROTOCOL007ISO781600000000"));
+
 				return DataResponse.build(null, null);
+			}
+
+			@Override
+			public void init(Context ctx) {
+				// TODO Auto-generated method stub
+
 			}
 
 		});
@@ -98,6 +104,7 @@ public class CardTest {
 			SimulatorFactory.getSimulator().start();
 		}
 		catch (SimulatorException e) {
+			Assert.assertFalse(true);
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
@@ -110,16 +117,25 @@ public class CardTest {
 
 			@Override
 			public void processEvent(ComponentIO _this, String event) {
-				card.notifyMessage(m_ept_card, tpe_ch);
+
+				DataResponse rp = (DataResponse) m_ept_card.send(_this, tpe_ch);
+				System.out.println(rp.getData());
+				Assert.assertTrue(rp
+						.getData()
+						.contains(
+								"03100070000000000POS ID0100000623598000000000OP CODE002000000000000AMOUNT0100000008000PIN VERIFICATION001100CARD AGREEMENT00110000000000000PAN016497671002564213000000000STAN006000002"));
+
 			}
 
 			@Override
 			public IResponse processMessage(ComponentIO _this, Mediator mediator, String data) {
-				Assert.assertThat(
-						data,
-						JUnitMatchers
-								.containsString("POS ID0100000623598000000000OP CODE002000000000000AMOUNT0100000008000PIN VERIFICATION001100CARD AGREEMENT00110000000000000PAN016497671002564213000000000"));
 				return DataResponse.build(null, null);
+			}
+
+			@Override
+			public void init(Context ctx) {
+				// TODO Auto-generated method stub
+
 			}
 
 		});
@@ -130,6 +146,7 @@ public class CardTest {
 			SimulatorFactory.getSimulator().start();
 		}
 		catch (SimulatorException e) {
+			Assert.assertFalse(true);
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
@@ -142,16 +159,24 @@ public class CardTest {
 
 			@Override
 			public void processEvent(ComponentIO _this, String event) {
-				card.notifyMessage(m_ept_card, tpe_finalagree);
+				DataResponse rp = (DataResponse) m_ept_card.send(_this, tpe_finalagree);
+				System.out.println(rp.getData());
+				Assert.assertTrue(rp
+						.getData()
+						.contains(
+								"05000070000000000POS ID0100000623598000000000OP CODE002000000000000AMOUNT0100000008000000APPROVAL CODE00607B56=000RESPONSE CODE002000000000000000PAN016497671002564213000000000STAN006000002"));
+
 			}
 
 			@Override
 			public IResponse processMessage(ComponentIO _this, Mediator mediator, String data) {
-				Assert.assertThat(
-						data,
-						JUnitMatchers
-								.containsString("05000070000000000POS ID0100000623598000000000OP CODE002000000000000AMOUNT0100000008000000APPROVAL CODE00607B56=000RESPONSE CODE002000000000000000PAN016497671002564213000000000"));
 				return DataResponse.build(null, null);
+			}
+
+			@Override
+			public void init(Context ctx) {
+				// TODO Auto-generated method stub
+
 			}
 
 		});
@@ -162,6 +187,7 @@ public class CardTest {
 			SimulatorFactory.getSimulator().start();
 		}
 		catch (SimulatorException e) {
+			Assert.assertFalse(true);
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}

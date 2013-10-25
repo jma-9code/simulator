@@ -112,6 +112,35 @@ public class EPTUnitTest {
 
 	}
 
+	@Test
+	public void secureChanneltest() {
+		/*
+		 * final String card_sc =
+		 * "01010060000000000POS ID0100000623598000PROTOCOL LIST022ISO7816 ISO8583 CB2A-T0000000PREFERRED007ISO78160000RET REF NUMB012320012000001000000000000STAN00600000100000000DATETIME0101008170100"
+		 * ; ept.setStrategy(new IStrategy<ComponentIO>() {
+		 * 
+		 * @Override public void processEvent(ComponentIO _this, String event) {
+		 * card.notifyMessage(m_ept_card, tpe_sc); }
+		 * 
+		 * @Override public IResponse processMessage(ComponentIO _this, Mediator
+		 * mediator, String data) { Assert.assertThat(data, JUnitMatchers
+		 * .containsString
+		 * ("01100020000000000POS ID010000062359800000000PROTOCOL007ISO781600000000"
+		 * )); return DataResponse.build(null, null); }
+		 * 
+		 * @Override public void init(Context ctx) { // TODO Auto-generated
+		 * method stub
+		 * 
+		 * }
+		 * 
+		 * }); // on insert la carte dans le tpe, le tpe envoie des donnees a la
+		 * carte Context.getInstance().addStartPoint(new Date(), ept,
+		 * "SMART_CARD_INSERTED"); // execute simulation. try {
+		 * SimulatorFactory.getSimulator().start(); } catch (SimulatorException
+		 * e) { // TODO Auto-generated catch block e.printStackTrace(); }
+		 */
+	}
+
 	public void simulate(IOutput dst, String event) throws SimulatorException {
 		// add start point for the simulator
 		Context.getInstance().addStartPoint(new Date(), dst, event);

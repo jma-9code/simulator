@@ -40,7 +40,7 @@ public class ISO7816Tools {
 			ret = "000001";
 		}
 		else {
-			ret = String.format("%d06", val_stan++);
+			ret = String.format("%06d", ++val_stan);
 		}
 		return ret;
 	}

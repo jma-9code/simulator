@@ -17,6 +17,7 @@ public class EPTSmartCardReader implements IStrategy<ComponentIO> {
 
 	@Override
 	public void processEvent(ComponentIO _this, String event) {
+
 	}
 
 	@Override

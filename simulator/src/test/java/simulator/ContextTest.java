@@ -1,6 +1,7 @@
 package simulator;
 
 import java.util.Date;
+import java.util.List;
 
 import model.component.ComponentIO;
 import model.factory.MediatorFactory;
@@ -10,13 +11,22 @@ import model.mediator.PipedMediator;
 import model.response.IResponse;
 import model.strategies.IStrategy;
 
+import org.hamcrest.CoreMatchers;
+import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 
 import simulator.exception.ContextException;
 import simulator.exception.SimulatorException;
+import tools.TestPass;
 
+/**
+ * Dans cette classe de test, on s'attache à vérifier les méthodes disponibles
+ * dans le contexte de simulation : <br />
+ * - getFirstMediator<br />
+ * - getAllMediators
+ */
 public class ContextTest {
 
 	private ComponentIO c1;
@@ -28,6 +38,9 @@ public class ContextTest {
 
 	@Before
 	public void beforeTest() {
+		// verify that the test has been passed
+		TestPass.init();
+
 		System.out.println("---------NEW TEST---------");
 
 		Context ctx = Context.getInstance();
@@ -50,6 +63,11 @@ public class ContextTest {
 		c2.getComponents().add(c2s2);
 	}
 
+	@After
+	public void afterTest() {
+		TestPass.assertTest();
+	}
+
 	@Test
 	public void testFirstMediator_depth1() throws SimulatorException {
 		MediatorFactory factory = MediatorFactory.getInstance();
@@ -62,6 +80,8 @@ public class ContextTest {
 
 			@Override
 			public void processEvent(ComponentIO _this, String event) {
+				TestPass.passed();
+
 				try {
 					Assert.assertEquals(Context.getInstance().getFirstMediator(_this, "C2"), mExpected);
 				}
@@ -93,6 +113,8 @@ public class ContextTest {
 
 			@Override
 			public void processEvent(ComponentIO _this, String event) {
+				TestPass.passed();
+
 				try {
 					Mediator m = Context.getInstance().getFirstMediator(_this, "C2");
 					System.out.println("ETTSTTSTSTS" + m);
@@ -129,6 +151,8 @@ public class ContextTest {
 
 			@Override
 			public void processEvent(ComponentIO _this, String event) {
+				TestPass.passed();
+
 				try {
 					Mediator m = Context.getInstance().getFirstMediator(_this, "C1S2");
 					Assert.assertEquals(m.getClass(), PipedMediator.class);
@@ -165,6 +189,8 @@ public class ContextTest {
 
 			@Override
 			public void processEvent(ComponentIO _this, String event) {
+				TestPass.passed();
+
 				try {
 					Mediator m = Context.getInstance().getFirstMediator(_this, "C1S2");
 					Assert.assertEquals(m.getClass(), PipedMediator.class);
@@ -201,6 +227,8 @@ public class ContextTest {
 
 			@Override
 			public void processEvent(ComponentIO _this, String event) {
+				TestPass.passed();
+
 				try {
 					Mediator m = Context.getInstance().getFirstMediator(_this, "C1S2");
 					Assert.assertTrue(false);
@@ -219,6 +247,47 @@ public class ContextTest {
 		});
 
 		Context.getInstance().addStartPoint(new Date(), c1s1, "TEST");
+		SimulatorFactory.getSimulator().start();
+	}
+
+	@Test
+	public void test2Mediators_depth1() throws SimulatorException {
+		// second component with same name
+		ComponentIO c22 = new ComponentIO("C2");
+
+		MediatorFactory factory = MediatorFactory.getInstance();
+		final Mediator m1 = factory.getMediator(c1, c2, EMediator.SIMPLEX);
+		final Mediator m2 = factory.getMediator(c1, c22, EMediator.SIMPLEX);
+
+		c1.setStrategy(new IStrategy<ComponentIO>() {
+			@Override
+			public void init(Context ctx) {
+			}
+
+			@Override
+			public void processEvent(ComponentIO _this, String event) {
+				TestPass.passed();
+
+				try {
+					List<Mediator> mList = Context.getInstance().getMediators(_this, "C2");
+					Assert.assertEquals(mList.size(), 2);
+					Assert.assertThat("Mediators returned not correct", mList, CoreMatchers.hasItem(m1));
+					Assert.assertThat("Mediators returned not correct", mList, CoreMatchers.hasItem(m2));
+				}
+				catch (ContextException e) {
+					e.printStackTrace();
+					Assert.assertTrue(false);
+				}
+			}
+
+			@Override
+			public IResponse processMessage(ComponentIO _this, Mediator mediator, String data) {
+				// TODO Auto-generated method stub
+				return null;
+			}
+		});
+
+		Context.getInstance().addStartPoint(new Date(), c1, "TEST");
 		SimulatorFactory.getSimulator().start();
 	}
 }

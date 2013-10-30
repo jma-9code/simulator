@@ -1,6 +1,7 @@
 package model.strategies;
 
 import model.component.Component;
+import model.component.IOutput;
 import model.mediator.Mediator;
 import model.response.IResponse;
 import model.response.VoidResponse;
@@ -15,7 +16,7 @@ public class NullStrategy implements IStrategy<Component> {
 	private static Logger log = LoggerFactory.getLogger(NullStrategy.class);
 
 	@Override
-	public void init(Context ctx) {
+	public void init(IOutput _this, Context ctx) {
 	}
 
 	@Override

@@ -1,6 +1,7 @@
 package simulator;
 
 import java.util.Calendar;
+import java.util.Collection;
 import java.util.Comparator;
 import java.util.Date;
 import java.util.HashMap;
@@ -64,10 +65,50 @@ public class Context {
 	 */
 	private boolean autoRegistrationMode = false;
 
+	private Map<String, List<IOutput>> events;
+
 	public Context() {
 		this.startPoints = new PriorityQueue<>(1, new StartPointComparator());
 		this.components = new HashMap<>();
 		this.mediators = new LinkedList<>();
+		this.events = new HashMap<>();
+	}
+
+	/**
+	 * Subscription method to an event.
+	 * 
+	 * @param component
+	 * @param event
+	 */
+	public void subscribeEvent(IOutput component, String event) {
+		List<IOutput> componentList = events.get(event);
+
+		// Already exists ?
+		if (componentList == null) {
+			// no, so instanciate it.
+			componentList = new LinkedList<>();
+			events.put(event, componentList);
+		}
+
+		// add the component to be notify
+		componentList.add(component);
+	}
+
+	/**
+	 * Notifying all components subscribed to the event given.
+	 * 
+	 * @param event
+	 */
+	void notifyComponents(String event) {
+		List<IOutput> componentList = events.get(event);
+
+		if (componentList != null) {
+			// iterate on component subscribed
+			for (IOutput component : componentList) {
+				// notify the component
+				component.notifyEvent(event);
+			}
+		}
 	}
 
 	/**
@@ -81,7 +122,7 @@ public class Context {
 	public void registerComponent(Component component, boolean selfRegistration) {
 		// auto-register
 		if (autoRegistrationMode) {
-			components.put(component.getName(), component);
+			components.put(component.getInstanceName(), component);
 		}
 	}
 
@@ -112,6 +153,15 @@ public class Context {
 	 */
 	public void registerMediator(Mediator mediator) {
 		mediators.add(mediator);
+	}
+
+	/**
+	 * Return all components registred
+	 * 
+	 * @return
+	 */
+	Collection<Component> getAllComponents() {
+		return components.values();
 	}
 
 	/**
@@ -266,9 +316,9 @@ public class Context {
 	 * Allow to add a start point for the simulation<br />
 	 * Note : invokable by UI or Component strategy
 	 */
-	public void addStartPoint(Date time, IOutput component, String event) {
-		log.debug("Start point added on " + component + " with event " + event + " and scheduled on " + time);
-		StartPoint sp = new StartPoint(time, component, event);
+	public void addStartPoint(Date time, String event) {
+		log.debug("Start point with event " + event + " and scheduled on " + time);
+		StartPoint sp = new StartPoint(time, event);
 		this.startPoints.add(sp);
 	}
 
@@ -288,6 +338,7 @@ public class Context {
 		currentCounter = 0;
 		components.clear();
 		mediators.clear();
+		events.clear();
 		autoRegistrationMode = false;
 	}
 
@@ -326,10 +377,6 @@ public class Context {
 		return this.current != null ? this.current.time : null;
 	}
 
-	IOutput getComponent() {
-		return this.current != null ? this.current.component : null;
-	}
-
 	String getEvent() {
 		return this.current != null ? this.current.event : null;
 	}
@@ -347,13 +394,11 @@ public class Context {
 	public final static class StartPoint {
 
 		protected Date time;
-		protected IOutput component;
 		protected String event;
 
-		public StartPoint(Date time, IOutput component, String event) {
+		public StartPoint(Date time, String event) {
 			super();
 			this.time = time != null ? time : Calendar.getInstance().getTime();
-			this.component = component;
 			this.event = event;
 		}
 

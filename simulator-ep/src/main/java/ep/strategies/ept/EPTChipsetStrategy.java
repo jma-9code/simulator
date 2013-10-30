@@ -6,6 +6,7 @@ import java.util.Map;
 
 import model.component.Component;
 import model.component.ComponentIO;
+import model.component.IOutput;
 import model.mediator.Mediator;
 import model.response.DataResponse;
 import model.response.IResponse;
@@ -27,7 +28,8 @@ public class EPTChipsetStrategy implements IStrategy<ComponentIO> {
 	private static Logger log = LoggerFactory.getLogger(EPTChipsetStrategy.class);
 
 	@Override
-	public void init(Context ctx) {
+	public void init(IOutput _this, Context ctx) {
+		ctx.subscribeEvent(_this, "SMART_CARD_INSERTED");
 	}
 
 	@Override

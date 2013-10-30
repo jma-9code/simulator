@@ -3,12 +3,11 @@ package model.component;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import simulator.Context;
+
 public class ComponentO extends Component implements IOutput {
 
 	private static Logger log = LoggerFactory.getLogger(ComponentO.class);
-
-	public ComponentO() {
-	}
 
 	public ComponentO(String _name) {
 		super(_name);
@@ -22,5 +21,20 @@ public class ComponentO extends Component implements IOutput {
 	@Override
 	public String toString() {
 		return "C[Output - " + this.name + "]";
+	}
+
+	@Override
+	public void init(Context ctx) {
+		this.strategy.init(this, ctx);
+	}
+
+	@Override
+	public boolean isOutput() {
+		return true;
+	}
+
+	@Override
+	public boolean isInput() {
+		return false;
 	}
 }

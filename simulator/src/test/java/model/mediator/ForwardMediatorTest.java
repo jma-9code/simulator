@@ -72,7 +72,7 @@ public class ForwardMediatorTest {
 
 		c1.setStrategy(new IStrategy() {
 			@Override
-			public void init(Context ctx) {
+			public void init(IOutput _this, Context ctx) {
 			}
 
 			@Override
@@ -102,7 +102,7 @@ public class ForwardMediatorTest {
 
 		c2.setStrategy(new IStrategy() {
 			@Override
-			public void init(Context ctx) {
+			public void init(IOutput _this, Context ctx) {
 			}
 
 			@Override
@@ -125,7 +125,7 @@ public class ForwardMediatorTest {
 
 		c3.setStrategy(new IStrategy() {
 			@Override
-			public void init(Context ctx) {
+			public void init(IOutput _this, Context ctx) {
 			}
 
 			@Override
@@ -148,7 +148,7 @@ public class ForwardMediatorTest {
 
 		c4.setStrategy(new IStrategy() {
 			@Override
-			public void init(Context ctx) {
+			public void init(IOutput _this, Context ctx) {
 			}
 
 			@Override

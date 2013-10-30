@@ -4,6 +4,7 @@ import java.util.Date;
 import java.util.List;
 
 import model.component.ComponentIO;
+import model.component.IOutput;
 import model.factory.MediatorFactory;
 import model.factory.MediatorFactory.EMediator;
 import model.mediator.Mediator;
@@ -75,7 +76,8 @@ public class ContextTest {
 
 		c1.setStrategy(new IStrategy<ComponentIO>() {
 			@Override
-			public void init(Context ctx) {
+			public void init(IOutput _this, Context ctx) {
+				ctx.subscribeEvent(_this, "TEST");
 			}
 
 			@Override
@@ -97,7 +99,7 @@ public class ContextTest {
 			}
 		});
 
-		Context.getInstance().addStartPoint(new Date(), c1, "TEST");
+		Context.getInstance().addStartPoint(new Date(), "TEST");
 		SimulatorFactory.getSimulator().start();
 	}
 
@@ -108,7 +110,8 @@ public class ContextTest {
 
 		c1.setStrategy(new IStrategy<ComponentIO>() {
 			@Override
-			public void init(Context ctx) {
+			public void init(IOutput _this, Context ctx) {
+				ctx.subscribeEvent(_this, "TEST");
 			}
 
 			@Override
@@ -133,7 +136,7 @@ public class ContextTest {
 			}
 		});
 
-		Context.getInstance().addStartPoint(new Date(), c1, "TEST");
+		Context.getInstance().addStartPoint(new Date(), "TEST");
 		SimulatorFactory.getSimulator().start();
 	}
 
@@ -146,7 +149,8 @@ public class ContextTest {
 
 		c1s1.setStrategy(new IStrategy<ComponentIO>() {
 			@Override
-			public void init(Context ctx) {
+			public void init(IOutput _this, Context ctx) {
+				ctx.subscribeEvent(_this, "TEST");
 			}
 
 			@Override
@@ -171,7 +175,7 @@ public class ContextTest {
 			}
 		});
 
-		Context.getInstance().addStartPoint(new Date(), c1s1, "TEST");
+		Context.getInstance().addStartPoint(new Date(), "TEST");
 		SimulatorFactory.getSimulator().start();
 	}
 
@@ -184,7 +188,8 @@ public class ContextTest {
 
 		c1s1.setStrategy(new IStrategy<ComponentIO>() {
 			@Override
-			public void init(Context ctx) {
+			public void init(IOutput _this, Context ctx) {
+				ctx.subscribeEvent(_this, "TEST");
 			}
 
 			@Override
@@ -209,7 +214,7 @@ public class ContextTest {
 			}
 		});
 
-		Context.getInstance().addStartPoint(new Date(), c1s1, "TEST");
+		Context.getInstance().addStartPoint(new Date(), "TEST");
 		SimulatorFactory.getSimulator().start();
 	}
 
@@ -222,7 +227,8 @@ public class ContextTest {
 
 		c1s1.setStrategy(new IStrategy<ComponentIO>() {
 			@Override
-			public void init(Context ctx) {
+			public void init(IOutput _this, Context ctx) {
+				ctx.subscribeEvent(_this, "TEST");
 			}
 
 			@Override
@@ -246,7 +252,7 @@ public class ContextTest {
 			}
 		});
 
-		Context.getInstance().addStartPoint(new Date(), c1s1, "TEST");
+		Context.getInstance().addStartPoint(new Date(), "TEST");
 		SimulatorFactory.getSimulator().start();
 	}
 
@@ -261,7 +267,8 @@ public class ContextTest {
 
 		c1.setStrategy(new IStrategy<ComponentIO>() {
 			@Override
-			public void init(Context ctx) {
+			public void init(IOutput _this, Context ctx) {
+				ctx.subscribeEvent(_this, "TEST");
 			}
 
 			@Override
@@ -287,7 +294,7 @@ public class ContextTest {
 			}
 		});
 
-		Context.getInstance().addStartPoint(new Date(), c1, "TEST");
+		Context.getInstance().addStartPoint(new Date(), "TEST");
 		SimulatorFactory.getSimulator().start();
 	}
 }

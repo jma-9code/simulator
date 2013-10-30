@@ -6,12 +6,11 @@ import model.response.IResponse;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import simulator.Context;
+
 public class ComponentIO extends Component implements IInputOutput {
 
 	private static Logger log = LoggerFactory.getLogger(ComponentIO.class);
-
-	public ComponentIO() {
-	}
 
 	public ComponentIO(String _name) {
 		super(_name);
@@ -35,6 +34,21 @@ public class ComponentIO extends Component implements IInputOutput {
 	@Override
 	public String toString() {
 		return "C[Input, Output - " + this.name + "]";
+	}
+
+	@Override
+	public void init(Context ctx) {
+		this.strategy.init(this, ctx);
+	}
+
+	@Override
+	public boolean isOutput() {
+		return true;
+	}
+
+	@Override
+	public boolean isInput() {
+		return true;
 	}
 
 }

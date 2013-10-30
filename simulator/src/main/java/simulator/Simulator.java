@@ -1,10 +1,12 @@
 package simulator;
 
+import model.component.Component;
+import model.component.IOutput;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import simulator.exception.SimulatorException;
-
 
 public class Simulator {
 
@@ -19,8 +21,17 @@ public class Simulator {
 	public void start() throws SimulatorException {
 
 		Context ctx = Context.getInstance();
+
+		// check if a start point is set
 		if (!ctx.hasNext()) {
 			throw new SimulatorException("No start point configured by user.");
+		}
+
+		// init all output components
+		for (Component c : ctx.getAllComponents()) {
+			if (c.isOutput()) {
+				((IOutput) c).init(ctx);
+			}
 		}
 
 		while (ctx.hasNext()) {
@@ -29,14 +40,14 @@ public class Simulator {
 			log.info("Context just moved to the next start point, the date is " + ctx.getTime());
 
 			// run simulation from start point defined
-			log.info("Simulation context " + ctx.currentCounter() + " from " + ctx.getComponent() + " with event "
-					+ ctx.getEvent() + " will start soon.");
+			log.info("Simulation context " + ctx.currentCounter() + " with event " + ctx.getEvent()
+					+ " will start soon.");
 
 			try {
-				ctx.getComponent().notifyEvent(ctx.getEvent());
+				ctx.notifyComponents(ctx.getEvent());
 			}
 			catch (Throwable e) {
-				log.error("Error occured during simulation, throw an exception");
+				log.error("Error occured during simulation, throw an exception", e);
 				throw new SimulatorException(e);
 			}
 

@@ -91,11 +91,11 @@ public class EPTUnitTest {
 	}
 
 	@Test
-	public void testPipedMediator() {
+	public void testPipedMediator() throws SimulatorException {
 		fakeSmartCard.setStrategy(new IStrategy<ComponentIO>() {
 
 			@Override
-			public void init(Context ctx) {
+			public void init(IOutput _this, Context ctx) {
 			}
 
 			@Override
@@ -108,8 +108,13 @@ public class EPTUnitTest {
 			}
 
 		});
-		chipset.notifyEvent("SMART_CARD_INSERTED");
+		// chipset.notifyEvent("SMART_CARD_INSERTED");
 
+		// add start point for the simulator
+		Context.getInstance().addStartPoint(new Date(), "SMART_CARD_INSERTED");
+
+		// execute simulation.
+		SimulatorFactory.getSimulator().start();
 	}
 
 	@Test
@@ -141,11 +146,4 @@ public class EPTUnitTest {
 		 */
 	}
 
-	public void simulate(IOutput dst, String event) throws SimulatorException {
-		// add start point for the simulator
-		Context.getInstance().addStartPoint(new Date(), dst, event);
-
-		// execute simulation.
-		SimulatorFactory.getSimulator().start();
-	}
 }

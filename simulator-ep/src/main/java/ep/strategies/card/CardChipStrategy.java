@@ -5,6 +5,7 @@ import java.util.List;
 import java.util.Map;
 
 import model.component.ComponentIO;
+import model.component.IOutput;
 import model.mediator.Mediator;
 import model.response.DataResponse;
 import model.response.IResponse;
@@ -31,7 +32,7 @@ public class CardChipStrategy implements IStrategy<ComponentIO> {
 	}
 
 	@Override
-	public void init(Context ctx) {
+	public void init(IOutput _this, Context ctx) {
 	}
 
 	@Override

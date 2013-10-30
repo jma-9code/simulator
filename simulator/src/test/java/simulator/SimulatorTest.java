@@ -4,6 +4,7 @@ import java.util.Date;
 
 import model.component.Component;
 import model.component.ComponentIO;
+import model.component.IOutput;
 import model.mediator.HalfDuplexMediator;
 import model.mediator.Mediator;
 import model.mediator.SimplexMediator;
@@ -76,7 +77,7 @@ public class SimulatorTest {
 		// setting context
 		Context ctx = Context.getInstance();
 		short contextIndex = ctx.currentCounter();
-		ctx.addStartPoint(new Date(), florent, "TEST EVENT");
+		ctx.addStartPoint(new Date(), "TEST EVENT");
 
 		// running simulation
 		Simulator simulator = SimulatorFactory.getSimulator();
@@ -112,7 +113,7 @@ public class SimulatorTest {
 		// setting context
 		Context ctx = Context.getInstance();
 		short contextIndex = ctx.currentCounter();
-		ctx.addStartPoint(new Date(), florent, "TEST EVENT");
+		ctx.addStartPoint(new Date(), "TEST EVENT");
 
 		// running simulation
 		AsyncSimulator simulator = SimulatorFactory.getAsyncSimulator();
@@ -144,7 +145,10 @@ public class SimulatorTest {
 		bank.setStrategy(new NullStrategy());
 		bank.setStrategy(new IStrategy() {
 			@Override
-			public void init(Context ctx) {
+			public void init(IOutput _this, Context ctx) {
+				ctx.subscribeEvent(_this, "TEST EVENT 2");
+				ctx.subscribeEvent(_this, "TEST EVENT 3");
+				ctx.subscribeEvent(_this, "TEST EVENT 4");
 			}
 
 			@Override
@@ -156,8 +160,8 @@ public class SimulatorTest {
 			public void processEvent(Component _this, String event) {
 				if ("TEST EVENT 2".equals(event)) {
 					Context ctx = Context.getInstance();
-					ctx.addStartPoint(new Date(System.currentTimeMillis() - 3600 * 4 * 1000), bank, "TEST EVENT 3");
-					ctx.addStartPoint(new Date(System.currentTimeMillis() + 3600 * 4 * 1000), bank, "TEST EVENT 4");
+					ctx.addStartPoint(new Date(System.currentTimeMillis() - 3600 * 4 * 1000), "TEST EVENT 3");
+					ctx.addStartPoint(new Date(System.currentTimeMillis() + 3600 * 4 * 1000), "TEST EVENT 4");
 				}
 			}
 		});
@@ -179,8 +183,8 @@ public class SimulatorTest {
 		// setting context
 		Context ctx = Context.getInstance();
 		short contextIndex = ctx.currentCounter();
-		ctx.addStartPoint(new Date(), florent, "TEST EVENT 1");
-		ctx.addStartPoint(new Date(), bank, "TEST EVENT 2");
+		ctx.addStartPoint(new Date(), "TEST EVENT 1");
+		ctx.addStartPoint(new Date(), "TEST EVENT 2");
 		// ajout dynamique en strategy
 		// ctx.addStartPoint(new Date(), bank, mediator1, "TEST CTX 3");
 

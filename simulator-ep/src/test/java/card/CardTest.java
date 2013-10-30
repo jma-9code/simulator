@@ -3,6 +3,7 @@ package card;
 import java.util.Date;
 
 import model.component.ComponentIO;
+import model.component.IOutput;
 import model.factory.MediatorFactory;
 import model.factory.MediatorFactory.EMediator;
 import model.mediator.Mediator;
@@ -91,14 +92,13 @@ public class CardTest {
 			}
 
 			@Override
-			public void init(Context ctx) {
-				// TODO Auto-generated method stub
-
+			public void init(IOutput _this, Context ctx) {
+				ctx.subscribeEvent(_this, "SMART_CARD_INSERTED");
 			}
 
 		});
 		// on insert la carte dans le tpe, le tpe envoie des donnees a la carte
-		Context.getInstance().addStartPoint(new Date(), ept, "SMART_CARD_INSERTED");
+		Context.getInstance().addStartPoint(new Date(), "SMART_CARD_INSERTED");
 		// execute simulation.
 		try {
 			SimulatorFactory.getSimulator().start();
@@ -132,14 +132,13 @@ public class CardTest {
 			}
 
 			@Override
-			public void init(Context ctx) {
-				// TODO Auto-generated method stub
-
+			public void init(IOutput _this, Context ctx) {
+				ctx.subscribeEvent(_this, "SMART_CARD_INSERTED");
 			}
 
 		});
 		// on insert la carte dans le tpe, le tpe envoie des donnees a la carte
-		Context.getInstance().addStartPoint(new Date(), ept, "SMART_CARD_INSERTED");
+		Context.getInstance().addStartPoint(new Date(), "SMART_CARD_INSERTED");
 		// execute simulation.
 		try {
 			SimulatorFactory.getSimulator().start();
@@ -173,14 +172,13 @@ public class CardTest {
 			}
 
 			@Override
-			public void init(Context ctx) {
-				// TODO Auto-generated method stub
-
+			public void init(IOutput _this, Context ctx) {
+				ctx.subscribeEvent(_this, "SMART_CARD_INSERTED");
 			}
 
 		});
 		// on insert la carte dans le tpe, le tpe envoie des donnees a la carte
-		Context.getInstance().addStartPoint(new Date(), ept, "SMART_CARD_INSERTED");
+		Context.getInstance().addStartPoint(new Date(), "SMART_CARD_INSERTED");
 		// execute simulation.
 		try {
 			SimulatorFactory.getSimulator().start();

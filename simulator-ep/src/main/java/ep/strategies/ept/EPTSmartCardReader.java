@@ -1,6 +1,7 @@
 package ep.strategies.ept;
 
 import model.component.ComponentIO;
+import model.component.IOutput;
 import model.mediator.Mediator;
 import model.response.DataResponse;
 import model.response.IResponse;
@@ -16,7 +17,7 @@ public class EPTSmartCardReader implements IStrategy<ComponentIO> {
 	private static Logger log = LoggerFactory.getLogger(EPTSmartCardReader.class);
 
 	@Override
-	public void init(Context ctx) {
+	public void init(IOutput _this, Context ctx) {
 	}
 
 	@Override

@@ -10,9 +10,6 @@ public class ComponentI extends Component implements IInput {
 
 	private static Logger log = LoggerFactory.getLogger(ComponentI.class);
 
-	public ComponentI() {
-	}
-
 	public ComponentI(String _name) {
 		super(_name);
 	}
@@ -32,4 +29,15 @@ public class ComponentI extends Component implements IInput {
 	public String toString() {
 		return "C[Input - " + this.name + "]";
 	}
+
+	@Override
+	public boolean isOutput() {
+		return false;
+	}
+
+	@Override
+	public boolean isInput() {
+		return true;
+	}
+
 }

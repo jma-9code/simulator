@@ -11,6 +11,7 @@ import model.strategies.NullStrategy;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import simulator.Context;
 import tools.CaseInsensitiveMap;
 
 public abstract class Component {
@@ -28,11 +29,10 @@ public abstract class Component {
 	// sub-component
 	protected List<Component> components = new ArrayList<>();
 
-	public Component() {
-	}
-
 	public Component(String _name) {
 		this.name = _name;
+		this.uuid = UUID.randomUUID().toString();
+		Context.getInstance().registerComponent(this, true);
 	}
 
 	/**
@@ -89,7 +89,10 @@ public abstract class Component {
 
 	public void setStrategy(IStrategy<? extends Component> strategy) {
 		this.strategy = strategy;
-		this.uuid = UUID.randomUUID().toString();
+	}
+
+	public String getInstanceName() {
+		return this.name + "-" + this.uuid;
 	}
 
 	@Override
@@ -184,4 +187,7 @@ public abstract class Component {
 		this.properties = pMemento.getProperties();
 	}
 
+	public abstract boolean isOutput();
+
+	public abstract boolean isInput();
 }

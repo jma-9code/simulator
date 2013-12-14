@@ -1,4 +1,4 @@
-package ept;
+package ep.strategies.ept;
 
 import java.util.Date;
 
@@ -23,7 +23,7 @@ import simulator.SimulatorFactory;
 import simulator.exception.SimulatorException;
 import tools.ISO7816;
 import utils.ISO7816Tools;
-import card.CardTest;
+import ep.strategies.card.CardTest;
 import ep.strategies.ept.EPTChipsetStrategy;
 import ep.strategies.ept.EPTSmartCardReader;
 import ep.strategies.ept.EPTStrategy;

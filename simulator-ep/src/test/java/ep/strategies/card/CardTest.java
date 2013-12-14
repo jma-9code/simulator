@@ -1,4 +1,4 @@
-package card;
+package ep.strategies.card;
 
 import java.util.Date;
 

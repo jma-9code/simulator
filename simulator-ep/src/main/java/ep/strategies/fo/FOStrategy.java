@@ -33,6 +33,7 @@ public class FOStrategy implements IStrategy<ComponentIO> {
 		// message de façon à ce que
 		// si on branche un tpe sur le fo ça fasse pareil que si n le branchait
 		// sur le module destinataire.
+		return null;
 	}
 
 	@Override

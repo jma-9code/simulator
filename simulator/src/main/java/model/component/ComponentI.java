@@ -1,14 +1,24 @@
 package model.component;
 
+import javax.xml.bind.annotation.XmlAccessType;
+import javax.xml.bind.annotation.XmlAccessorType;
+import javax.xml.bind.annotation.XmlRootElement;
+
 import model.mediator.Mediator;
 import model.response.VoidResponse;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+@XmlRootElement
+@XmlAccessorType(XmlAccessType.FIELD)
 public class ComponentI extends Component implements IInput {
 
 	private static Logger log = LoggerFactory.getLogger(ComponentI.class);
+
+	public ComponentI() {
+		super();
+	}
 
 	public ComponentI(String _name) {
 		super(_name);

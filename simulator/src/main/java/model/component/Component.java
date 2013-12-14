@@ -5,6 +5,10 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.UUID;
 
+import javax.xml.bind.annotation.XmlAccessType;
+import javax.xml.bind.annotation.XmlAccessorType;
+import javax.xml.bind.annotation.XmlRootElement;
+
 import model.strategies.IStrategy;
 import model.strategies.NullStrategy;
 
@@ -14,20 +18,27 @@ import org.slf4j.LoggerFactory;
 import simulator.Context;
 import tools.CaseInsensitiveMap;
 
+@XmlRootElement
+@XmlAccessorType(XmlAccessType.FIELD)
 public abstract class Component {
 
 	private static Logger log = LoggerFactory.getLogger(Component.class);
 
-	// attributes
 	protected String name;
 	protected String uuid;
 	protected HashMap<String, String> properties = new CaseInsensitiveMap();
 
 	// delegate
-	protected IStrategy strategy = new NullStrategy();
+	protected transient IStrategy strategy = new NullStrategy();
 
 	// sub-component
 	protected List<Component> components = new ArrayList<>();
+
+	public Component() {
+		this.name = "default";
+		this.uuid = UUID.randomUUID().toString();
+		Context.getInstance().registerComponent(this, true);
+	}
 
 	public Component(String _name) {
 		this.name = _name;
@@ -190,4 +201,8 @@ public abstract class Component {
 	public abstract boolean isOutput();
 
 	public abstract boolean isInput();
+
+	public String getUuid() {
+		return uuid;
+	}
 }

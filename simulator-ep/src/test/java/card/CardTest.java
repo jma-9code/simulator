@@ -11,7 +11,6 @@ import model.response.DataResponse;
 import model.response.IResponse;
 import model.strategies.IStrategy;
 
-import org.hamcrest.core.StringStartsWith;
 import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;
@@ -22,6 +21,8 @@ import org.slf4j.LoggerFactory;
 import simulator.Context;
 import simulator.SimulatorFactory;
 import simulator.exception.SimulatorException;
+import tools.ISO7816;
+import utils.ISO7816Tools;
 import ep.strategies.card.CardChipStrategy;
 import ep.strategies.card.CardStrategy;
 
@@ -78,7 +79,7 @@ public class CardTest {
 
 	@Test
 	public void cardtest() {
-		log.debug("----TEST CARD----");
+		log.info("----TEST CARD----");
 		final String tpe_sc = "01010060000000000POS ID0100000623598000PROTOCOL LIST022ISO7816 ISO8583 CB2A-T0000000PREFERRED007ISO78160000RET REF NUMB012320012000001000000000000STAN00600000100000000DATETIME0101008170100";
 		final String tpe_ch = "03010070000000000POS ID0100000623598000000000OP CODE002000000000000AMOUNT010000000800000000000PIN DATA00412340000RET REF NUMB012320012000001000000000000STAN00600000300000000DATETIME0101008170100";
 		final String tpe_finalagree = "04110090000000000POS ID0100000623598000000000OP CODE002000000000000AMOUNT0100000008000000APPROVAL CODE00607B56=000RESPONSE CODE002000000000000000PAN016497671002564213000000000DATETIME01010081730260000RET REF NUMB012320012000001000000000000STAN006000005";
@@ -86,24 +87,43 @@ public class CardTest {
 		ept.setStrategy(new IStrategy<ComponentIO>() {
 			@Override
 			public void processEvent(ComponentIO _this, String event) {
-				log.debug("tpe send secure channel");
-				DataResponse rp = (DataResponse) m_ept_card.send(_this, tpe_sc);
-				Assert.assertThat(rp.getData(), new StringStartsWith(
-						"01100050000000000POS ID010000062359800000000PROTOCOL007ISO7816000000000000STAN006000002"));
+				try {
+					log.info("tpe send secure channel");
+					DataResponse rp = (DataResponse) m_ept_card.send(_this, tpe_sc);
+					log.debug("card rp :" + rp.getData());
+					boolean res = ISO7816
+							.compareIso7816(
+									"01100050000000000POS ID010000062359800000000PROTOCOL007ISO7816000000000000STAN00600000200000000DATETIME01010081701000000RET REF NUMB012320012000001",
+									rp.getData(), ISO7816Tools.FIELD_POSID, ISO7816Tools.FIELD_PROTOCOL,
+									ISO7816Tools.FIELD_STAN);
+					Assert.assertTrue(res);
 
-				log.debug("tpe send card holder");
-				rp = (DataResponse) m_ept_card.send(_this, tpe_ch);
-				Assert.assertThat(
-						rp.getData(),
-						new StringStartsWith(
-								"03100090000000000POS ID0100000623598000000000OP CODE002000000000000AMOUNT010000000800000CARD AGREEMENT0011PIN VERIFICATION00110000000000000PAN0164976710025642130000000000000STAN006000004"));
+					log.info("tpe send card holder");
+					rp = (DataResponse) m_ept_card.send(_this, tpe_ch);
+					log.debug("card rp :" + rp.getData());
+					res = ISO7816
+							.compareIso7816(
+									"03100090000000000POS ID0100000623598000000000OP CODE002000000000000AMOUNT010000000800000CARD AGREEMENT0011PIN VERIFICATION00110000000000000PAN0164976710025642130000000000000STAN00600000400000000DATETIME01010081701000000RET REF NUMB012320012000001",
+									rp.getData(), ISO7816Tools.FIELD_POSID, ISO7816Tools.FIELD_OPCODE,
+									ISO7816Tools.FIELD_AMOUNT, ISO7816Tools.FIELD_CARDAGREEMENT,
+									ISO7816Tools.FIELD_PINVERIFICATION, ISO7816Tools.FIELD_PAN, ISO7816Tools.FIELD_STAN);
+					Assert.assertTrue(res);
+					log.info("tpe send final agreement");
+					rp = (DataResponse) m_ept_card.send(_this, tpe_finalagree);
+					log.debug("card rp :" + rp.getData());
+					res = ISO7816
+							.compareIso7816(
+									"05000090000000000POS ID0100000623598000000000OP CODE002000000000000AMOUNT0100000008000000APPROVAL CODE00607B56=000RESPONSE CODE002000000000000000PAN0164976710025642130000000000000STAN00600000600000000DATETIME01010081701000000RET REF NUMB012320012000001",
+									rp.getData(), ISO7816Tools.FIELD_POSID, ISO7816Tools.FIELD_OPCODE,
+									ISO7816Tools.FIELD_AMOUNT, ISO7816Tools.FIELD_APPROVALCODE,
+									ISO7816Tools.FIELD_RESPONSECODE, ISO7816Tools.FIELD_PAN, ISO7816Tools.FIELD_STAN);
+				}
+				catch (Exception e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+					Assert.assertFalse(true);
+				}
 
-				log.debug("tpe send final agreement");
-				rp = (DataResponse) m_ept_card.send(_this, tpe_finalagree);
-				Assert.assertThat(
-						rp.getData(),
-						new StringStartsWith(
-								"05000090000000000POS ID0100000623598000000000OP CODE002000000000000AMOUNT0100000008000000APPROVAL CODE00607B56=000RESPONSE CODE002000000000000000PAN0164976710025642130000000000000STAN006000006"));
 			}
 
 			@Override
@@ -125,10 +145,10 @@ public class CardTest {
 			SimulatorFactory.getSimulator().start();
 		}
 		catch (SimulatorException e) {
-			Assert.assertFalse(true);
 			// TODO Auto-generated catch block
 			e.printStackTrace();
+			Assert.assertFalse(true);
 		}
-		log.debug("----TEST CARD END----");
+		log.info("----TEST CARD END----");
 	}
 }

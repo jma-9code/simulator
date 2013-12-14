@@ -1,5 +1,9 @@
 package model.component;
 
+import javax.xml.bind.annotation.XmlAccessType;
+import javax.xml.bind.annotation.XmlAccessorType;
+import javax.xml.bind.annotation.XmlRootElement;
+
 import model.mediator.Mediator;
 import model.response.IResponse;
 
@@ -8,9 +12,15 @@ import org.slf4j.LoggerFactory;
 
 import simulator.Context;
 
+@XmlRootElement
+@XmlAccessorType(XmlAccessType.FIELD)
 public class ComponentIO extends Component implements IInputOutput {
 
 	private static Logger log = LoggerFactory.getLogger(ComponentIO.class);
+
+	public ComponentIO() {
+		super();
+	}
 
 	public ComponentIO(String _name) {
 		super(_name);

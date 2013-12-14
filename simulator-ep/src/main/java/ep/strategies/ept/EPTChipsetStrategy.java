@@ -97,7 +97,7 @@ public class EPTChipsetStrategy implements IStrategy<ComponentIO> {
 
 		// head
 		sb.append(ISO7816Tools.convertType2CodeMsg(MessageType.SECURE_CHANNEL_RQ));
-		sb.append("005");
+		sb.append("006");
 
 		// data
 		sb.append(ISO7816Tools.createformatTLV(ISO7816Tools.FIELD_POSID, _this.getProperty("pos_id")));
@@ -124,7 +124,7 @@ public class EPTChipsetStrategy implements IStrategy<ComponentIO> {
 
 		// head
 		sb.append(ISO7816Tools.convertType2CodeMsg(MessageType.CARDHOLDER_AUTH_RQ));
-		sb.append("005");
+		sb.append("007");
 
 		// data
 		sb.append(ISO7816Tools.createformatTLV(ISO7816Tools.FIELD_POSID, _this.getProperty("pos_id")));
@@ -132,7 +132,8 @@ public class EPTChipsetStrategy implements IStrategy<ComponentIO> {
 		sb.append(ISO7816Tools.createformatTLV(ISO7816Tools.FIELD_AMOUNT, ISO7816Tools.writeAMOUNT(80.52)));
 		sb.append(ISO7816Tools.createformatTLV(ISO7816Tools.FIELD_PINDATA, "1234")); // normally
 																						// ciphered
-		sb.append(ISO7816Tools.createformatTLV(ISO7816Tools.FIELD_STAN, generateNextSTAN(_this, data.get("stan"))));
+		sb.append(ISO7816Tools.createformatTLV(ISO7816Tools.FIELD_STAN,
+				generateNextSTAN(_this, data.get(ISO7816Tools.FIELD_STAN))));
 		sb.append(ISO7816Tools.createformatTLV(ISO7816Tools.FIELD_RRN, generateTransactid(_this)));
 		sb.append(ISO7816Tools.createformatTLV(ISO7816Tools.FIELD_DATETIME,
 				ISO7816Tools.writeDATETIME(Calendar.getInstance().getTime())));
@@ -174,8 +175,9 @@ public class EPTChipsetStrategy implements IStrategy<ComponentIO> {
 		sb.append(ISO7816Tools.createformatTLV(ISO7816Tools.FIELD_AMOUNT, ISO7816Tools.writeAMOUNT(80.52)));
 		sb.append(ISO7816Tools.createformatTLV(ISO7816Tools.FIELD_APPROVALCODE, data.get("approvalcode")));
 		sb.append(ISO7816Tools.createformatTLV(ISO7816Tools.FIELD_RESPONSECODE, data.get("responsecode")));
-		sb.append(ISO7816Tools.createformatTLV(ISO7816Tools.FIELD_PAN, data.get("pan")));
-		sb.append(ISO7816Tools.createformatTLV(ISO7816Tools.FIELD_STAN, generateNextSTAN(_this, data.get("stan"))));
+		sb.append(ISO7816Tools.createformatTLV(ISO7816Tools.FIELD_PAN, data.get(ISO7816Tools.FIELD_PAN)));
+		sb.append(ISO7816Tools.createformatTLV(ISO7816Tools.FIELD_STAN,
+				generateNextSTAN(_this, data.get(ISO7816Tools.FIELD_STAN))));
 		sb.append(ISO7816Tools.createformatTLV(ISO7816Tools.FIELD_RRN, generateTransactid(_this)));
 		sb.append(ISO7816Tools.createformatTLV(ISO7816Tools.FIELD_DATETIME,
 				ISO7816Tools.writeDATETIME(Calendar.getInstance().getTime())));

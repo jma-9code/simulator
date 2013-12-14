@@ -12,12 +12,18 @@ import model.response.IResponse;
 import model.strategies.IStrategy;
 
 import org.junit.After;
+import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import simulator.Context;
 import simulator.SimulatorFactory;
 import simulator.exception.SimulatorException;
+import tools.ISO7816;
+import utils.ISO7816Tools;
+import card.CardTest;
 import ep.strategies.ept.EPTChipsetStrategy;
 import ep.strategies.ept.EPTSmartCardReader;
 import ep.strategies.ept.EPTStrategy;
@@ -38,7 +44,7 @@ import ep.strategies.ept.EPTStrategy;
  * @author Flo
  */
 public class EPTUnitTest {
-
+	private static Logger log = LoggerFactory.getLogger(CardTest.class);
 	private static ComponentIO fakeSmartCard;
 
 	private static ComponentIO ept;
@@ -82,7 +88,8 @@ public class EPTUnitTest {
 		ept.getComponents().add(networkInterface);
 
 		// static mediators
-		factory.getMediator(ept, fakeSmartCard, EMediator.SIMPLEX);
+		factory.getMediator(smartCardReader, chipset, EMediator.HALFDUPLEX);
+		factory.getMediator(smartCardReader, fakeSmartCard, EMediator.HALFDUPLEX);
 	}
 
 	@After
@@ -118,32 +125,86 @@ public class EPTUnitTest {
 	}
 
 	@Test
-	public void secureChanneltest() {
-		/*
-		 * final String card_sc =
-		 * "01010060000000000POS ID0100000623598000PROTOCOL LIST022ISO7816 ISO8583 CB2A-T0000000PREFERRED007ISO78160000RET REF NUMB012320012000001000000000000STAN00600000100000000DATETIME0101008170100"
-		 * ; ept.setStrategy(new IStrategy<ComponentIO>() {
-		 * 
-		 * @Override public void processEvent(ComponentIO _this, String event) {
-		 * card.notifyMessage(m_ept_card, tpe_sc); }
-		 * 
-		 * @Override public IResponse processMessage(ComponentIO _this, Mediator
-		 * mediator, String data) { Assert.assertThat(data, JUnitMatchers
-		 * .containsString
-		 * ("01100020000000000POS ID010000062359800000000PROTOCOL007ISO781600000000"
-		 * )); return DataResponse.build(null, null); }
-		 * 
-		 * @Override public void init(Context ctx) { // TODO Auto-generated
-		 * method stub
-		 * 
-		 * }
-		 * 
-		 * }); // on insert la carte dans le tpe, le tpe envoie des donnees a la
-		 * carte Context.getInstance().addStartPoint(new Date(), ept,
-		 * "SMART_CARD_INSERTED"); // execute simulation. try {
-		 * SimulatorFactory.getSimulator().start(); } catch (SimulatorException
-		 * e) { // TODO Auto-generated catch block e.printStackTrace(); }
-		 */
-	}
+	public void card_tpetest() {
+		log.debug("----TEST EPT<->CARD----");
+		final String card_sc = "01100050000000000POS ID010000062359800000000PROTOCOL007ISO7816000000000000STAN0060000020000RET REF NUMB01232001200000100000000DATETIME0101121205051";
+		final String card_ch = "03100090000000000POS ID0100000623598000000000OP CODE002000000000000AMOUNT010000000800000CARD AGREEMENT0011PIN VERIFICATION00110000000000000PAN0164976710025642130000000000000STAN0060000040000RET REF NUMB01232001200000100000000DATETIME0101121205051";
+		final String card_finalagree = "05000090000000000POS ID0100000623598000000000OP CODE002000000000000AMOUNT0100000008000000APPROVAL CODE00607B56=000RESPONSE CODE002000000000000000PAN0164976710025642130000000000000STAN0060000060000RET REF NUMB01232001200000100000000DATETIME0101121205051";
 
+		fakeSmartCard.setStrategy(new IStrategy<ComponentIO>() {
+			private int msg = 0;
+
+			@Override
+			public void processEvent(ComponentIO _this, String event) {
+
+			}
+
+			@Override
+			public IResponse processMessage(ComponentIO _this, Mediator mediator, String data) {
+				try {
+					boolean res = false;
+					switch (msg) {
+						case 0:
+							log.debug("card receiv secure channel");
+							res = ISO7816
+									.compareIso7816(
+											"01010060000000000POS ID0100000623598000PROTOCOL LIST022ISO7816 ISO8583 CB2A-T0000000PREFERRED007ISO78160000RET REF NUMB012320012000001000000000000STAN00600000100000000DATETIME0101121205051",
+											data, ISO7816Tools.FIELD_POSID, ISO7816Tools.FIELD_PROTOCOLLIST,
+											ISO7816Tools.FIELD_PROTOCOLPREFERRED, ISO7816Tools.FIELD_STAN);
+							Assert.assertTrue(res);
+							return DataResponse.build(mediator, card_sc);
+						case 1:
+							log.debug("card receiv card holder");
+							res = ISO7816
+									.compareIso7816(
+											"03010070000000000POS ID0100000623598000000000OP CODE002000000000000AMOUNT010000000800000000000PIN DATA00412340000RET REF NUMB012320012000001000000000000STAN00600000300000000DATETIME0101121205051",
+											data, ISO7816Tools.FIELD_POSID, ISO7816Tools.FIELD_OPCODE,
+											ISO7816Tools.FIELD_AMOUNT, ISO7816Tools.FIELD_PINDATA,
+											ISO7816Tools.FIELD_STAN);
+							Assert.assertTrue(res);
+							return DataResponse.build(mediator, card_ch);
+						case 2:
+							log.debug("card receiv final agreement");
+							res = ISO7816
+									.compareIso7816(
+											"04110090000000000POS ID0100000623598000000000OP CODE002000000000000AMOUNT0100000008000000APPROVAL CODE00607B56=000RESPONSE CODE002000000000000000PAN01649767100256421300000000DATETIME0101121205051",
+											data, ISO7816Tools.FIELD_POSID, ISO7816Tools.FIELD_OPCODE,
+											ISO7816Tools.FIELD_APPROVALCODE, ISO7816Tools.FIELD_RESPONSECODE,
+											ISO7816Tools.FIELD_PAN, ISO7816Tools.FIELD_STAN);
+							Assert.assertTrue(res);
+							return DataResponse.build(mediator, card_finalagree);
+						default:
+							break;
+					}
+				}
+				catch (Exception e) {
+
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+					Assert.assertFalse(true);
+				}
+
+				return DataResponse.build(null, null);
+			}
+
+			@Override
+			public void init(IOutput _this, Context ctx) {
+				ctx.subscribeEvent(_this, "SMART_CARD_INSERTED");
+			}
+
+		});
+		// on insert la carte dans le tpe, le tpe envoie des donnees a la carte
+		Context.getInstance().addStartPoint(new Date(), "SMART_CARD_INSERTED");
+
+		// execute simulation.
+		try {
+			SimulatorFactory.getSimulator().start();
+		}
+		catch (SimulatorException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+			Assert.assertFalse(true);
+		}
+		log.debug("----TEST EPT<->CARD END----");
+	}
 }

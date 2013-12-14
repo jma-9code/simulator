@@ -4,6 +4,8 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.HashMap;
 
+import tools.CaseInsensitiveMap;
+
 public class ISO7816Tools {
 
 	public enum MessageType {
@@ -96,9 +98,9 @@ public class ISO7816Tools {
 	 * @return
 	 */
 	public static String writeAMOUNT(double d) {
-		String r = String.format("%.2f%n", d);
+		String r = String.format("%.2f", d);
 		r = r.replace(",", "");
-		return r;
+		return ("0000000000" + r).substring(r.length());
 	}
 
 	public static String createformatTLV(String tag, String value) {
@@ -185,7 +187,7 @@ public class ISO7816Tools {
 	 * @throws ISO7816Exception
 	 */
 	public static HashMap<String, String> read(String data) throws ISO7816Exception {
-		HashMap<String, String> ret = new HashMap<>();
+		HashMap<String, String> ret = new CaseInsensitiveMap();
 		// head
 		String head = data.substring(0, 4);
 		ret.put("type", convertCodeMsg2Type(head).name());

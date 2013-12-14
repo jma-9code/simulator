@@ -26,8 +26,8 @@ public class ISO7816 {
 		String a = null;
 		String b = null;
 		for (String s : keys) {
-			a = expect.get(keys);
-			b = act.get(keys);
+			a = expect.get(s);
+			b = act.get(s);
 			if (a != null && b != null && !a.equalsIgnoreCase(b)) {
 				log.warn("field not equals : " + s + " (" + a + "," + b + ")");
 				return false;

@@ -57,8 +57,9 @@ public class EPTChipsetStrategy implements IStrategy<ComponentIO> {
 					Map<String, String> rpfromBank = new CaseInsensitiveMap();
 					rpfromBank.put("approvalcode", "07B56=");
 					rpfromBank.put("responsecode", "00");
-					rpfromBank.put("pan", parsedData.get("pan"));
-					rpfromBank.put("stan", ISO7816Tools.generateSTAN(_this.getProperty("stan")));
+					rpfromBank.put("pan", parsedData.get("PAN"));
+					rpfromBank.put("stan", ISO7816Tools.generateSTAN(_this.getProperty("STAN")));
+					rpfromBank.put("amount", parsedData.get("amount"));
 					rpfromBank.put(ISO7816Tools.FIELD_RRN, generateTransactid(_this));
 
 					// ARPC
@@ -129,7 +130,7 @@ public class EPTChipsetStrategy implements IStrategy<ComponentIO> {
 		// data
 		sb.append(ISO7816Tools.createformatTLV(ISO7816Tools.FIELD_POSID, _this.getProperty("pos_id")));
 		sb.append(ISO7816Tools.createformatTLV(ISO7816Tools.FIELD_OPCODE, "00")); // 00=purchase
-		sb.append(ISO7816Tools.createformatTLV(ISO7816Tools.FIELD_AMOUNT, ISO7816Tools.writeAMOUNT(80.52)));
+		sb.append(ISO7816Tools.createformatTLV(ISO7816Tools.FIELD_AMOUNT, ISO7816Tools.writeAMOUNT(80)));
 		sb.append(ISO7816Tools.createformatTLV(ISO7816Tools.FIELD_PINDATA, "1234")); // normally
 																						// ciphered
 		sb.append(ISO7816Tools.createformatTLV(ISO7816Tools.FIELD_STAN,
@@ -167,12 +168,12 @@ public class EPTChipsetStrategy implements IStrategy<ComponentIO> {
 
 		// head
 		sb.append(ISO7816Tools.convertType2CodeMsg(MessageType.AUTHORIZATION_RP_CRYPTO));
-		sb.append("008");
+		sb.append("009");
 
 		// data
 		sb.append(ISO7816Tools.createformatTLV(ISO7816Tools.FIELD_POSID, _this.getProperty("pos_id")));
 		sb.append(ISO7816Tools.createformatTLV(ISO7816Tools.FIELD_OPCODE, "00")); // 00=purchase
-		sb.append(ISO7816Tools.createformatTLV(ISO7816Tools.FIELD_AMOUNT, ISO7816Tools.writeAMOUNT(80.52)));
+		sb.append(ISO7816Tools.createformatTLV(ISO7816Tools.FIELD_AMOUNT, data.get("amount")));
 		sb.append(ISO7816Tools.createformatTLV(ISO7816Tools.FIELD_APPROVALCODE, data.get("approvalcode")));
 		sb.append(ISO7816Tools.createformatTLV(ISO7816Tools.FIELD_RESPONSECODE, data.get("responsecode")));
 		sb.append(ISO7816Tools.createformatTLV(ISO7816Tools.FIELD_PAN, data.get(ISO7816Tools.FIELD_PAN)));
@@ -215,7 +216,7 @@ public class EPTChipsetStrategy implements IStrategy<ComponentIO> {
 			ret = "000001";
 		}
 		else {
-			ret = String.format("%d06", val_stan++);
+			ret = String.format("%06d", ++val_stan);
 		}
 		_this.getProperties().put("stan", ret);
 		return ret;

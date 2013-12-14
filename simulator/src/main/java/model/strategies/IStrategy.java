@@ -1,18 +1,22 @@
 package model.strategies;
 
+import java.io.Serializable;
+
 import model.component.Component;
 import model.component.IOutput;
 import model.mediator.Mediator;
 import model.response.IResponse;
 import simulator.Context;
 
-public interface IStrategy<T extends Component> {
+public interface IStrategy<T extends Component> extends Serializable {
 
 	/**
 	 * Phase d'initialisation d'une stratégie dans laquelle le composant devra
 	 * s'enregistrer auprès des évènements pour lesquels il souhaite être
 	 * notifié.
-	 * @param _this TODO
+	 * 
+	 * @param _this
+	 *            TODO
 	 * @param ctx
 	 */
 	public void init(IOutput _this, Context ctx);

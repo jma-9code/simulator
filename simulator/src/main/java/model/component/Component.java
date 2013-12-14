@@ -1,5 +1,6 @@
 package model.component;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -20,7 +21,7 @@ import tools.CaseInsensitiveMap;
 
 @XmlRootElement
 @XmlAccessorType(XmlAccessType.FIELD)
-public abstract class Component {
+public abstract class Component implements Serializable {
 
 	private static Logger log = LoggerFactory.getLogger(Component.class);
 

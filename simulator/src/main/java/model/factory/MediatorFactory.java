@@ -50,6 +50,22 @@ public class MediatorFactory {
 		}
 	}
 
+	public Mediator getMediator(Component src, Component dst) {
+		if (src instanceof IInputOutput && dst instanceof IInputOutput) {
+			return getMediator(src, dst, EMediator.HALFDUPLEX);
+		}
+		else if (src instanceof IOutput && dst instanceof IInput) {
+			return getMediator(src, dst, EMediator.SIMPLEX);
+		}
+		/*
+		 * else if (src instanceof IInput && dst instanceof IOutput) { return
+		 * getMediator(dst, src, EMediator.SIMPLEX); }
+		 */
+		else {
+			return null;
+		}
+	}
+
 	/**
 	 * Permet de récupérer le médiateur de transfert.
 	 * 

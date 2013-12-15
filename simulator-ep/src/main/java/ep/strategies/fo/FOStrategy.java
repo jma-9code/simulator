@@ -52,4 +52,9 @@ public class FOStrategy implements IStrategy<ComponentIO> {
 		// mais dans les sous module ...
 	}
 
+	@Override
+	public String toString() {
+		return "FO";
+	}
+
 }

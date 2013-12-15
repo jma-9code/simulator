@@ -2,6 +2,7 @@ package model.dao.factory;
 
 import model.component.Component;
 import model.dao.DAO;
+import model.strategies.IStrategy;
 
 public abstract class DAOFactory {
 	/**
@@ -12,10 +13,12 @@ public abstract class DAOFactory {
 	 * double-checked locking !
 	 */
 	private static class DAOFactoryHolder {
-		public static DAOFactory factory = new XmlDAOFactory();
+		public static DAOFactory factory = new VolatileDAOFactory();
 	}
 
 	public abstract DAO<Component> getComponentDAO();
+
+	public abstract DAO<IStrategy> getStrategyDAO();
 
 	/**
 	 * Retourne la factory de DAO => localisation du point de changement actuel

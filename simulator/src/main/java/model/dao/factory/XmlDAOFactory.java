@@ -4,6 +4,7 @@ import model.component.Component;
 import model.dao.DAO;
 import model.dao.impl.xml.ComponentXmlDAO;
 import model.dao.source.XmlSource;
+import model.strategies.IStrategy;
 import tools.Config;
 
 public class XmlDAOFactory extends DAOFactory {
@@ -12,6 +13,11 @@ public class XmlDAOFactory extends DAOFactory {
 
 	public DAO<Component> getComponentDAO() {
 		return new ComponentXmlDAO(db);
+	}
+
+	public DAO<IStrategy> getStrategyDAO() {
+		// TODO Julien.
+		throw new UnsupportedOperationException();
 	}
 
 }

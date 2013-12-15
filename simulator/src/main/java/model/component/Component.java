@@ -37,13 +37,11 @@ public abstract class Component implements Serializable {
 
 	public Component() {
 		this.name = "default";
-		this.uuid = UUID.randomUUID().toString();
 		Context.getInstance().registerComponent(this, true);
 	}
 
 	public Component(String _name) {
 		this.name = _name;
-		this.uuid = UUID.randomUUID().toString();
 		Context.getInstance().registerComponent(this, true);
 	}
 
@@ -205,5 +203,13 @@ public abstract class Component implements Serializable {
 
 	public String getUuid() {
 		return uuid;
+	}
+
+	/**
+	 * Instancie le composant
+	 */
+	public void instanciate() {
+		this.uuid = UUID.randomUUID().toString();
+		log.info(getInstanceName() + " instancied");
 	}
 }

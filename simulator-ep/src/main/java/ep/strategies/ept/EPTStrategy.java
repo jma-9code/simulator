@@ -35,4 +35,9 @@ public class EPTStrategy implements IStrategy<ComponentIO> {
 	@Override
 	public void processEvent(ComponentIO _this, String event) {
 	}
+
+	@Override
+	public String toString() {
+		return "EPT";
+	}
 }

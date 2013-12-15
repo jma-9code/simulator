@@ -29,4 +29,9 @@ public class NullStrategy implements IStrategy<Component> {
 	public void processEvent(Component _this, String event) {
 	}
 
+	@Override
+	public String toString() {
+		return "Null strategy";
+	}
+
 }

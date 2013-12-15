@@ -1,12 +1,13 @@
 package model.mediator;
 
+import java.io.Serializable;
 import java.util.HashMap;
 
 import model.component.IInput;
 import model.component.IOutput;
 import model.response.IResponse;
 
-public abstract class Mediator {
+public abstract class Mediator implements Serializable {
 
 	protected IOutput sender;
 	protected IInput receiver;
@@ -54,14 +55,16 @@ public abstract class Mediator {
 			if (other.receiver != null) {
 				return false;
 			}
-		} else if (!this.receiver.equals(other.receiver)) {
+		}
+		else if (!this.receiver.equals(other.receiver) && !this.receiver.equals(other.sender)) {
 			return false;
 		}
 		if (this.sender == null) {
 			if (other.sender != null) {
 				return false;
 			}
-		} else if (!this.sender.equals(other.sender)) {
+		}
+		else if (!this.sender.equals(other.sender) && !this.sender.equals(other.receiver)) {
 			return false;
 		}
 		return true;

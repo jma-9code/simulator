@@ -25,8 +25,7 @@ import javax.swing.KeyStroke;
 import com.mxgraph.util.mxResources;
 import com.mxgraph.view.mxGraph;
 
-public class EditorAboutFrame extends JDialog
-{
+public class EditorAboutFrame extends JDialog {
 
 	/**
 	 * 
@@ -36,15 +35,13 @@ public class EditorAboutFrame extends JDialog
 	/**
 	 * 
 	 */
-	public EditorAboutFrame(Frame owner)
-	{
+	public EditorAboutFrame(Frame owner) {
 		super(owner);
 		setTitle(mxResources.get("aboutGraphEditor"));
 		setLayout(new BorderLayout());
 
 		// Creates the gradient panel
-		JPanel panel = new JPanel(new BorderLayout())
-		{
+		JPanel panel = new JPanel(new BorderLayout()) {
 
 			/**
 			 * 
@@ -54,22 +51,19 @@ public class EditorAboutFrame extends JDialog
 			/**
 			 * 
 			 */
-			public void paintComponent(Graphics g)
-			{
+			public void paintComponent(Graphics g) {
 				super.paintComponent(g);
 
 				// Paint gradient background
 				Graphics2D g2d = (Graphics2D) g;
-				g2d.setPaint(new GradientPaint(0, 0, Color.WHITE, getWidth(),
-						0, getBackground()));
+				g2d.setPaint(new GradientPaint(0, 0, Color.WHITE, getWidth(), 0, getBackground()));
 				g2d.fillRect(0, 0, getWidth(), getHeight());
 			}
 
 		};
 
-		panel.setBorder(BorderFactory.createCompoundBorder(BorderFactory
-				.createMatteBorder(0, 0, 1, 0, Color.GRAY), BorderFactory
-				.createEmptyBorder(8, 8, 12, 8)));
+		panel.setBorder(BorderFactory.createCompoundBorder(BorderFactory.createMatteBorder(0, 0, 1, 0, Color.GRAY),
+				BorderFactory.createEmptyBorder(8, 8, 12, 8)));
 
 		// Adds title
 		JLabel titleLabel = new JLabel(mxResources.get("aboutGraphEditor"));
@@ -79,8 +73,7 @@ public class EditorAboutFrame extends JDialog
 		panel.add(titleLabel, BorderLayout.NORTH);
 
 		// Adds optional subtitle
-		JLabel subtitleLabel = new JLabel(
-				"For more information visit http://www.mxgraph.com/");
+		JLabel subtitleLabel = new JLabel(mxResources.get("simulator-title"));
 		subtitleLabel.setBorder(BorderFactory.createEmptyBorder(4, 18, 0, 0));
 		subtitleLabel.setOpaque(false);
 		panel.add(subtitleLabel, BorderLayout.CENTER);
@@ -91,52 +84,38 @@ public class EditorAboutFrame extends JDialog
 		content.setLayout(new BoxLayout(content, BoxLayout.Y_AXIS));
 		content.setBorder(BorderFactory.createEmptyBorder(12, 12, 12, 12));
 
-		content.add(new JLabel("JGraph X - The Swing Portion of mxGraph"));
+		content.add(new JLabel("<html><b>Projet ENSICAEN</b></html>"));
+		content.add(new JLabel("Promotion Informatique Apprentissage 2014"));
 		content.add(new JLabel(" "));
 
-		content.add(new JLabel("mxGraph Version " + mxGraph.VERSION));
-		content.add(new JLabel("Copyright (C) 2009 by JGraph Ltd."));
-		content.add(new JLabel("All rights reserved."));
+		content.add(new JLabel("<html><b>" + mxResources.get("dependencies") + "</b></html>"));
+		content.add(new JLabel("     mxGraph v" + mxGraph.VERSION + " - Licence BSD"));
+		content.add(new JLabel("     Copyright (C) 2009 by JGraph Ltd."));
+		content.add(new JLabel("     " + mxResources.get("allRightsReserved")));
 		content.add(new JLabel(" "));
 
-		try
-		{
-			content.add(new JLabel("Operating System Name: "
-					+ System.getProperty("os.name")));
-			content.add(new JLabel("Operating System Version: "
-					+ System.getProperty("os.version")));
-			content.add(new JLabel(" "));
-
-			content.add(new JLabel("Java Vendor: "
-					+ System.getProperty("java.vendor", "undefined")));
-			content.add(new JLabel("Java Version: "
+		try {
+			content.add(new JLabel("<html><b>" + mxResources.get("environment") + "</b></html>"));
+			content.add(new JLabel("     " + System.getProperty("os.name", "undefined")));
+			content.add(new JLabel("     JVM " + System.getProperty("java.vendor", "undefined") + " "
 					+ System.getProperty("java.version", "undefined")));
 			content.add(new JLabel(" "));
-
-			content.add(new JLabel("Total Memory: "
-					+ Runtime.getRuntime().totalMemory()));
-			content.add(new JLabel("Free Memory: "
-					+ Runtime.getRuntime().freeMemory()));
 		}
-		catch (Exception e)
-		{
+		catch (Exception e) {
 			// ignore
 		}
 
 		getContentPane().add(content, BorderLayout.CENTER);
 
 		JPanel buttonPanel = new JPanel(new FlowLayout(FlowLayout.RIGHT));
-		buttonPanel.setBorder(BorderFactory.createCompoundBorder(BorderFactory
-				.createMatteBorder(1, 0, 0, 0, Color.GRAY), BorderFactory
-				.createEmptyBorder(16, 8, 8, 8)));
+		buttonPanel.setBorder(BorderFactory.createCompoundBorder(
+				BorderFactory.createMatteBorder(1, 0, 0, 0, Color.GRAY), BorderFactory.createEmptyBorder(16, 8, 8, 8)));
 		getContentPane().add(buttonPanel, BorderLayout.SOUTH);
 
 		// Adds OK button to close window
 		JButton closeButton = new JButton("Close");
-		closeButton.addActionListener(new ActionListener()
-		{
-			public void actionPerformed(ActionEvent e)
-			{
+		closeButton.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
 				setVisible(false);
 			}
 		});
@@ -147,21 +126,18 @@ public class EditorAboutFrame extends JDialog
 		getRootPane().setDefaultButton(closeButton);
 
 		setResizable(false);
-		setSize(400, 400);
+		setSize(400, 360);
 	}
 
 	/**
 	 * Overrides {@link JDialog#createRootPane()} to return a root pane that
 	 * hides the window when the user presses the ESCAPE key.O
 	 */
-	protected JRootPane createRootPane()
-	{
+	protected JRootPane createRootPane() {
 		KeyStroke stroke = KeyStroke.getKeyStroke(KeyEvent.VK_ESCAPE, 0);
 		JRootPane rootPane = new JRootPane();
-		rootPane.registerKeyboardAction(new ActionListener()
-		{
-			public void actionPerformed(ActionEvent actionEvent)
-			{
+		rootPane.registerKeyboardAction(new ActionListener() {
+			public void actionPerformed(ActionEvent actionEvent) {
 				setVisible(false);
 			}
 		}, stroke, JComponent.WHEN_IN_FOCUSED_WINDOW);

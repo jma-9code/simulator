@@ -14,11 +14,9 @@ public class RightSplitPane extends JSplitPane {
 		setDividerSize(6);
 		setBorder(null);
 		setOrientation(JSplitPane.VERTICAL_SPLIT);
-		setDividerLocation(250);
+		setDividerLocation(0.50);
 		setMinimumSize(new Dimension(250, 0));
-		// pas trouvé pour fixer la largeur de ce panel lorsqu'on agrandit la
-		// fenetre ...
-		// max, preferred + size testé ...
+		setResizeWeight(0.50);
 
 		setTopComponent(new ComponentPanel(frame));
 		setBottomComponent(new SimulatorPanel(frame));

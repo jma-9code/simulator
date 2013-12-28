@@ -174,4 +174,8 @@ public class SimulatorPanel extends JTabbedPane implements ListSelectionListener
 		}
 	}
 
+	public void refresh() {
+		startPointModelTable.fireTableDataChanged();
+	}
+
 }

@@ -1,5 +1,6 @@
 package com.mxgraph.examples.swing.editor;
 
+import gui.panel.ConsolePanel;
 import gui.panel.RightSplitPane;
 
 import java.awt.BorderLayout;
@@ -93,7 +94,7 @@ public class BasicGraphEditor extends JPanel {
 	 */
 	protected JTabbedPane libraryPane;
 
-	protected RightSplitPane rightSplitPane;
+	protected RightSplitPane vRightSplit;
 
 	/**
 	 * 
@@ -148,6 +149,8 @@ public class BasicGraphEditor extends JPanel {
 		}
 	};
 
+	private ConsolePanel consolePane;
+
 	/**
 	 * 
 	 */
@@ -187,30 +190,37 @@ public class BasicGraphEditor extends JPanel {
 		// Creates the library pane that contains the tabs with the palettes
 		libraryPane = new JTabbedPane();
 
-		// creates simulator panel
-		rightSplitPane = new RightSplitPane(this);
+		// creates simulator & console panel
+		vRightSplit = new RightSplitPane(this);
+		consolePane = new ConsolePanel(this);
 
 		// Creates the inner split pane that contains the library with the
 		// palettes and the graph outline on the left side of the window
-		JSplitPane inner = new JSplitPane(JSplitPane.VERTICAL_SPLIT, libraryPane, graphOutline);
-		inner.setDividerLocation(320);
-		inner.setResizeWeight(1);
-		inner.setDividerSize(6);
-		inner.setBorder(null);
+		JSplitPane vLeftSplit = new JSplitPane(JSplitPane.VERTICAL_SPLIT, libraryPane, graphOutline);
+		vLeftSplit.setDividerLocation(320);
+		vLeftSplit.setResizeWeight(1);
+		vLeftSplit.setDividerSize(6);
+		vLeftSplit.setBorder(null);
 
-		// Creates the outer split pane that contains the inner split pane and
-		// the graph component on the right side of the window
-		JSplitPane outer = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT, inner, graphComponent);
+		JSplitPane vGraphSplit = new JSplitPane(JSplitPane.VERTICAL_SPLIT, graphComponent, consolePane);
+		vGraphSplit.setOneTouchExpandable(true);
+		vGraphSplit.setDividerLocation(320);
+		vGraphSplit.setResizeWeight(1);
+		vGraphSplit.setDividerSize(6);
+		vGraphSplit.setBorder(null);
+
+		JSplitPane hSplit1 = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT, vLeftSplit, vGraphSplit);
 		// outer.setOneTouchExpandable(true);
-		outer.setDividerLocation(200);
-		outer.setDividerSize(6);
-		outer.setBorder(null);
+		hSplit1.setDividerLocation(200);
+		hSplit1.setDividerSize(6);
+		hSplit1.setBorder(null);
 
-		JSplitPane outer2 = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT, outer, rightSplitPane);
-		outer2.setOneTouchExpandable(true);
-		outer2.setDividerLocation(600);
-		outer2.setDividerSize(6);
-		outer2.setBorder(null);
+		JSplitPane hSplit2 = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT, hSplit1, vRightSplit);
+		hSplit2.setOneTouchExpandable(true);
+		hSplit2.setDividerLocation(600);
+		hSplit2.setDividerSize(6);
+		hSplit2.setResizeWeight(1);
+		hSplit2.setBorder(null);
 
 		// Creates the status bar
 		JPanel statusBar = createStatusBar();
@@ -220,7 +230,7 @@ public class BasicGraphEditor extends JPanel {
 
 		// Puts everything together
 		setLayout(new BorderLayout());
-		add(outer2, BorderLayout.CENTER);
+		add(hSplit2, BorderLayout.CENTER);
 		add(statusBar, BorderLayout.SOUTH);
 		installToolBar();
 
@@ -844,6 +854,20 @@ public class BasicGraphEditor extends JPanel {
 		}
 
 		return layout;
+	}
+
+	/**
+	 * Rafraichissement de l'UI
+	 */
+	public void refreshAll() {
+		vRightSplit.getSimulatorPanel().refresh();
+	}
+
+	/**
+	 * Mise à zéro de l'UI
+	 */
+	public void resetAll() {
+		consolePane.reset();
 	}
 
 }

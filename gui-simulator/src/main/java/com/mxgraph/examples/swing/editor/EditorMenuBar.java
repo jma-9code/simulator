@@ -20,29 +20,19 @@ import com.mxgraph.analysis.mxTraversal;
 import com.mxgraph.costfunction.mxCostFunction;
 import com.mxgraph.examples.swing.editor.EditorActions.AlignCellsAction;
 import com.mxgraph.examples.swing.editor.EditorActions.AutosizeAction;
-import com.mxgraph.examples.swing.editor.EditorActions.BackgroundAction;
-import com.mxgraph.examples.swing.editor.EditorActions.BackgroundImageAction;
 import com.mxgraph.examples.swing.editor.EditorActions.ColorAction;
 import com.mxgraph.examples.swing.editor.EditorActions.ExitAction;
-import com.mxgraph.examples.swing.editor.EditorActions.GridColorAction;
-import com.mxgraph.examples.swing.editor.EditorActions.GridStyleAction;
 import com.mxgraph.examples.swing.editor.EditorActions.KeyValueAction;
 import com.mxgraph.examples.swing.editor.EditorActions.NewAction;
 import com.mxgraph.examples.swing.editor.EditorActions.OpenAction;
-import com.mxgraph.examples.swing.editor.EditorActions.PageBackgroundAction;
 import com.mxgraph.examples.swing.editor.EditorActions.PrintAction;
-import com.mxgraph.examples.swing.editor.EditorActions.PromptPropertyAction;
 import com.mxgraph.examples.swing.editor.EditorActions.PromptValueAction;
 import com.mxgraph.examples.swing.editor.EditorActions.SaveAction;
 import com.mxgraph.examples.swing.editor.EditorActions.ScaleAction;
-import com.mxgraph.examples.swing.editor.EditorActions.SelectShortestPathAction;
-import com.mxgraph.examples.swing.editor.EditorActions.SelectSpanningTreeAction;
 import com.mxgraph.examples.swing.editor.EditorActions.SetLabelPositionAction;
 import com.mxgraph.examples.swing.editor.EditorActions.SetStyleAction;
 import com.mxgraph.examples.swing.editor.EditorActions.StyleAction;
-import com.mxgraph.examples.swing.editor.EditorActions.StylesheetAction;
 import com.mxgraph.examples.swing.editor.EditorActions.ToggleAction;
-import com.mxgraph.examples.swing.editor.EditorActions.ToggleOutlineItem;
 import com.mxgraph.model.mxIGraphModel;
 import com.mxgraph.swing.mxGraphComponent;
 import com.mxgraph.swing.util.mxGraphActions;
@@ -251,83 +241,98 @@ public class EditorMenuBar extends JMenuBar {
 		// populateShapeMenu(menu, editor);
 
 		// Creates the diagram menu
-		menu = add(new JMenu(mxResources.get("diagram")));
-
-		menu.add(new ToggleOutlineItem(editor, mxResources.get("outline")));
-
-		menu.addSeparator();
-
-		submenu = (JMenu) menu.add(new JMenu(mxResources.get("background")));
-
-		submenu.add(editor.bind(mxResources.get("backgroundColor"), new BackgroundAction()));
-		submenu.add(editor.bind(mxResources.get("backgroundImage"), new BackgroundImageAction()));
-
-		submenu.addSeparator();
-
-		submenu.add(editor.bind(mxResources.get("pageBackground"), new PageBackgroundAction()));
-
-		submenu = (JMenu) menu.add(new JMenu(mxResources.get("grid")));
-
-		submenu.add(editor.bind(mxResources.get("gridSize"), new PromptPropertyAction(graph, "Grid Size", "GridSize")));
-		submenu.add(editor.bind(mxResources.get("gridColor"), new GridColorAction()));
-
-		submenu.addSeparator();
-
-		submenu.add(editor.bind(mxResources.get("dashed"), new GridStyleAction(mxGraphComponent.GRID_STYLE_DASHED)));
-		submenu.add(editor.bind(mxResources.get("dot"), new GridStyleAction(mxGraphComponent.GRID_STYLE_DOT)));
-		submenu.add(editor.bind(mxResources.get("line"), new GridStyleAction(mxGraphComponent.GRID_STYLE_LINE)));
-		submenu.add(editor.bind(mxResources.get("cross"), new GridStyleAction(mxGraphComponent.GRID_STYLE_CROSS)));
-
-		menu.addSeparator();
-
-		submenu = (JMenu) menu.add(new JMenu(mxResources.get("layout")));
-
-		submenu.add(editor.graphLayout("verticalHierarchical", true));
-		submenu.add(editor.graphLayout("horizontalHierarchical", true));
-
-		submenu.addSeparator();
-
-		submenu.add(editor.graphLayout("verticalPartition", false));
-		submenu.add(editor.graphLayout("horizontalPartition", false));
-
-		submenu.addSeparator();
-
-		submenu.add(editor.graphLayout("verticalStack", false));
-		submenu.add(editor.graphLayout("horizontalStack", false));
-
-		submenu.addSeparator();
-
-		submenu.add(editor.graphLayout("verticalTree", true));
-		submenu.add(editor.graphLayout("horizontalTree", true));
-
-		submenu.addSeparator();
-
-		submenu.add(editor.graphLayout("placeEdgeLabels", false));
-		submenu.add(editor.graphLayout("parallelEdges", false));
-
-		submenu.addSeparator();
-
-		submenu.add(editor.graphLayout("organicLayout", true));
-		submenu.add(editor.graphLayout("circleLayout", true));
-
-		submenu = (JMenu) menu.add(new JMenu(mxResources.get("selection")));
-
-		submenu.add(editor.bind(mxResources.get("selectPath"), new SelectShortestPathAction(false)));
-		submenu.add(editor.bind(mxResources.get("selectDirectedPath"), new SelectShortestPathAction(true)));
-
-		submenu.addSeparator();
-
-		submenu.add(editor.bind(mxResources.get("selectTree"), new SelectSpanningTreeAction(false)));
-		submenu.add(editor.bind(mxResources.get("selectDirectedTree"), new SelectSpanningTreeAction(true)));
-
-		menu.addSeparator();
-
-		submenu = (JMenu) menu.add(new JMenu(mxResources.get("stylesheet")));
-
-		submenu.add(editor.bind(mxResources.get("basicStyle"), new StylesheetAction(
-				"/com/mxgraph/examples/swing/resources/basic-style.xml")));
-		submenu.add(editor.bind(mxResources.get("defaultStyle"), new StylesheetAction(
-				"/com/mxgraph/examples/swing/resources/default-style.xml")));
+		// menu = add(new JMenu(mxResources.get("diagram")));
+		//
+		// menu.add(new ToggleOutlineItem(editor, mxResources.get("outline")));
+		//
+		// menu.addSeparator();
+		//
+		// submenu = (JMenu) menu.add(new JMenu(mxResources.get("background")));
+		//
+		// submenu.add(editor.bind(mxResources.get("backgroundColor"), new
+		// BackgroundAction()));
+		// submenu.add(editor.bind(mxResources.get("backgroundImage"), new
+		// BackgroundImageAction()));
+		//
+		// submenu.addSeparator();
+		//
+		// submenu.add(editor.bind(mxResources.get("pageBackground"), new
+		// PageBackgroundAction()));
+		//
+		// submenu = (JMenu) menu.add(new JMenu(mxResources.get("grid")));
+		//
+		// submenu.add(editor.bind(mxResources.get("gridSize"), new
+		// PromptPropertyAction(graph, "Grid Size", "GridSize")));
+		// submenu.add(editor.bind(mxResources.get("gridColor"), new
+		// GridColorAction()));
+		//
+		// submenu.addSeparator();
+		//
+		// submenu.add(editor.bind(mxResources.get("dashed"), new
+		// GridStyleAction(mxGraphComponent.GRID_STYLE_DASHED)));
+		// submenu.add(editor.bind(mxResources.get("dot"), new
+		// GridStyleAction(mxGraphComponent.GRID_STYLE_DOT)));
+		// submenu.add(editor.bind(mxResources.get("line"), new
+		// GridStyleAction(mxGraphComponent.GRID_STYLE_LINE)));
+		// submenu.add(editor.bind(mxResources.get("cross"), new
+		// GridStyleAction(mxGraphComponent.GRID_STYLE_CROSS)));
+		//
+		// menu.addSeparator();
+		//
+		// submenu = (JMenu) menu.add(new JMenu(mxResources.get("layout")));
+		//
+		// submenu.add(editor.graphLayout("verticalHierarchical", true));
+		// submenu.add(editor.graphLayout("horizontalHierarchical", true));
+		//
+		// submenu.addSeparator();
+		//
+		// submenu.add(editor.graphLayout("verticalPartition", false));
+		// submenu.add(editor.graphLayout("horizontalPartition", false));
+		//
+		// submenu.addSeparator();
+		//
+		// submenu.add(editor.graphLayout("verticalStack", false));
+		// submenu.add(editor.graphLayout("horizontalStack", false));
+		//
+		// submenu.addSeparator();
+		//
+		// submenu.add(editor.graphLayout("verticalTree", true));
+		// submenu.add(editor.graphLayout("horizontalTree", true));
+		//
+		// submenu.addSeparator();
+		//
+		// submenu.add(editor.graphLayout("placeEdgeLabels", false));
+		// submenu.add(editor.graphLayout("parallelEdges", false));
+		//
+		// submenu.addSeparator();
+		//
+		// submenu.add(editor.graphLayout("organicLayout", true));
+		// submenu.add(editor.graphLayout("circleLayout", true));
+		//
+		// submenu = (JMenu) menu.add(new JMenu(mxResources.get("selection")));
+		//
+		// submenu.add(editor.bind(mxResources.get("selectPath"), new
+		// SelectShortestPathAction(false)));
+		// submenu.add(editor.bind(mxResources.get("selectDirectedPath"), new
+		// SelectShortestPathAction(true)));
+		//
+		// submenu.addSeparator();
+		//
+		// submenu.add(editor.bind(mxResources.get("selectTree"), new
+		// SelectSpanningTreeAction(false)));
+		// submenu.add(editor.bind(mxResources.get("selectDirectedTree"), new
+		// SelectSpanningTreeAction(true)));
+		//
+		// menu.addSeparator();
+		//
+		// submenu = (JMenu) menu.add(new JMenu(mxResources.get("stylesheet")));
+		//
+		// submenu.add(editor.bind(mxResources.get("basicStyle"), new
+		// StylesheetAction(
+		// "/com/mxgraph/examples/swing/resources/basic-style.xml")));
+		// submenu.add(editor.bind(mxResources.get("defaultStyle"), new
+		// StylesheetAction(
+		// "/com/mxgraph/examples/swing/resources/default-style.xml")));
 
 		// Creates the options menu
 		// menu = add(new JMenu(mxResources.get("options")));

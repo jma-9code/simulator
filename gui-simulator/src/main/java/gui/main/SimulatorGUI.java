@@ -13,7 +13,6 @@ import java.net.URL;
 import java.text.NumberFormat;
 import java.util.HashMap;
 
-import javax.swing.ImageIcon;
 import javax.swing.UIManager;
 
 import model.component.Component;
@@ -77,12 +76,12 @@ public class SimulatorGUI extends BasicGraphEditor {
 		mxGraph graph = graphComponent.getGraph();
 
 		// link selection event
-		graph.getSelectionModel().addListener(mxEvent.CHANGE, rightSplitPane.getComponentPanel());
+		graph.getSelectionModel().addListener(mxEvent.CHANGE, vRightSplit.getComponentPanel());
 
 		// Creates the components palette for our electronic payment application
 		EditorPalette componentsPalette = insertPalette(mxResources.get("components"));
-		EditorPalette examplesPalette = insertPalette(mxResources.get("examples"));
 
+		// test à supprimer BEGIN
 		HashMap<String, String> test = new HashMap<>();
 		test.put("cou", "oj");
 		test.put("ceru", "oj");
@@ -106,69 +105,10 @@ public class SimulatorGUI extends BasicGraphEditor {
 		dao.create(new ComponentIO("IS"));
 		dao.create(new ComponentIO("FO"));
 		dao.create(new ComponentIO("BO"));
+		// test à supprimer END
 
 		ComponentPaletteBridge bridge = new ComponentPaletteBridge(componentsPalette, dao, graphComponent.getGraph());
 		bridge.refresh();
-
-		// Adds some template cells for dropping into the graph
-		examplesPalette.addTemplate("Container",
-				new ImageIcon(SimulatorGUI.class.getResource("/com/mxgraph/examples/swing/images/swimlane.png")),
-				"swimlane", 280, 280, "Container");
-		examplesPalette.addTemplate("Icon",
-				new ImageIcon(SimulatorGUI.class.getResource("/com/mxgraph/examples/swing/images/rounded.png")),
-				"icon;image=/com/mxgraph/examples/swing/images/wrench.png", 70, 70, "Icon");
-		examplesPalette.addTemplate("Label",
-				new ImageIcon(SimulatorGUI.class.getResource("/com/mxgraph/examples/swing/images/rounded.png")),
-				"label;image=/com/mxgraph/examples/swing/images/gear.png", 130, 50, "Label");
-		examplesPalette.addTemplate("Rectangle",
-				new ImageIcon(SimulatorGUI.class.getResource("/com/mxgraph/examples/swing/images/rectangle.png")),
-				null, 160, 120, "");
-		examplesPalette.addTemplate("Rounded Rectangle",
-				new ImageIcon(SimulatorGUI.class.getResource("/com/mxgraph/examples/swing/images/rounded.png")),
-				"rounded=1", 160, 120, "");
-		examplesPalette.addTemplate("Ellipse",
-				new ImageIcon(SimulatorGUI.class.getResource("/com/mxgraph/examples/swing/images/ellipse.png")),
-				"ellipse", 160, 160, "");
-		examplesPalette.addTemplate("Double Ellipse",
-				new ImageIcon(SimulatorGUI.class.getResource("/com/mxgraph/examples/swing/images/doubleellipse.png")),
-				"ellipse;shape=doubleEllipse", 160, 160, "");
-		examplesPalette.addTemplate("Triangle",
-				new ImageIcon(SimulatorGUI.class.getResource("/com/mxgraph/examples/swing/images/triangle.png")),
-				"triangle", 120, 160, "");
-		examplesPalette.addTemplate("Rhombus",
-				new ImageIcon(SimulatorGUI.class.getResource("/com/mxgraph/examples/swing/images/rhombus.png")),
-				"rhombus", 160, 160, "");
-		examplesPalette.addTemplate("Horizontal Line",
-				new ImageIcon(SimulatorGUI.class.getResource("/com/mxgraph/examples/swing/images/hline.png")), "line",
-				160, 10, "");
-		examplesPalette.addTemplate("Hexagon",
-				new ImageIcon(SimulatorGUI.class.getResource("/com/mxgraph/examples/swing/images/hexagon.png")),
-				"shape=hexagon", 160, 120, "");
-		examplesPalette.addTemplate("Cylinder",
-				new ImageIcon(SimulatorGUI.class.getResource("/com/mxgraph/examples/swing/images/cylinder.png")),
-				"shape=cylinder", 120, 160, "");
-		examplesPalette.addTemplate("Actor",
-				new ImageIcon(SimulatorGUI.class.getResource("/com/mxgraph/examples/swing/images/actor.png")),
-				"shape=actor", 120, 160, "");
-		examplesPalette.addTemplate("Cloud",
-				new ImageIcon(SimulatorGUI.class.getResource("/com/mxgraph/examples/swing/images/cloud.png")),
-				"ellipse;shape=cloud", 160, 120, "");
-
-		examplesPalette.addEdgeTemplate("Straight",
-				new ImageIcon(SimulatorGUI.class.getResource("/com/mxgraph/examples/swing/images/straight.png")),
-				"straight", 120, 120, "");
-		examplesPalette.addEdgeTemplate("Horizontal Connector",
-				new ImageIcon(SimulatorGUI.class.getResource("/com/mxgraph/examples/swing/images/connect.png")), null,
-				100, 100, "");
-		examplesPalette.addEdgeTemplate("Vertical Connector",
-				new ImageIcon(SimulatorGUI.class.getResource("/com/mxgraph/examples/swing/images/vertical.png")),
-				"vertical", 100, 100, "");
-		examplesPalette.addEdgeTemplate("Entity Relation",
-				new ImageIcon(SimulatorGUI.class.getResource("/com/mxgraph/examples/swing/images/entity.png")),
-				"entity", 100, 100, "");
-		examplesPalette.addEdgeTemplate("Arrow",
-				new ImageIcon(SimulatorGUI.class.getResource("/com/mxgraph/examples/swing/images/arrow.png")), "arrow",
-				120, 120, "");
 	}
 
 	/**
@@ -186,14 +126,14 @@ public class SimulatorGUI extends BasicGraphEditor {
 		mxSwingConstants.SHADOW_COLOR = Color.LIGHT_GRAY;
 		mxConstants.W3C_SHADOWCOLOR = "#D3D3D3";
 
-		DAO<IStrategy> dao2 = DAOFactory.getFactory().getStrategyDAO();
-		dao2.create(new NullStrategy());
-		dao2.create(new CardChipStrategy());
-		dao2.create(new CardStrategy());
-		dao2.create(new EPTChipsetStrategy());
-		dao2.create(new EPTSmartCardReader());
-		dao2.create(new EPTStrategy());
-		dao2.create(new FOStrategy());
+		DAO<IStrategy> daoStrategy = DAOFactory.getFactory().getStrategyDAO();
+		daoStrategy.create(new NullStrategy());
+		daoStrategy.create(new CardChipStrategy());
+		daoStrategy.create(new CardStrategy());
+		daoStrategy.create(new EPTChipsetStrategy());
+		daoStrategy.create(new EPTSmartCardReader());
+		daoStrategy.create(new EPTStrategy());
+		daoStrategy.create(new FOStrategy());
 
 		SimulatorGUI editor = new SimulatorGUI();
 		editor.createFrame(new EditorMenuBar(editor)).setVisible(true);

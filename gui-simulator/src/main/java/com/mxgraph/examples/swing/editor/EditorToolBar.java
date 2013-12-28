@@ -1,13 +1,9 @@
 package com.mxgraph.examples.swing.editor;
 
-import gui.main.CustomGraph;
-import gui.main.CustomGraphComponent;
-
 import java.awt.Dimension;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
-import javax.swing.AbstractAction;
 import javax.swing.BorderFactory;
 import javax.swing.JComboBox;
 import javax.swing.JOptionPane;
@@ -17,7 +13,6 @@ import com.mxgraph.examples.swing.editor.EditorActions.NewAction;
 import com.mxgraph.examples.swing.editor.EditorActions.OpenAction;
 import com.mxgraph.examples.swing.editor.EditorActions.PrintAction;
 import com.mxgraph.examples.swing.editor.EditorActions.SaveAction;
-import com.mxgraph.model.mxGraphModel;
 import com.mxgraph.swing.mxGraphComponent;
 import com.mxgraph.swing.util.mxGraphActions;
 import com.mxgraph.util.mxEvent;
@@ -239,18 +234,6 @@ public class EditorToolBar extends JToolBar {
 				}
 			}
 		});
-
-		addSeparator();
-		add(editor.bind("Auto layout", new AbstractAction() {
-			@Override
-			public void actionPerformed(ActionEvent e) {
-				CustomGraphComponent graphComponent = (CustomGraphComponent) e.getSource();
-				CustomGraph graph = (CustomGraph) graphComponent.getGraph();
-				mxGraphModel model = (mxGraphModel) graph.getModel();
-
-				graph.resetEdge(graph.getAllEdges(model.getCells().values().toArray()));
-			}
-		}, "/com/mxgraph/examples/swing/images/tree.gif"));
 
 	}
 }

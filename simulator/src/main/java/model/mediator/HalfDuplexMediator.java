@@ -15,6 +15,10 @@ import simulator.Context;
  */
 public class HalfDuplexMediator extends Mediator {
 
+	public HalfDuplexMediator() {
+
+	}
+
 	public HalfDuplexMediator(IInputOutput a, IInputOutput b) {
 		super(a, b);
 

@@ -1,26 +1,39 @@
 package dao;
 
-import java.nio.file.Files;
-import java.nio.file.Paths;
-
 import model.component.Component;
 import model.component.ComponentIO;
 import model.dao.DAO;
+import model.dao.ScenarioData;
 import model.dao.factory.DAOFactory;
+import model.factory.MediatorFactory;
+import model.factory.MediatorFactory.EMediator;
+import model.mediator.Mediator;
+import model.strategies.NullStrategy;
 
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 
+import simulator.Context;
 import tools.Config;
 
 public class XmlDaoTest {
 	private static ComponentIO card;
 	private static ComponentIO chip;
 	private static ComponentIO magstrippe;
+	private static Context ctx;
+	private static MediatorFactory factory = MediatorFactory.getInstance();
+
+	private static Mediator m_ept_card;
+	private static Mediator m_card_chip;
+	private static Mediator m_card_magstrippe;
 
 	@Before
 	public void setUp() throws Exception {
+		ctx = Context.getInstance();
+		ctx.reset();
+		ctx.autoRegistrationMode();
+
 		card = new ComponentIO("cb");
 		card.getProperties().put("pan", "4976710025642130");
 		card.getProperties().put("icvv", "000");
@@ -39,17 +52,40 @@ public class XmlDaoTest {
 		magstrippe = new ComponentIO("magstrippe");
 		magstrippe.getProperties().put("iso2", "59859595985888648468454684");
 
-		card.getComponents().add(magstrippe);
-		card.getComponents().add(chip);
+		card.getChilds().add(magstrippe);
+		card.getChilds().add(chip);
+		card.getChilds().add(chip);
+		chip.getChilds().add(magstrippe);
+
+		card.setStrategy(new NullStrategy());
+
+		m_card_chip = MediatorFactory.getInstance().getMediator(card, chip, EMediator.HALFDUPLEX);
+		m_card_magstrippe = MediatorFactory.getInstance().getMediator(card, magstrippe, EMediator.HALFDUPLEX);
 	}
 
 	@Test
 	public void test_componentXml() {
 		DAO<Component> dao = DAOFactory.getFactory().getComponentDAO();
 		dao.create(card);
+		Assert.assertEquals(card.hashCode(), dao.find(card.getUuid()).hashCode());
+
 		String path = Config.getProps().getProperty("config.xml.path.library.model");
-		Assert.assertTrue(Files.exists(Paths.get(path, card.getName() + "_" + card.getUuid())));
 		// a commenter, si on veut voir le xml obtenu (library/model/name_uid)
-		Paths.get(path, card.getName() + "_" + card.getUuid()).toFile().delete();
+		// Paths.get(path, card.getName() + "_" +
+		// card.getUuid()).toFile().delete();
+	}
+
+	@Test
+	public void test_scenarioXml() {
+		DAO<ScenarioData> dao = DAOFactory.getFactory().getScenarioDataDAO();
+		ScenarioData data = new ScenarioData("test", ctx);
+		dao.create(data);
+		Assert.assertEquals(data, dao.find(data.getName()));
+		String path = Config.getProps().getProperty("config.xml.path.library.scenario");
+		// a commenter, si on veut voir le xml obtenu (library/model/name_uid)
+		/*
+		 * Paths.get(path, card.getName() + "_" +
+		 * card.getUuid()).toFile().delete();
+		 */
 	}
 }

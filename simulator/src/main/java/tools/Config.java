@@ -29,6 +29,7 @@ public class Config {
 		System.out.println("Lancement de la configuration par defaut");
 		props = new Properties();
 		props.put("config.xml.path.library.model", "./library/model/");
+		props.put("config.xml.path.library.scenario", "./library/scenario/");
 	}
 
 	public static Properties getProps() {

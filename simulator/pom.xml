@@ -4,6 +4,7 @@
   <artifactId>simulator</artifactId>
   <version>0.0.1</version>
   <name>simulator</name>
+
   <dependencies>
   	<dependency>
   		<groupId>org.slf4j</groupId>

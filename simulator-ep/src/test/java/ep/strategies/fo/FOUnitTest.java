@@ -93,36 +93,36 @@ public class FOUnitTest {
 		purchaser = new ComponentIO("purchaser");
 
 		/* Ajout des trois grandes fonctions du front Office */
-		frontOffice.getComponents().add(1, transmitter);
-		frontOffice.getComponents().add(2, acceptor);
-		frontOffice.getComponents().add(3, purchaser);
+		frontOffice.getChilds().add(1, transmitter);
+		frontOffice.getChilds().add(2, acceptor);
+		frontOffice.getChilds().add(3, purchaser);
 
 		/* Ajout des modules émetteur */
 		authorization = new ComponentIO("authorization");
 		gestionDeLaFraude = new ComponentIO("gestionDeLaFraude");
-		frontOffice.getComponents().get(1).getComponents().add(1, authorization);
-		frontOffice.getComponents().get(1).getComponents().add(2, gestionDeLaFraude);
+		frontOffice.getChilds().get(1).getChilds().add(1, authorization);
+		frontOffice.getChilds().get(1).getChilds().add(2, gestionDeLaFraude);
 
 		/* Ajout des composants du module Autorisation */
 		controlesCarte = new ComponentIO("controlesCarte");
 		traitementsAutorisation = new ComponentIO("traitemntsAutorisation");
-		frontOffice.getComponents().get(1).getComponents().get(1).getComponents().add(1, controlesCarte);
-		frontOffice.getComponents().get(1).getComponents().get(1).getComponents().add(2, traitementsAutorisation);
+		frontOffice.getChilds().get(1).getChilds().get(1).getChilds().add(1, controlesCarte);
+		frontOffice.getChilds().get(1).getChilds().get(1).getChilds().add(2, traitementsAutorisation);
 
 		gestionDroitsCarte = new ComponentIO("gestionDroitsCarte");
 		gestionSoldeCompte = new ComponentIO("gestionSoldeCompte");
-		frontOffice.getComponents().get(1).getComponents().get(1).getComponents().get(2).getComponents()
+		frontOffice.getChilds().get(1).getChilds().get(1).getChilds().get(2).getChilds()
 				.add(1, gestionDroitsCarte);
-		frontOffice.getComponents().get(1).getComponents().get(1).getComponents().get(2).getComponents()
+		frontOffice.getChilds().get(1).getChilds().get(1).getChilds().get(2).getChilds()
 				.add(2, gestionSoldeCompte);
 
 		/* Ajout des modules accepteur */
 		systemeEncaissement = new ComponentIO("systemeEncaissement");
 		concentrateurMonetique = new ComponentIO("concentrateurMonetique");
 		telePaiement = new ComponentIO("telePaiement");
-		frontOffice.getComponents().get(2).getComponents().add(1, systemeEncaissement);
-		frontOffice.getComponents().get(2).getComponents().add(2, concentrateurMonetique);
-		frontOffice.getComponents().get(2).getComponents().add(3, telePaiement);
+		frontOffice.getChilds().get(2).getChilds().add(1, systemeEncaissement);
+		frontOffice.getChilds().get(2).getChilds().add(2, concentrateurMonetique);
+		frontOffice.getChilds().get(2).getChilds().add(3, telePaiement);
 
 		/* Ajout des composants du module systemeEncaissement */
 		gestionEncaissementsMultiples = new ComponentIO("gestionEncaissementsMultiples");
@@ -130,43 +130,43 @@ public class FOUnitTest {
 		gestionTickets = new ComponentIO("gestionTickets");
 		gestionPeripheriques = new ComponentIO("gestionPeripheriques");
 		editionDeFactures = new ComponentIO("editionDeFactures");
-		frontOffice.getComponents().get(2).getComponents().get(1).getComponents().add(1, gestionEncaissementsMultiples);
-		frontOffice.getComponents().get(2).getComponents().get(1).getComponents().add(2, gestionRolesDeCaisse);
-		frontOffice.getComponents().get(2).getComponents().get(1).getComponents().add(3, gestionTickets);
-		frontOffice.getComponents().get(2).getComponents().get(1).getComponents().add(4, gestionPeripheriques);
-		frontOffice.getComponents().get(2).getComponents().get(1).getComponents().add(5, editionDeFactures);
+		frontOffice.getChilds().get(2).getChilds().get(1).getChilds().add(1, gestionEncaissementsMultiples);
+		frontOffice.getChilds().get(2).getChilds().get(1).getChilds().add(2, gestionRolesDeCaisse);
+		frontOffice.getChilds().get(2).getChilds().get(1).getChilds().add(3, gestionTickets);
+		frontOffice.getChilds().get(2).getChilds().get(1).getChilds().add(4, gestionPeripheriques);
+		frontOffice.getChilds().get(2).getChilds().get(1).getChilds().add(5, editionDeFactures);
 
 		/* Ajout des composants du module concentrateur Monétique */
 		gestionLigneDeCaisse = new ComponentIO("gestionLigneDeCaisse");
 		gestionTerminauxDePaiementGrappes = new ComponentIO("gestionTerminauxDePaiementGrappes");
-		frontOffice.getComponents().get(2).getComponents().get(2).getComponents().add(1, gestionLigneDeCaisse);
-		frontOffice.getComponents().get(2).getComponents().get(2).getComponents()
+		frontOffice.getChilds().get(2).getChilds().get(2).getChilds().add(1, gestionLigneDeCaisse);
+		frontOffice.getChilds().get(2).getChilds().get(2).getChilds()
 				.add(2, gestionTerminauxDePaiementGrappes);
 
 		/* Ajout des composants du module télépaiement */
 		passerelleTelepaiement = new ComponentIO("passerelleTelepaiement");
 		gestionnaireTelepaiement = new ComponentIO("gestionnaireTelepaiement");
-		frontOffice.getComponents().get(2).getComponents().get(3).getComponents().add(1, passerelleTelepaiement);
-		frontOffice.getComponents().get(2).getComponents().get(3).getComponents().add(2, gestionnaireTelepaiement);
+		frontOffice.getChilds().get(2).getChilds().get(3).getChilds().add(1, passerelleTelepaiement);
+		frontOffice.getChilds().get(2).getChilds().get(3).getChilds().add(2, gestionnaireTelepaiement);
 
 		acceptationPaiementPubliphone = new ComponentIO("acceptationPaiementPubliphone");
 		acceptationPaiementParInternet = new ComponentIO("acceptationPaiementParInternet");
 		acceptationPaiementParGSM = new ComponentIO("acceptationPaiementParGSM");
-		frontOffice.getComponents().get(2).getComponents().get(3).getComponents().get(1).getComponents()
+		frontOffice.getChilds().get(2).getChilds().get(3).getChilds().get(1).getChilds()
 				.add(1, acceptationPaiementPubliphone);
-		frontOffice.getComponents().get(2).getComponents().get(3).getComponents().get(1).getComponents()
+		frontOffice.getChilds().get(2).getChilds().get(3).getChilds().get(1).getChilds()
 				.add(2, acceptationPaiementParInternet);
-		frontOffice.getComponents().get(2).getComponents().get(3).getComponents().get(1).getComponents()
+		frontOffice.getChilds().get(2).getChilds().get(3).getChilds().get(1).getChilds()
 				.add(3, acceptationPaiementParGSM);
 
 		delivrancePaiement = new ComponentIO("delivrancePaiement");
 		gestionDesRemises = new ComponentIO("gestionDesRemises");
 		gestionDonneesFonctionnement = new ComponentIO("gestionDonneesFonctionnement");
-		frontOffice.getComponents().get(2).getComponents().get(3).getComponents().get(2).getComponents()
+		frontOffice.getChilds().get(2).getChilds().get(3).getChilds().get(2).getChilds()
 				.add(1, delivrancePaiement);
-		frontOffice.getComponents().get(2).getComponents().get(3).getComponents().get(2).getComponents()
+		frontOffice.getChilds().get(2).getChilds().get(3).getChilds().get(2).getChilds()
 				.add(1, gestionDesRemises);
-		frontOffice.getComponents().get(2).getComponents().get(3).getComponents().get(2).getComponents()
+		frontOffice.getChilds().get(2).getChilds().get(3).getChilds().get(2).getChilds()
 				.add(1, gestionDonneesFonctionnement);
 
 		/* Ajout des modules acquéreur */
@@ -175,16 +175,16 @@ public class FOUnitTest {
 		telecollection = new ComponentIO("telecollection");
 		paymentPurchaser = new ComponentIO("paymentPurchaser");
 		compensationSingleMessage = new ComponentIO("compensationSingleMessage");
-		frontOffice.getComponents().get(3).getComponents().add(1, GABHandler);
-		frontOffice.getComponents().get(3).getComponents().add(2, telecollection);
-		frontOffice.getComponents().get(3).getComponents().add(3, paymentPurchaser);
-		frontOffice.getComponents().get(3).getComponents().add(4, compensationSingleMessage);
+		frontOffice.getChilds().get(3).getChilds().add(1, GABHandler);
+		frontOffice.getChilds().get(3).getChilds().add(2, telecollection);
+		frontOffice.getChilds().get(3).getChilds().add(3, paymentPurchaser);
+		frontOffice.getChilds().get(3).getChilds().add(4, compensationSingleMessage);
 
 		/* Ajout des composants du module GABHandler" */
 		retrait = new ComponentIO("retrait");
 		libreServiceBancaire = new ComponentIO("libreServiceBancaire");
-		frontOffice.getComponents().get(3).getComponents().get(1).getComponents().add(1, retrait);
-		frontOffice.getComponents().get(3).getComponents().get(1).getComponents().add(2, libreServiceBancaire);
+		frontOffice.getChilds().get(3).getChilds().get(1).getChilds().add(1, retrait);
+		frontOffice.getChilds().get(3).getChilds().get(1).getChilds().add(2, libreServiceBancaire);
 
 		retraitAutoCompte = new ComponentIO("retraitAutoCompte");
 		depot = new ComponentIO("depot");
@@ -193,23 +193,23 @@ public class FOUnitTest {
 		demandeDeRIB = new ComponentIO("demandeDeRIB");
 		demandeDeSolde = new ComponentIO("demandeDeSolde");
 		historiqueOperations = new ComponentIO("historiqueOperations");
-		frontOffice.getComponents().get(3).getComponents().get(1).getComponents().get(2).getComponents()
+		frontOffice.getChilds().get(3).getChilds().get(1).getChilds().get(2).getChilds()
 				.add(1, retraitAutoCompte);
-		frontOffice.getComponents().get(3).getComponents().get(1).getComponents().get(2).getComponents().add(2, depot);
-		frontOffice.getComponents().get(3).getComponents().get(1).getComponents().get(2).getComponents()
+		frontOffice.getChilds().get(3).getChilds().get(1).getChilds().get(2).getChilds().add(2, depot);
+		frontOffice.getChilds().get(3).getChilds().get(1).getChilds().get(2).getChilds()
 				.add(3, virement);
-		frontOffice.getComponents().get(3).getComponents().get(1).getComponents().get(2).getComponents()
+		frontOffice.getChilds().get(3).getChilds().get(1).getChilds().get(2).getChilds()
 				.add(4, commandeDeChequier);
-		frontOffice.getComponents().get(3).getComponents().get(1).getComponents().get(2).getComponents()
+		frontOffice.getChilds().get(3).getChilds().get(1).getChilds().get(2).getChilds()
 				.add(5, demandeDeRIB);
-		frontOffice.getComponents().get(3).getComponents().get(1).getComponents().get(2).getComponents()
+		frontOffice.getChilds().get(3).getChilds().get(1).getChilds().get(2).getChilds()
 				.add(6, demandeDeSolde);
-		frontOffice.getComponents().get(3).getComponents().get(1).getComponents().get(2).getComponents()
+		frontOffice.getChilds().get(3).getChilds().get(1).getChilds().get(2).getChilds()
 				.add(7, historiqueOperations);
 
 		/* Ajout des composants du module telecollection */
 		gestionCBPRCB2A = new ComponentIO("gestionCBPRCB2A");
-		frontOffice.getComponents().get(3).getComponents().get(2).getComponents().add(1, gestionCBPRCB2A);
+		frontOffice.getChilds().get(3).getChilds().get(2).getChilds().add(1, gestionCBPRCB2A);
 
 		/* Ajout des composants du module paymentPurchaser */
 		paiementDeProximite = new ComponentIO("paiementDeProximite");
@@ -220,14 +220,14 @@ public class FOUnitTest {
 		paiementTelevise = new ComponentIO("paiementTelevise");
 		quasiCash = new ComponentIO("quasiCash");
 		cashAdvance = new ComponentIO("cashAdvance");
-		frontOffice.getComponents().get(3).getComponents().get(3).getComponents().add(1, paiementDeProximite);
-		frontOffice.getComponents().get(3).getComponents().get(3).getComponents().add(2, preAutorisation);
-		frontOffice.getComponents().get(3).getComponents().get(3).getComponents().add(3, venteADistance);
-		frontOffice.getComponents().get(3).getComponents().get(3).getComponents().add(4, telePaiementGSM);
-		frontOffice.getComponents().get(3).getComponents().get(3).getComponents().add(5, paiementVocal);
-		frontOffice.getComponents().get(3).getComponents().get(3).getComponents().add(6, paiementTelevise);
-		frontOffice.getComponents().get(3).getComponents().get(3).getComponents().add(7, quasiCash);
-		frontOffice.getComponents().get(3).getComponents().get(3).getComponents().add(8, cashAdvance);
+		frontOffice.getChilds().get(3).getChilds().get(3).getChilds().add(1, paiementDeProximite);
+		frontOffice.getChilds().get(3).getChilds().get(3).getChilds().add(2, preAutorisation);
+		frontOffice.getChilds().get(3).getChilds().get(3).getChilds().add(3, venteADistance);
+		frontOffice.getChilds().get(3).getChilds().get(3).getChilds().add(4, telePaiementGSM);
+		frontOffice.getChilds().get(3).getChilds().get(3).getChilds().add(5, paiementVocal);
+		frontOffice.getChilds().get(3).getChilds().get(3).getChilds().add(6, paiementTelevise);
+		frontOffice.getChilds().get(3).getChilds().get(3).getChilds().add(7, quasiCash);
+		frontOffice.getChilds().get(3).getChilds().get(3).getChilds().add(8, cashAdvance);
 
 	}
 

@@ -1,5 +1,6 @@
 package simulator;
 
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Collection;
 import java.util.Comparator;
@@ -396,6 +397,9 @@ public class Context {
 		protected Date time;
 		protected String event;
 
+		public StartPoint() {
+		}
+
 		public StartPoint(Date time, String event) {
 			super();
 			this.time = time != null ? time : Calendar.getInstance().getTime();
@@ -411,6 +415,22 @@ public class Context {
 			return o1.time != null ? o1.time.compareTo(o2.time) : -1;
 		}
 
+	}
+
+	public List<Component> getComponents() {
+		return new ArrayList<Component>(components.values());
+	}
+
+	public void setComponents(Map<String, Component> components) {
+		this.components = components;
+	}
+
+	public List<Mediator> getMediators() {
+		return mediators;
+	}
+
+	public void setMediators(List<Mediator> mediators) {
+		this.mediators = mediators;
 	}
 
 }

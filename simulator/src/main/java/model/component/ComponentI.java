@@ -1,7 +1,5 @@
 package model.component;
 
-import javax.xml.bind.annotation.XmlAccessType;
-import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlRootElement;
 
 import model.mediator.Mediator;
@@ -11,7 +9,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 @XmlRootElement
-@XmlAccessorType(XmlAccessType.FIELD)
 public class ComponentI extends Component implements IInput {
 
 	private static Logger log = LoggerFactory.getLogger(ComponentI.class);
@@ -49,5 +46,4 @@ public class ComponentI extends Component implements IInput {
 	public boolean isInput() {
 		return true;
 	}
-
 }

@@ -1,11 +1,20 @@
 package model.dao.impl.xml;
 
+import java.io.IOException;
+import java.nio.file.DirectoryStream;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBException;
 import javax.xml.bind.Marshaller;
+import javax.xml.bind.Unmarshaller;
+import javax.xml.bind.annotation.XmlElement;
+import javax.xml.bind.annotation.XmlRootElement;
 
 import model.component.Component;
 import model.dao.DAO;
@@ -17,6 +26,16 @@ import org.slf4j.LoggerFactory;
 
 public class ComponentXmlDAO extends DAO<Component> {
 
+	@XmlRootElement
+	public static class Components {
+		@XmlElement
+		private List<Component> components;
+
+		public Components() {
+
+		}
+	}
+
 	private static Logger logger = LoggerFactory.getLogger(ComponentXmlDAO.class);
 
 	public ComponentXmlDAO(DaoSource _daoSrc) {
@@ -25,13 +44,14 @@ public class ComponentXmlDAO extends DAO<Component> {
 
 	@Override
 	public boolean create(Component obj) {
+		Components data = new Components();
+		data.components = obj.getAllTree();
 		try {
-			JAXBContext jaxbContext = JAXBContext.newInstance(obj.getClass());
+			JAXBContext jaxbContext = JAXBContext.newInstance(Components.class);
 			Marshaller jaxbMarshaller = jaxbContext.createMarshaller();
 			jaxbMarshaller.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, true);
-			jaxbMarshaller.marshal(obj,
-					Paths.get(((XmlSource) daoSrc).getPath_library_model(), obj.getName() + "_" + obj.getUuid())
-							.toFile());
+			jaxbMarshaller.marshal(data, Paths.get(((XmlSource) daoSrc).getPath_library_model(), obj.getUuid())
+					.toFile());
 			return true;
 		}
 		catch (JAXBException e) {
@@ -45,26 +65,75 @@ public class ComponentXmlDAO extends DAO<Component> {
 
 	@Override
 	public boolean delete(Component obj) {
-		// TODO Auto-generated method stub
+		Path path = Paths.get(((XmlSource) daoSrc).getPath_library_model(), obj.getUuid());
+		try {
+			return Files.deleteIfExists(path);
+		}
+		catch (IOException e) {
+			logger.warn("problem during the delete of " + obj.getUuid(), e);
+		}
 		return false;
 	}
 
 	@Override
 	public boolean update(Component obj) {
-		// TODO Auto-generated method stub
-		return false;
+		delete(obj);
+		return create(obj);
 	}
 
 	@Override
 	public Component find(String id) {
-		// TODO Auto-generated method stub
-		return null;
+		Component c = null;
+		Path path = Paths.get(((XmlSource) daoSrc).getPath_library_model());
+		try (DirectoryStream<Path> stream = Files.newDirectoryStream(path)) {
+			JAXBContext jaxbContext = JAXBContext.newInstance(Components.class);
+			Unmarshaller jaxbUnmarshaller = jaxbContext.createUnmarshaller();
+			Iterator<Path> iterator = stream.iterator();
+			while (iterator.hasNext()) {
+				Path p = iterator.next();
+				if (p.toFile().getName().contains(id)) {
+					Components c1 = (Components) jaxbUnmarshaller.unmarshal(p.toFile());
+					c = (c1.components != null && !c1.components.isEmpty()) ? c1.components.get(0) : null;
+					break;
+				}
+			}
+		}
+		catch (IOException | JAXBException e) {
+			logger.warn("problem to find uuid : " + id, e);
+		}
+		return c;
 	}
 
 	@Override
 	public List<Component> findAll() {
-		// TODO Auto-generated method stub
-		return null;
+		Path path = Paths.get(((XmlSource) daoSrc).getPath_library_model());
+		List<Component> components = new ArrayList<>();
+		try (DirectoryStream<Path> stream = Files.newDirectoryStream(path)) {
+			JAXBContext jaxbContext = JAXBContext.newInstance(Components.class);
+			Unmarshaller jaxbUnmarshaller = jaxbContext.createUnmarshaller();
+			Iterator<Path> iterator = stream.iterator();
+			while (iterator.hasNext()) {
+				Path p = iterator.next();
+				Components c1 = (Components) jaxbUnmarshaller.unmarshal(p.toFile());
+				if (c1.components != null && !c1.components.isEmpty())
+					components.add(c1.components.get(0));
+			}
+		}
+		catch (IOException | JAXBException e) {
+			logger.warn("problem to find all", e);
+		}
+		return components;
 	}
 
+	private static void getAllComponents(Component c, List<Component> know) {
+		if (know == null)
+			know = new ArrayList<>();
+
+		if (!know.contains(c)) {
+			know.add(c);
+			for (Component child : c.getChilds()) {
+				getAllComponents(child, know);
+			}
+		}
+	}
 }

@@ -52,16 +52,16 @@ public class ContextTest {
 		c2 = new ComponentIO("C2");
 
 		c1s1 = new ComponentIO("C1S1");
-		c1.getComponents().add(c1s1);
+		c1.getChilds().add(c1s1);
 
 		c1s2 = new ComponentIO("C1S2");
-		c1.getComponents().add(c1s2);
+		c1.getChilds().add(c1s2);
 
 		c2s1 = new ComponentIO("C2S1");
-		c2.getComponents().add(c2s1);
+		c2.getChilds().add(c2s1);
 
 		c2s2 = new ComponentIO("C2S2");
-		c2.getComponents().add(c2s2);
+		c2.getChilds().add(c2s2);
 	}
 
 	@After

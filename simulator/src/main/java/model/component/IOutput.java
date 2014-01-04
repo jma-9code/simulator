@@ -1,7 +1,10 @@
 package model.component;
 
+import javax.xml.bind.annotation.XmlSeeAlso;
+
 import simulator.Context;
 
+@XmlSeeAlso({ ComponentIO.class, ComponentO.class })
 public interface IOutput {
 	/**
 	 * Retourne le nom de l'élément.

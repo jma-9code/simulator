@@ -1,9 +1,10 @@
 package model.dao.source;
 
-import java.io.Serializable;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.Properties;
+
+import model.dao.ScenarioData;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -14,6 +15,7 @@ public class XmlSource extends DaoSource {
 	private static Logger logger = LoggerFactory.getLogger(XmlSource.class);
 
 	private String path_library_model = "library/model/";
+	private String path_library_scenario = "library/scenario/";
 
 	/**
 	 * Source de données (read/write)
@@ -22,20 +24,11 @@ public class XmlSource extends DaoSource {
 	/**
 	 * Données effectives en jvm
 	 */
-	private XmlData data;
+	private ScenarioData data;
 
 	/**
 	 * Sous classe conteneur des objets devant être serialisés par la source.
 	 */
-	public class XmlData implements Serializable {
-
-		private static final long serialVersionUID = -9088311987427401818L;
-
-		// Centralisation de tout les objets a manipuler.
-
-		public XmlData() {
-		}
-	}
 
 	public XmlSource(Properties props) {
 		super(props);
@@ -46,10 +39,11 @@ public class XmlSource extends DaoSource {
 		if (!Files.exists(Paths.get(path_library_model))) {
 			Paths.get(path_library_model).toFile().mkdirs();
 		}
-	}
 
-	public XmlData getData() {
-		return data;
+		path_library_scenario = prop.getProperty("config.xml.path.library.scenario");
+		if (!Files.exists(Paths.get(path_library_scenario))) {
+			Paths.get(path_library_scenario).toFile().mkdirs();
+		}
 	}
 
 	public String getPath_library_model() {
@@ -58,6 +52,14 @@ public class XmlSource extends DaoSource {
 
 	public void setPath_library_model(String path_library_model) {
 		this.path_library_model = path_library_model;
+	}
+
+	public String getPath_library_scenario() {
+		return path_library_scenario;
+	}
+
+	public void setPath_library_scenario(String path_library_scenario) {
+		this.path_library_scenario = path_library_scenario;
 	}
 
 }

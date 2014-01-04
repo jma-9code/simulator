@@ -22,6 +22,10 @@ public class SimplexMediator extends Mediator {
 
 	private static Logger log = LoggerFactory.getLogger(SimplexMediator.class);
 
+	public SimplexMediator() {
+
+	}
+
 	public SimplexMediator(IOutput _sender, IInput _receiver) {
 		super(_sender, _receiver);
 

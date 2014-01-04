@@ -33,6 +33,10 @@ public class ForwardMediator extends Mediator {
 	 */
 	private Mediator origin;
 
+	public ForwardMediator() {
+
+	}
+
 	public ForwardMediator(Mediator origin, IInput forward) {
 		super(origin.getSender(), forward);
 		this.origin = origin;
@@ -48,7 +52,8 @@ public class ForwardMediator extends Mediator {
 	public IResponse send(IOutput s, String data) {
 		if (s == this.sender || s == getRouter(this.origin)) {
 			return this.receiver.notifyMessage(this, data);
-		} else if (getOriginType() == EMediator.HALFDUPLEX) {
+		}
+		else if (getOriginType() == EMediator.HALFDUPLEX) {
 			return ((IInput) this.sender).notifyMessage(this, data);
 		}
 
@@ -64,9 +69,11 @@ public class ForwardMediator extends Mediator {
 	private EMediator getOriginType() {
 		if (this.origin instanceof HalfDuplexMediator) {
 			return EMediator.HALFDUPLEX;
-		} else if (this.origin instanceof ForwardMediator) {
+		}
+		else if (this.origin instanceof ForwardMediator) {
 			return ((ForwardMediator) this.origin).getOriginType();
-		} else {
+		}
+		else {
 			return EMediator.SIMPLEX;
 		}
 	}

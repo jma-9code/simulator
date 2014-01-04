@@ -65,7 +65,7 @@ public class SimulatorTest {
 		account.getProperties().put("porteur", "florent moisson");
 		account.getProperties().put("montant", "1500");
 		account.getProperties().put("plafond", "9000");
-		bank.getComponents().add(account);
+		bank.getChilds().add(account);
 		account.setStrategy(new NullStrategy());
 
 		// TODO : va surement poser pb si on doit passer les types hérités
@@ -102,7 +102,7 @@ public class SimulatorTest {
 		account.getProperties().put("porteur", "florent moisson");
 		account.getProperties().put("montant", "1500");
 		account.getProperties().put("plafond", "9000");
-		bank.getComponents().add(account);
+		bank.getChilds().add(account);
 
 		// TODO : va surement poser pb si on doit passer les types hérités
 		// A l'instanciation, je vois plus passer Component mais on sait pas si
@@ -170,7 +170,7 @@ public class SimulatorTest {
 		account.getProperties().put("porteur", "florent moisson");
 		account.getProperties().put("montant", "1500");
 		account.getProperties().put("plafond", "9000");
-		bank.getComponents().add(account);
+		bank.getChilds().add(account);
 		account.setStrategy(new NullStrategy());
 
 		// TODO : va surement poser pb si on doit passer les types hérités

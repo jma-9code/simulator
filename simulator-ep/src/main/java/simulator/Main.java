@@ -35,8 +35,8 @@ public class Main {
 		card.getProperties().put("nom porteur", "Florent Moisson");
 		card.getProperties().put("date expiration", "09/15");
 		magstrippe.getProperties().put("piste iso2", "59859595985888648468454684");
-		card.getComponents().add(magstrippe);
-		card.getComponents().add(chip);
+		card.getChilds().add(magstrippe);
+		card.getChilds().add(chip);
 		log.info(card.toString());
 		//Comportement de la carte
 		//card.setStrategy(new CardStrategy());
@@ -49,10 +49,10 @@ public class Main {
 		Component chipReader = new ComponentIO("lecteur carte a puce");
 		ComponentIO core = new ComponentIO("logiciel integre");
 		core.getProperties().put("banque acquereur", "bnp");
-		tpe.getComponents().add(magstrippeReader);
-		tpe.getComponents().add(pinpad);
-		tpe.getComponents().add(chipReader);
-		tpe.getComponents().add(core);
+		tpe.getChilds().add(magstrippeReader);
+		tpe.getChilds().add(pinpad);
+		tpe.getChilds().add(chipReader);
+		tpe.getChilds().add(core);
 		log.info(tpe.toString());
 		//Comportement de la tpe
 		//tpe.setStrategy(new EPTStrategy());

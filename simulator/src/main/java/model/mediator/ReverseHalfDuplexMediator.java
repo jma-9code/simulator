@@ -6,6 +6,10 @@ import model.response.IResponse;
 
 public class ReverseHalfDuplexMediator extends Mediator {
 
+	public ReverseHalfDuplexMediator() {
+
+	}
+
 	public ReverseHalfDuplexMediator(HalfDuplexMediator mediator) {
 		super((IOutput) mediator.getReceiver(), (IInput) mediator.getSender());
 	}

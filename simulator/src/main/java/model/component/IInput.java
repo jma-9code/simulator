@@ -1,8 +1,11 @@
 package model.component;
 
+import javax.xml.bind.annotation.XmlSeeAlso;
+
 import model.mediator.Mediator;
 import model.response.IResponse;
 
+@XmlSeeAlso({ ComponentIO.class, ComponentI.class })
 public interface IInput {
 	/**
 	 * Retourne le nom de l'élément.

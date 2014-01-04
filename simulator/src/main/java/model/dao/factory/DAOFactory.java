@@ -2,6 +2,7 @@ package model.dao.factory;
 
 import model.component.Component;
 import model.dao.DAO;
+import model.dao.ScenarioData;
 
 public abstract class DAOFactory {
 	/**
@@ -16,6 +17,8 @@ public abstract class DAOFactory {
 	}
 
 	public abstract DAO<Component> getComponentDAO();
+
+	public abstract DAO<ScenarioData> getScenarioDataDAO();
 
 	/**
 	 * Retourne la factory de DAO => localisation du point de changement actuel

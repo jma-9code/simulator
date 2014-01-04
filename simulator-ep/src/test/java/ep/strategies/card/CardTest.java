@@ -59,8 +59,8 @@ public class CardTest {
 		magstrippe = new ComponentIO("magstrippe");
 		magstrippe.getProperties().put("iso2", "59859595985888648468454684");
 
-		card.getComponents().add(magstrippe);
-		card.getComponents().add(chip);
+		card.getChilds().add(magstrippe);
+		card.getChilds().add(chip);
 
 		ept = new ComponentIO("ept");
 

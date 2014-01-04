@@ -9,6 +9,10 @@ public class PipedMediator extends Mediator {
 	private Mediator m1;
 	private Mediator m2;
 
+	public PipedMediator() {
+
+	}
+
 	public PipedMediator(Mediator m1, Mediator m2) {
 		super(m1.getSender(), m2.getReceiver());
 		this.m1 = m1;

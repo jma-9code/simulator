@@ -66,7 +66,7 @@ public class EPTUnitTest {
 
 		smartCardReader = new ComponentIO("Smart Card Reader");
 		smartCardReader.setStrategy(new EPTSmartCardReader());
-		ept.getComponents().add(smartCardReader);
+		ept.getChilds().add(smartCardReader);
 		factory.getMediator(ept, smartCardReader, EMediator.HALFDUPLEX);
 
 		chipset = new ComponentIO("Chipset");
@@ -75,17 +75,17 @@ public class EPTUnitTest {
 		chipset.getProperties().put("stan", "000001");
 		chipset.getProperties().put("protocol_list", "ISO7816 ISO8583 CB2A-T");
 		chipset.getProperties().put("protocol_prefered", "ISO7816");
-		ept.getComponents().add(chipset);
+		ept.getChilds().add(chipset);
 		factory.getMediator(ept, chipset, EMediator.HALFDUPLEX);
 
 		printer = new ComponentIO("Printer");
-		ept.getComponents().add(printer);
+		ept.getChilds().add(printer);
 
 		securePinPad = new ComponentIO("Secure pin pad");
-		ept.getComponents().add(securePinPad);
+		ept.getChilds().add(securePinPad);
 
 		networkInterface = new ComponentIO("Network interface");
-		ept.getComponents().add(networkInterface);
+		ept.getChilds().add(networkInterface);
 
 		// static mediators
 		factory.getMediator(smartCardReader, chipset, EMediator.HALFDUPLEX);

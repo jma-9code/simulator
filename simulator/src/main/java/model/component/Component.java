@@ -8,7 +8,12 @@ import java.util.UUID;
 
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
-import javax.xml.bind.annotation.XmlRootElement;
+import javax.xml.bind.annotation.XmlAttribute;
+import javax.xml.bind.annotation.XmlElement;
+import javax.xml.bind.annotation.XmlID;
+import javax.xml.bind.annotation.XmlIDREF;
+import javax.xml.bind.annotation.XmlSeeAlso;
+import javax.xml.bind.annotation.XmlTransient;
 
 import model.strategies.IStrategy;
 import model.strategies.NullStrategy;
@@ -19,29 +24,35 @@ import org.slf4j.LoggerFactory;
 import simulator.Context;
 import tools.CaseInsensitiveMap;
 
-@XmlRootElement
+@XmlSeeAlso({ ComponentIO.class, ComponentI.class, ComponentO.class })
 @XmlAccessorType(XmlAccessType.FIELD)
 public abstract class Component implements Serializable {
 
 	private static Logger log = LoggerFactory.getLogger(Component.class);
 
-	protected String name;
+	@XmlAttribute
+	@XmlID
 	protected String uuid;
+
+	protected String name;
+
 	protected HashMap<String, String> properties = new CaseInsensitiveMap();
 
 	// delegate
 	protected transient IStrategy strategy = new NullStrategy();
 
 	// sub-component
-	protected List<Component> components = new ArrayList<>();
+	@XmlElement
+	@XmlIDREF
+	protected List<Component> childs = new ArrayList<>();
 
 	public Component() {
 		this.name = "default";
 		this.uuid = UUID.randomUUID().toString();
-		Context.getInstance().registerComponent(this, true);
 	}
 
 	public Component(String _name) {
+		super();
 		this.name = _name;
 		this.uuid = UUID.randomUUID().toString();
 		Context.getInstance().registerComponent(this, true);
@@ -56,7 +67,7 @@ public abstract class Component implements Serializable {
 	 */
 	public <T extends Component> T getChild(String name, Class<T> type) {
 		if (name != null) {
-			for (Component child : this.components) {
+			for (Component child : this.childs) {
 				if (name.equalsIgnoreCase(child.getName()) && child.getClass() == type) {
 					return (T) child;
 				}
@@ -79,12 +90,12 @@ public abstract class Component implements Serializable {
 		this.properties = properties;
 	}
 
-	public List<Component> getComponents() {
-		return this.components;
+	public List<Component> getChilds() {
+		return this.childs;
 	}
 
-	public void setComponents(List<Component> components) {
-		this.components = components;
+	public void setChilds(List<Component> components) {
+		this.childs = components;
 	}
 
 	public String getName() {
@@ -95,6 +106,7 @@ public abstract class Component implements Serializable {
 		this.name = name;
 	}
 
+	@XmlTransient
 	public IStrategy<? extends Component> getStrategy() {
 		return this.strategy;
 	}
@@ -111,7 +123,7 @@ public abstract class Component implements Serializable {
 	public String toString() {
 		StringBuilder sb = new StringBuilder();
 		sb.append("\t\n" + this.name + " - " + this.properties);
-		for (Component c : this.components) {
+		for (Component c : this.childs) {
 			sb.append("\t\n" + c.getName() + " - ");
 			sb.append(c.getProperties());
 		}
@@ -122,40 +134,12 @@ public abstract class Component implements Serializable {
 	public int hashCode() {
 		final int prime = 31;
 		int result = 1;
+		result = prime * result + ((childs == null) ? 0 : childs.hashCode());
 		result = prime * result + ((name == null) ? 0 : name.hashCode());
+		result = prime * result + ((properties == null) ? 0 : properties.hashCode());
 		result = prime * result + ((strategy == null) ? 0 : strategy.hashCode());
 		result = prime * result + ((uuid == null) ? 0 : uuid.hashCode());
 		return result;
-	}
-
-	@Override
-	public boolean equals(Object obj) {
-		if (this == obj)
-			return true;
-		if (obj == null)
-			return false;
-		if (getClass() != obj.getClass())
-			return false;
-		Component other = (Component) obj;
-		if (name == null) {
-			if (other.name != null)
-				return false;
-		}
-		else if (!name.equals(other.name))
-			return false;
-		if (strategy == null) {
-			if (other.strategy != null)
-				return false;
-		}
-		else if (!strategy.equals(other.strategy))
-			return false;
-		if (uuid == null) {
-			if (other.uuid != null)
-				return false;
-		}
-		else if (!uuid.equals(other.uuid))
-			return false;
-		return true;
 	}
 
 	/**
@@ -205,5 +189,68 @@ public abstract class Component implements Serializable {
 
 	public String getUuid() {
 		return uuid;
+	}
+
+	/**
+	 * Recupere une liste des composants et du composant lui meme (sans
+	 * doublon).
+	 * 
+	 * @return
+	 */
+	public List<Component> getAllTree() {
+		List<Component> ret = new ArrayList<>();
+		ret.add(this);
+		for (Component c : getChilds()) {
+			List<Component> childs = c.getAllTree();
+			// retire les doublons
+			for (Component c1 : childs) {
+				if (!ret.contains(c1)) {
+					ret.add(c1);
+				}
+			}
+		}
+		return ret;
+	}
+
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj)
+			return true;
+		if (obj == null)
+			return false;
+		if (getClass() != obj.getClass())
+			return false;
+		Component other = (Component) obj;
+		if (childs == null) {
+			if (other.childs != null)
+				return false;
+		}
+		else if (!childs.equals(other.childs))
+			return false;
+		if (name == null) {
+			if (other.name != null)
+				return false;
+		}
+		else if (!name.equals(other.name))
+			return false;
+		if (properties == null) {
+			if (other.properties != null)
+				return false;
+		}
+		else if (!properties.equals(other.properties))
+			return false;
+		if (strategy == null) {
+			if (other.strategy != null)
+				return false;
+		}
+		else if (!strategy.equals(other.strategy))
+			return false;
+		if (uuid == null) {
+			if (other.uuid != null)
+				return false;
+		}
+		else if (!uuid.equals(other.uuid))
+			return false;
+		return true;
 	}
 }

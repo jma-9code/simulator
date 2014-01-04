@@ -2,16 +2,37 @@ package model.mediator;
 
 import java.util.HashMap;
 
+import javax.xml.bind.annotation.XmlAccessType;
+import javax.xml.bind.annotation.XmlAccessorType;
+import javax.xml.bind.annotation.XmlElement;
+import javax.xml.bind.annotation.XmlElements;
+import javax.xml.bind.annotation.XmlIDREF;
+import javax.xml.bind.annotation.XmlSeeAlso;
+
+import model.component.ComponentI;
+import model.component.ComponentIO;
+import model.component.ComponentO;
 import model.component.IInput;
 import model.component.IOutput;
 import model.response.IResponse;
 
+@XmlSeeAlso({ SimplexMediator.class, ReverseHalfDuplexMediator.class, ForwardMediator.class, PipedMediator.class,
+		HalfDuplexMediator.class })
+@XmlAccessorType(XmlAccessType.FIELD)
 public abstract class Mediator {
-
+	@XmlIDREF
+	@XmlElements({ @XmlElement(type = ComponentO.class), @XmlElement(type = ComponentIO.class) })
 	protected IOutput sender;
+
+	@XmlIDREF
+	@XmlElements({ @XmlElement(type = ComponentI.class), @XmlElement(type = ComponentIO.class) })
 	protected IInput receiver;
 
 	private HashMap<String, String> properties = null;
+
+	public Mediator() {
+
+	}
 
 	public Mediator(IOutput _sender, IInput _receiver) {
 		this.properties = new HashMap<>();
@@ -54,14 +75,16 @@ public abstract class Mediator {
 			if (other.receiver != null) {
 				return false;
 			}
-		} else if (!this.receiver.equals(other.receiver)) {
+		}
+		else if (!this.receiver.equals(other.receiver)) {
 			return false;
 		}
 		if (this.sender == null) {
 			if (other.sender != null) {
 				return false;
 			}
-		} else if (!this.sender.equals(other.sender)) {
+		}
+		else if (!this.sender.equals(other.sender)) {
 			return false;
 		}
 		return true;

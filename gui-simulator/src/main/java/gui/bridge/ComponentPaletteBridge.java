@@ -28,16 +28,19 @@ public class ComponentPaletteBridge {
 	private String defaultGraphIconPath;
 	private List<mxCell> parents;
 
-	private static Logger logger = LoggerFactory.getLogger(ComponentPaletteBridge.class);
+	private static Logger logger = LoggerFactory
+			.getLogger(ComponentPaletteBridge.class);
 
-	public ComponentPaletteBridge(EditorPalette palette, DAO<Component> dao, mxGraph graph) {
+	public ComponentPaletteBridge(EditorPalette palette, DAO<Component> dao,
+			mxGraph graph) {
 		this.palette = palette;
 		this.dao = dao;
 		this.graph = graph;
 
 		// init
 		this.defaultPaletteIcon = new ImageIcon(
-				ComponentPaletteBridge.class.getResource("/com/mxgraph/examples/swing/images/rounded.png"));
+				ComponentPaletteBridge.class
+						.getResource("/com/mxgraph/examples/swing/images/rounded.png"));
 		this.defaultGraphIconPath = "";
 		this.parents = new ArrayList();
 	}
@@ -67,7 +70,8 @@ public class ComponentPaletteBridge {
 	 * @return
 	 */
 	private ImageIcon getPaletteIcon(String name) {
-		URL iconUrl = ComponentPaletteBridge.class.getResource("/gui/icon/" + name + ".png");
+		URL iconUrl = ComponentPaletteBridge.class.getResource("/gui/icon/"
+				+ name + ".png");
 		return (iconUrl != null) ? new ImageIcon(iconUrl) : defaultPaletteIcon;
 	}
 
@@ -79,7 +83,8 @@ public class ComponentPaletteBridge {
 	 */
 	private String getGraphIconPath(String name) {
 		String iconPath = "/gui/icon/" + name + ".png";
-		return (ComponentPaletteBridge.class.getResource(iconPath) != null) ? iconPath : defaultGraphIconPath;
+		return (ComponentPaletteBridge.class.getResource(iconPath) != null) ? iconPath
+				: defaultGraphIconPath;
 	}
 
 	/**
@@ -106,14 +111,16 @@ public class ComponentPaletteBridge {
 		int[] size = getSize(graphIconPath);
 
 		// parent vertex
-		mxCell cell = new mxCell(wrapper, new mxGeometry(0, 0, size[0], size[1]), wrapper.getCollapsedStyle());
+		mxCell cell = new mxCell(wrapper,
+				new mxGeometry(0, 0, size[0], size[1]),
+				wrapper.getCollapsedStyle());
 		cell.setVertex(true);
 		cell.setCollapsed(true);
 
-		if (c.getComponents() != null && !c.getComponents().isEmpty()) {
+		if (c.getChilds() != null && !c.getChilds().isEmpty()) {
 
 			// creation of child vertex recursively
-			for (Component child : c.getComponents()) {
+			for (Component child : c.getChilds()) {
 				mxCell cellChild = createVertex(child);
 				cell.insert(cellChild);
 			}
@@ -126,11 +133,12 @@ public class ComponentPaletteBridge {
 
 	private int[] getSize(String graphIconPath) {
 		if (graphIconPath != null && !graphIconPath.isEmpty()) {
-			ImageIcon image = new ImageIcon(ComponentPaletteBridge.class.getResource(graphIconPath));
-			logger.debug("width = " + image.getIconWidth() + ", height = " + image.getIconHeight());
+			ImageIcon image = new ImageIcon(
+					ComponentPaletteBridge.class.getResource(graphIconPath));
+			logger.debug("width = " + image.getIconWidth() + ", height = "
+					+ image.getIconHeight());
 			return new int[] { image.getIconWidth(), image.getIconHeight() };
-		}
-		else {
+		} else {
 			return new int[] { 150, 75 };
 		}
 	}

@@ -60,4 +60,8 @@ public class NullStrategy implements IStrategy<Component> {
 		return true;
 	}
 
+	@Override
+	public String toString() {
+		return "Null strategy";
+	}
 }

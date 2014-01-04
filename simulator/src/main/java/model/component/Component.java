@@ -190,6 +190,14 @@ public abstract class Component implements Serializable {
 	public String getUuid() {
 		return uuid;
 	}
+	
+	/**
+	 * Instancie le composant
+	 */
+	public void instanciate() {
+		this.uuid = UUID.randomUUID().toString();
+		log.info(getInstanceName() + " instancied");
+	}
 
 	/**
 	 * Recupere une liste des composants et du composant lui meme (sans

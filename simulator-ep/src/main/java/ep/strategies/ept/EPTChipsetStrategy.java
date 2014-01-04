@@ -233,4 +233,8 @@ public class EPTChipsetStrategy implements IStrategy<ComponentIO> {
 		return sdf.format(Context.getInstance().getTime()) + _this.getProperty("stan");
 	}
 
+	@Override
+	public String toString() {
+		return "EPTChipset";
+	}
 }

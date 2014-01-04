@@ -34,5 +34,4 @@ public interface IStrategy<T extends Component> extends Serializable {
 	public void processEvent(T _this, String event);
 
 	public IResponse processMessage(T _this, Mediator mediator, String data);
-
 }

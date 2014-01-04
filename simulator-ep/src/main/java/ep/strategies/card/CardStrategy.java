@@ -40,4 +40,8 @@ public class CardStrategy implements IStrategy<ComponentIO> {
 
 	}
 
+	@Override
+	public String toString() {
+		return "Card";
+	}
 }

@@ -37,4 +37,9 @@ public class EPTSmartCardReader implements IStrategy<ComponentIO> {
 															// protocol ?
 		}
 	}
+
+	@Override
+	public String toString() {
+		return "EPTSmartCardReader";
+	}
 }

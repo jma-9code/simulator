@@ -122,8 +122,11 @@ public class Context {
 	 */
 	public void registerComponent(Component component, boolean selfRegistration) {
 		// auto-register
-		if (autoRegistrationMode) {
+		if (autoRegistrationMode || !selfRegistration) {
+			log.info("Register component " + component.getInstanceName());
+			component.instanciate();
 			components.put(component.getInstanceName(), component);
+			log.debug(components.size() + " components");
 		}
 	}
 
@@ -134,6 +137,11 @@ public class Context {
 		registerComponent(component, false);
 	}
 
+	public void unregisterComponent(Component component) {
+		log.info("Unregister component " + component.getInstanceName());
+		components.remove(component);
+	}
+
 	/**
 	 * Called by mediator factory to register all mediators in the context.
 	 * 
@@ -142,8 +150,10 @@ public class Context {
 	 */
 	public void registerMediator(Mediator mediator, boolean selfRegistration) {
 		// auto-register
-		if (autoRegistrationMode) {
+		if (autoRegistrationMode || !selfRegistration) {
+			log.info("Register mediator " + mediator.toString());
 			mediators.add(mediator);
+			log.debug(mediators.size() + " mediators");
 		}
 	}
 
@@ -153,7 +163,12 @@ public class Context {
 	 * @param mediator
 	 */
 	public void registerMediator(Mediator mediator) {
-		mediators.add(mediator);
+		registerMediator(mediator, false);
+	}
+
+	public void unregisterMediator(Mediator mediator) {
+		log.info("Unregister mediator " + mediator.toString());
+		mediators.remove(mediator);
 	}
 
 	/**
@@ -323,6 +338,10 @@ public class Context {
 		this.startPoints.add(sp);
 	}
 
+	public Queue<StartPoint> getStartPoints() {
+		return startPoints;
+	}
+
 	/**
 	 * Mecanism of registration components automatically at their instanciation.
 	 */
@@ -404,6 +423,22 @@ public class Context {
 			super();
 			this.time = time != null ? time : Calendar.getInstance().getTime();
 			this.event = event;
+		}
+
+		public Date getTime() {
+			return time;
+		}
+
+		public String getEvent() {
+			return event;
+		}
+
+		public void setEvent(String event) {
+			this.event = event;
+		}
+
+		public void setTime(Date time) {
+			this.time = time;
 		}
 
 	}

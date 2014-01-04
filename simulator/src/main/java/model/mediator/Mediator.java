@@ -76,7 +76,7 @@ public abstract class Mediator {
 				return false;
 			}
 		}
-		else if (!this.receiver.equals(other.receiver)) {
+		else if (!this.receiver.equals(other.receiver) && !this.receiver.equals(other.sender)) {
 			return false;
 		}
 		if (this.sender == null) {
@@ -84,7 +84,7 @@ public abstract class Mediator {
 				return false;
 			}
 		}
-		else if (!this.sender.equals(other.sender)) {
+		else if (!this.sender.equals(other.sender) && !this.sender.equals(other.receiver)) {
 			return false;
 		}
 		return true;

@@ -6,6 +6,7 @@ import model.dao.ScenarioData;
 import model.dao.impl.xml.ComponentXmlDAO;
 import model.dao.impl.xml.ScenarioDataXmlDAO;
 import model.dao.source.XmlSource;
+import model.strategies.IStrategy;
 import tools.Config;
 
 public class XmlDAOFactory extends DAOFactory {
@@ -20,4 +21,8 @@ public class XmlDAOFactory extends DAOFactory {
 		return new ScenarioDataXmlDAO(db);
 	}
 
+	public DAO<IStrategy> getStrategyDAO() {
+		// @TODO Julien
+		throw new UnsupportedOperationException();
+	}
 }

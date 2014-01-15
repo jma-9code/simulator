@@ -1,15 +1,22 @@
 package ep.strategies.fo;
 
+import java.util.Map;
+
 import model.component.ComponentIO;
 import model.component.IOutput;
+import model.factory.MediatorFactory;
 import model.mediator.Mediator;
 import model.response.IResponse;
 import model.strategies.IStrategy;
 
+import org.jpos.iso.ISOException;
+import org.jpos.iso.ISOMsg;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import simulator.Context;
+import tools.ISO7816;
+import utils.ISO7816Tools;
 
 public class FOStrategy implements IStrategy<ComponentIO> {
 
@@ -20,7 +27,34 @@ public class FOStrategy implements IStrategy<ComponentIO> {
 	}
 
 	@Override
-	public IResponse processMessage(ComponentIO card, Mediator m, String data) {
+	public IResponse processMessage(ComponentIO frontOffice, Mediator m, String data) {
+		
+		ISOMsg message8583 = null;
+		ComponentIO composantCible = null;
+		Mediator mediateurAUtiliser;
+		// faire le lien avec le message8583
+		
+		/* Si c'est une demande d'autorisation ... */
+		try {
+			switch (message8583.getMTI()) {
+				case "0110": 
+					composantCible = frontOffice.getChild("Issuer", ComponentIO.class);	
+					break;
+					
+					default:
+					
+					break;
+			}
+		}
+		catch (ISOException e) {
+			e.printStackTrace();
+		}
+		
+		mediateurAUtiliser = MediatorFactory.getInstance().getForwardMediator(m, composantCible);
+		// forward to the chipset
+		return mediateurAUtiliser.send(composantCible, data);
+		
+		
 		// Pour Antoine Michels ... ici on traite les messages entrants (ex: une
 		// auto arrive ...)
 		// Il faut que tu réutilises ta hiérarchie de composant que j'ai remis
@@ -33,7 +67,6 @@ public class FOStrategy implements IStrategy<ComponentIO> {
 		// message de façon à ce que
 		// si on branche un tpe sur le fo ça fasse pareil que si n le branchait
 		// sur le module destinataire.
-		return null;
 	}
 
 	@Override

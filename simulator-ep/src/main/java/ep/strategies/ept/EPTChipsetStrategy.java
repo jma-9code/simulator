@@ -13,6 +13,8 @@ import model.response.IResponse;
 import model.response.VoidResponse;
 import model.strategies.IStrategy;
 
+import org.jpos.iso.ISOException;
+import org.jpos.iso.ISOMsg;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -53,6 +55,24 @@ public class EPTChipsetStrategy implements IStrategy<ComponentIO> {
 					parsedData = ISO7816Tools.read(res.getData());
 
 					// auth request to bank (TPE -> Bank and bank -> TPE)
+					// Create ISO Message
+					ISOMsg isoMsg = new ISOMsg();
+					try {
+						isoMsg.setMTI("0110");
+						isoMsg.set(2, ISO7816Tools.FIELD_PAN); // PAN
+						isoMsg.set(3, "000101"); // Type of Auth + accounts
+						isoMsg.set(4, parsedData.get(ISO7816Tools.FIELD_AMOUNT)); // 100€
+						isoMsg.set(7, "0810172400"); // date : MMDDhhmmss
+						isoMsg.set(11, "123457"); // System Trace Audit Number
+						isoMsg.set(38, ISO7816Tools.FIELD_APPROVALCODE); // Approval Code
+						isoMsg.set(39, "00"); // Response Code
+						isoMsg.set(42, "623598"); // Acceptor's ID
+						isoMsg.set(123, ISO7816Tools.FIELD_POSID); // POS Data Code
+					} catch (ISOException isoException) {
+						log.error("Message ISO 8583 invalide.");
+					}
+					
+					
 					// ...
 					Map<String, String> rpfromBank = new CaseInsensitiveMap();
 					rpfromBank.put("approvalcode", "07B56=");

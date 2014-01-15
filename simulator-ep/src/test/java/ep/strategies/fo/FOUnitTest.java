@@ -12,7 +12,7 @@ public class FOUnitTest {
 	private static ComponentIO frontOffice;
 
 	/* Les trois grandes fonctions d'un FO */
-	private static ComponentIO transmitter;
+	private static ComponentIO issuer;
 	private static ComponentIO acceptor;
 	private static ComponentIO purchaser;
 
@@ -88,26 +88,26 @@ public class FOUnitTest {
 		Context.getInstance().autoRegistrationMode();
 		frontOffice = new ComponentIO("FrontOffice");
 
-		transmitter = new ComponentIO("transmitter");
+		issuer = new ComponentIO("Issuer");
 		acceptor = new ComponentIO("acceptor");
 		purchaser = new ComponentIO("purchaser");
 
 		/* Ajout des trois grandes fonctions du front Office */
-		frontOffice.getChilds().add(1, transmitter);
+		frontOffice.getChilds().add(1, issuer);
 		frontOffice.getChilds().add(2, acceptor);
 		frontOffice.getChilds().add(3, purchaser);
 
 		/* Ajout des modules émetteur */
-		authorization = new ComponentIO("authorization");
-		gestionDeLaFraude = new ComponentIO("gestionDeLaFraude");
-		frontOffice.getChilds().get(1).getChilds().add(1, authorization);
-		frontOffice.getChilds().get(1).getChilds().add(2, gestionDeLaFraude);
+		authorization = new ComponentIO("Authorization");
+		gestionDeLaFraude = new ComponentIO("GestionDeLaFraude");
+		frontOffice.getChild("Issuer", ComponentIO.class).getChilds().add(1, authorization);
+		frontOffice.getChild("Issuer", ComponentIO.class).getChilds().add(2, gestionDeLaFraude);
 
 		/* Ajout des composants du module Autorisation */
 		controlesCarte = new ComponentIO("controlesCarte");
 		traitementsAutorisation = new ComponentIO("traitemntsAutorisation");
-		frontOffice.getChilds().get(1).getChilds().get(1).getChilds().add(1, controlesCarte);
-		frontOffice.getChilds().get(1).getChilds().get(1).getChilds().add(2, traitementsAutorisation);
+		frontOffice.getChild("Issuer", ComponentIO.class).getChild("Authorization", ComponentIO.class).getChilds().add(1, controlesCarte);
+		frontOffice.getChild("Issuer", ComponentIO.class).getChild("Authorization", ComponentIO.class).getChilds().add(2, traitementsAutorisation);
 
 		gestionDroitsCarte = new ComponentIO("gestionDroitsCarte");
 		gestionSoldeCompte = new ComponentIO("gestionSoldeCompte");

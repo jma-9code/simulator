@@ -13,6 +13,7 @@ import org.slf4j.LoggerFactory;
 import ep.strategies.fo.FOStrategy;
 
 import simulator.Context;
+import simulator.exception.ContextException;
 
 public class FOPurchaserAuthorizationStrategy implements IStrategy<ComponentIO> {
 
@@ -23,7 +24,17 @@ public class FOPurchaserAuthorizationStrategy implements IStrategy<ComponentIO> 
 	}
 
 	@Override
-	public IResponse processMessage(ComponentIO frontOfficePurchaser, Mediator m, String data) {
+	public IResponse processMessage(ComponentIO FOPurchaserAuthorization, Mediator m, String data) {
+		
+		
+		try {
+			Mediator mediateurAUtiliser = Context.getInstance().getFirstMediator(FOPurchaserAuthorization, "IssuerAuthorization");
+			return mediateurAUtiliser.send(FOPurchaserAuthorization, data);
+		}
+		catch (ContextException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 		
 		return null;
 		

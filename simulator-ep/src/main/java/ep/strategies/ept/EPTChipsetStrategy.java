@@ -15,6 +15,7 @@ import model.strategies.IStrategy;
 
 import org.jpos.iso.ISOException;
 import org.jpos.iso.ISOMsg;
+import org.jpos.iso.packager.GenericPackager;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -58,7 +59,9 @@ public class EPTChipsetStrategy implements IStrategy<ComponentIO> {
 					// Create ISO Message
 					ISOMsg isoMsg = new ISOMsg();
 					try {
-						isoMsg.setMTI("0110");
+						GenericPackager packager = new GenericPackager("resources/8583.xml");
+						isoMsg.setPackager(packager);
+						isoMsg.setMTI("0100");
 						isoMsg.set(2, ISO7816Tools.FIELD_PAN); // PAN
 						isoMsg.set(3, "000101"); // Type of Auth + accounts
 						isoMsg.set(4, parsedData.get(ISO7816Tools.FIELD_AMOUNT)); // 100€
@@ -68,9 +71,12 @@ public class EPTChipsetStrategy implements IStrategy<ComponentIO> {
 						isoMsg.set(39, "00"); // Response Code
 						isoMsg.set(42, "623598"); // Acceptor's ID
 						isoMsg.set(123, ISO7816Tools.FIELD_POSID); // POS Data Code
+						byte[] data = isoMsg.pack();
+						Mediator mediateurFrontOffice = Context.getInstance().getFirstMediator(_this, "FrontOffice");
+						mediateurFrontOffice.send(_this, new String(data));
 					} catch (ISOException isoException) {
 						log.error("Message ISO 8583 invalide.");
-					}
+					}	
 					
 					
 					// ...

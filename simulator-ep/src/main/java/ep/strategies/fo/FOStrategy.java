@@ -29,16 +29,17 @@ public class FOStrategy implements IStrategy<ComponentIO> {
 	@Override
 	public IResponse processMessage(ComponentIO frontOffice, Mediator m, String data) {
 		
-		ISOMsg message8583 = null;
+		ISOMsg message8583 = new ISOMsg();
 		ComponentIO composantCible = null;
 		Mediator mediateurAUtiliser;
 		// faire le lien avec le message8583
 		
 		/* Si c'est une demande d'autorisation ... */
 		try {
+			message8583.unpack(data.getBytes());
 			switch (message8583.getMTI()) {
-				case "0110": 
-					composantCible = frontOffice.getChild("Issuer", ComponentIO.class);	
+				case "0100": 
+					composantCible = frontOffice.getChild("Purchaser", ComponentIO.class);	
 					break;
 					
 					default:

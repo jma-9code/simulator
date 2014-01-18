@@ -34,6 +34,28 @@ public class EPTChipsetStrategy implements IStrategy<ComponentIO> {
 	public void init(IOutput _this, Context ctx) {
 		ctx.subscribeEvent(_this, "SMART_CARD_INSERTED");
 	}
+	
+	public ISOMsg generateAuthorizationRequest (ComponentIO _this, Map<String, String> parsedData) {
+		ISOMsg authorizationRequest = new ISOMsg();
+		GenericPackager packager;
+		try {
+			packager = new GenericPackager("resources/8583.xml");
+			authorizationRequest.setPackager(packager);
+			authorizationRequest.setMTI("0100");
+			authorizationRequest.set(2, parsedData.get(ISO7816Tools.FIELD_PAN)); // PAN
+			authorizationRequest.set(3, "000101"); // Type of Auth + accounts
+			authorizationRequest.set(4, parsedData.get(ISO7816Tools.FIELD_AMOUNT)); // 100€
+			authorizationRequest.set(7, ISO7816Tools.writeDATETIME(Calendar.getInstance().getTime())); // date : MMDDhhmmss
+			authorizationRequest.set(11, generateNextSTAN(_this, parsedData.get(ISO7816Tools.FIELD_STAN))); // System Trace Audit Number
+			authorizationRequest.set(38, ISO7816Tools.FIELD_APPROVALCODE); // Approval Code
+			authorizationRequest.set(42, "623598"); // Acceptor's ID
+			authorizationRequest.set(123, ISO7816Tools.FIELD_POSID); // POS Data Code
+		}
+		catch (ISOException e) {
+			e.printStackTrace();
+		}	
+		return authorizationRequest;
+	}
 
 	@Override
 	public void processEvent(ComponentIO _this, String event) {
@@ -57,26 +79,30 @@ public class EPTChipsetStrategy implements IStrategy<ComponentIO> {
 
 					// auth request to bank (TPE -> Bank and bank -> TPE)
 					// Create ISO Message
-					ISOMsg isoMsg = new ISOMsg();
+					Mediator mediateurFrontOffice = Context.getInstance().getFirstMediator(_this, "FrontOffice");
+					ISOMsg authorizationAnswer = null;
 					try {
-						GenericPackager packager = new GenericPackager("resources/8583.xml");
-						isoMsg.setPackager(packager);
-						isoMsg.setMTI("0100");
-						isoMsg.set(2, ISO7816Tools.FIELD_PAN); // PAN
-						isoMsg.set(3, "000101"); // Type of Auth + accounts
-						isoMsg.set(4, parsedData.get(ISO7816Tools.FIELD_AMOUNT)); // 100€
-						isoMsg.set(7, "0810172400"); // date : MMDDhhmmss
-						isoMsg.set(11, "123457"); // System Trace Audit Number
-						isoMsg.set(38, ISO7816Tools.FIELD_APPROVALCODE); // Approval Code
-						isoMsg.set(39, "00"); // Response Code
-						isoMsg.set(42, "623598"); // Acceptor's ID
-						isoMsg.set(123, ISO7816Tools.FIELD_POSID); // POS Data Code
-						byte[] data = isoMsg.pack();
-						Mediator mediateurFrontOffice = Context.getInstance().getFirstMediator(_this, "FrontOffice");
-						mediateurFrontOffice.send(_this, new String(data));
-					} catch (ISOException isoException) {
-						log.error("Message ISO 8583 invalide.");
-					}	
+						authorizationAnswer = new ISOMsg();
+						authorizationAnswer.unpack(
+								((DataResponse)mediateurFrontOffice.send
+										(_this, new String(generateAuthorizationRequest(_this, parsedData).pack()))
+								).getData().getBytes());
+					}
+					catch (ISOException e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					}
+					
+					try {
+						if (authorizationAnswer.getValue(39) != "00") {
+							log.error("Authorization rejected by the bank");
+							return ;
+						}
+					}
+					catch (ISOException e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					}
 					
 					
 					// ...

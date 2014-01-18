@@ -4,7 +4,9 @@ import model.component.ComponentIO;
 import model.component.IOutput;
 import model.factory.MediatorFactory;
 import model.mediator.Mediator;
+import model.response.DataResponse;
 import model.response.IResponse;
+import model.response.VoidResponse;
 import model.strategies.IStrategy;
 
 import org.jpos.iso.ISOException;
@@ -26,24 +28,24 @@ public class FOIssuerAuthorizationStrategy implements IStrategy<ComponentIO> {
 
 	@Override
 	public IResponse processMessage(ComponentIO frontOfficeIssuer, Mediator m, String data) {
-		ISOMsg message8583 = new ISOMsg();
-		ComponentIO composantCible = null;
-		Mediator mediateurAUtiliser;
+		ISOMsg authorizationAnswer = new ISOMsg();
 		
 		try {
-			message8583.unpack(data.getBytes());
-			message8583.setMTI("0110");
-			message8583.set(7, "0810172400"); // date : MMDDhhmmss
-			message8583.set(39, "00");
-			m.send(frontOfficeIssuer, new String (message8583.pack()));
+			authorizationAnswer.unpack(data.getBytes());
+			authorizationAnswer.setMTI("0110");
+			authorizationAnswer.set(7, "0810172400"); // date : MMDDhhmmss
+			authorizationAnswer.set(39, "00");
 		}
 		catch (ISOException e) {
 			e.printStackTrace();
 		}
 		
-		
-	
-		return null;
+		try {
+			return DataResponse.build(m, new String(authorizationAnswer.getBytes()));
+		}
+		catch (ISOException e) {
+			return VoidResponse.build();
+		} 
 	}
 
 	@Override

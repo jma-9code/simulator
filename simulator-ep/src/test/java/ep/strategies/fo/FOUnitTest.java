@@ -89,8 +89,8 @@ public class FOUnitTest {
 		frontOffice = new ComponentIO("FrontOffice");
 
 		issuer = new ComponentIO("Issuer");
-		acceptor = new ComponentIO("acceptor");
-		purchaser = new ComponentIO("purchaser");
+		acceptor = new ComponentIO("Acceptor");
+		purchaser = new ComponentIO("Purchaser");
 
 		/* Ajout des trois grandes fonctions du front Office */
 		frontOffice.getChilds().add(1, issuer);

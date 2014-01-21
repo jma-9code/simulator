@@ -9,21 +9,21 @@ import javax.swing.table.AbstractTableModel;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import simulator.Context;
-import simulator.Context.StartPoint;
+import simulator.StartPoint;
 
 import com.mxgraph.util.mxResources;
 
 public class StartPointJTableBridge extends AbstractTableModel {
 
-	private static Logger logger = LoggerFactory.getLogger(StartPointJTableBridge.class);
+	private static Logger logger = LoggerFactory
+			.getLogger(StartPointJTableBridge.class);
 
 	private static final String NEW_TAG = mxResources.get("new_entry");
-	private Queue<Context.StartPoint> queue;
+	private Queue<StartPoint> queue;
 
 	private boolean addRowEnabled = false;
 
-	public StartPointJTableBridge(Queue<Context.StartPoint> queue) {
+	public StartPointJTableBridge(Queue<StartPoint> queue) {
 		this.queue = queue;
 	}
 
@@ -31,8 +31,7 @@ public class StartPointJTableBridge extends AbstractTableModel {
 	public int getRowCount() {
 		if (addRowEnabled) {
 			return queue != null ? queue.size() + 1 : 0;
-		}
-		else {
+		} else {
 			return queue != null ? queue.size() : 0;
 		}
 	}
@@ -45,22 +44,22 @@ public class StartPointJTableBridge extends AbstractTableModel {
 	@Override
 	public String getColumnName(int columnIndex) {
 		switch (columnIndex) {
-			case 0:
-				return mxResources.get("datetime");
-			case 1:
-				return mxResources.get("event");
-			default:
-				return "";
+		case 0:
+			return mxResources.get("datetime");
+		case 1:
+			return mxResources.get("event");
+		default:
+			return "";
 		}
 	}
 
 	@Override
 	public Class<?> getColumnClass(int columnIndex) {
 		switch (columnIndex) {
-			case 0:
-				return Date.class;
-			default:
-				return String.class;
+		case 0:
+			return Date.class;
+		default:
+			return String.class;
 		}
 	}
 
@@ -73,50 +72,52 @@ public class StartPointJTableBridge extends AbstractTableModel {
 	public Object getValueAt(int rowIndex, int columnIndex) {
 		// logger.debug("getValueAt(" + rowIndex + ", " + columnIndex + ")");
 		switch (columnIndex) {
-			case 0:
-				return (addRowEnabled && rowIndex == getRowCount() - 1) ? new Date() : getStartPoint(rowIndex)
-						.getTime();
-			case 1:
-				return (addRowEnabled && rowIndex == getRowCount() - 1) ? NEW_TAG : getStartPoint(rowIndex).getEvent();
-			default:
-				return "";
+		case 0:
+			return (addRowEnabled && rowIndex == getRowCount() - 1) ? new Date()
+					: getStartPoint(rowIndex).getTime();
+		case 1:
+			return (addRowEnabled && rowIndex == getRowCount() - 1) ? NEW_TAG
+					: getStartPoint(rowIndex).getEvent();
+		default:
+			return "";
 		}
 	}
 
 	@Override
 	public void setValueAt(Object aValue, int rowIndex, int columnIndex) {
 		// [" + aValue.getClass() + "]
-		logger.debug("setValueAt(" + aValue + ", " + rowIndex + ", " + columnIndex + ")");
+		logger.debug("setValueAt(" + aValue + ", " + rowIndex + ", "
+				+ columnIndex + ")");
 		switch (columnIndex) {
-			case 0:
-				if (addRowEnabled && rowIndex == getRowCount() - 1) {
-					queue.add(new StartPoint((Date) aValue, (String) getValueAt(rowIndex, 1)));
-					addRowEnabled = false;
-					fireTableDataChanged();
-				}
-				else {
-					getStartPoint(rowIndex).setTime((Date) aValue);
-				}
+		case 0:
+			if (addRowEnabled && rowIndex == getRowCount() - 1) {
+				queue.add(new StartPoint((Date) aValue, (String) getValueAt(
+						rowIndex, 1)));
+				addRowEnabled = false;
+				fireTableDataChanged();
+			} else {
+				getStartPoint(rowIndex).setTime((Date) aValue);
+			}
 
-				break;
-			case 1:
-				if (addRowEnabled && rowIndex == getRowCount() - 1) {
-					queue.add(new StartPoint((Date) getValueAt(rowIndex, 0), (String) aValue));
-					addRowEnabled = false;
-					fireTableDataChanged();
-				}
-				else {
-					getStartPoint(rowIndex).setEvent((String) aValue);
-				}
-				break;
-			default:
-				return;
+			break;
+		case 1:
+			if (addRowEnabled && rowIndex == getRowCount() - 1) {
+				queue.add(new StartPoint((Date) getValueAt(rowIndex, 0),
+						(String) aValue));
+				addRowEnabled = false;
+				fireTableDataChanged();
+			} else {
+				getStartPoint(rowIndex).setEvent((String) aValue);
+			}
+			break;
+		default:
+			return;
 		}
 	}
 
-	private Context.StartPoint getStartPoint(int index) {
-		Iterator<Context.StartPoint> ite = queue.iterator();
-		Context.StartPoint cur = null;
+	private StartPoint getStartPoint(int index) {
+		Iterator<StartPoint> ite = queue.iterator();
+		StartPoint cur = null;
 		for (int i = 0; ite.hasNext() && i <= index; i++) {
 			cur = ite.next();
 		}

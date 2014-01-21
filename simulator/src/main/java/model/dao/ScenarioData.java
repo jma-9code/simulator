@@ -4,6 +4,7 @@ import java.io.Serializable;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Queue;
 
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
@@ -14,8 +15,10 @@ import javax.xml.bind.annotation.XmlIDREF;
 import javax.xml.bind.annotation.XmlRootElement;
 
 import model.component.Component;
+import model.component.IOutput;
 import model.mediator.Mediator;
 import simulator.Context;
+import simulator.StartPoint;
 
 /**
  * Classe conteneur permettant de stocker l'ensemble des donnees constituants un
@@ -39,6 +42,13 @@ public class ScenarioData implements Serializable {
 	@XmlElement
 	@XmlElementWrapper
 	private List<Mediator> mediators = null;
+
+	@XmlElement
+	@XmlElementWrapper
+	private Queue<StartPoint> startPoints = null;
+
+	private Map<String, List<IOutput>> events = null;
+
 	/**
 	 * Permet de faire le lien entre un composant et sa strategie Key=uuid
 	 * component value=related strategy
@@ -49,11 +59,15 @@ public class ScenarioData implements Serializable {
 
 	}
 
-	public ScenarioData(String _name, List<Component> _components, List<Mediator> _mediators) {
+	public ScenarioData(String _name, List<Component> _components, List<Mediator> _mediators,
+			Queue<StartPoint> _startPoints, Map<String, List<IOutput>> _events) {
 		setName(_name);
 		components = _components;
 		mediators = _mediators;
 		link_strat_component = computelinks(components);
+		startPoints = _startPoints;
+		events = _events;
+
 	}
 
 	public ScenarioData(String _name, Context ctx) {
@@ -61,6 +75,8 @@ public class ScenarioData implements Serializable {
 		components = ctx.getComponents();
 		mediators = ctx.getMediators();
 		link_strat_component = computelinks(components);
+		startPoints = ctx.getStartPoints();
+		events = ctx.getEvents();
 	}
 
 	public String getName() {
@@ -146,5 +162,13 @@ public class ScenarioData implements Serializable {
 		else if (!name.equals(other.name))
 			return false;
 		return true;
+	}
+
+	public Queue<StartPoint> getStartPoints() {
+		return startPoints;
+	}
+
+	public void setStartPoints(Queue<StartPoint> startPoints) {
+		this.startPoints = startPoints;
 	}
 }

@@ -33,4 +33,8 @@ public class DataResponse implements IResponse {
 		return new DataResponse(mediator, data);
 	}
 
+	public static DataResponse build(Mediator mediator, byte[] data) {
+		return new DataResponse(mediator, new String(data));
+	}
+
 }

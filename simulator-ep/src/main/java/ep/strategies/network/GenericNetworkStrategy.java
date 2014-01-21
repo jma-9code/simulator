@@ -78,7 +78,8 @@ public class GenericNetworkStrategy implements IStrategy<ComponentIO> {
 							// model, the mediator represents the support, then
 							// it also contains this identifiant.
 							Context ctx = Context.getInstance();
-							Mediator mediatorToIssuer = ctx.getFirstMediator(_this, "IAM", MKEY_ISSUER_ID, issuerId);
+							Mediator mediatorToIssuer = ctx.getFirstMediator(_this, "Issuer Authorization Module",
+									MKEY_ISSUER_ID, issuerId);
 
 							if (mediatorToIssuer != null) {
 								// The server response check is not implemented

@@ -58,19 +58,19 @@ public class GenericNetworkUnitTest {
 		Context.getInstance().autoRegistrationMode();
 
 		// mock strategy to launch the test
-		testLauncher = new ComponentIO("AAM");
+		testLauncher = new ComponentIO("Test Launcher");
 
-		eRSBNetwork = new ComponentIO("e-RSB Network");
+		eRSBNetwork = new ComponentIO("Network");
 		eRSBNetwork.setStrategy(new GenericNetworkStrategy());
 		eRSBNetwork.getProperties().put(GenericNetworkStrategy.CKEY_NAME, "e-RSB");
 
-		iam1 = new ComponentIO("IAM");
+		iam1 = new ComponentIO("Issuer Authorization Module");
 		// no strategy
 
-		iam2 = new ComponentIO("IAM");
+		iam2 = new ComponentIO("Issuer Authorization Module");
 		// no strategy
 
-		iam3 = new ComponentIO("IAM");
+		iam3 = new ComponentIO("Issuer Authorization Module");
 		// no strategy
 
 		m_test_ersb = MediatorFactory.getInstance().getMediator(testLauncher, eRSBNetwork, EMediator.HALFDUPLEX);
@@ -108,7 +108,7 @@ public class GenericNetworkUnitTest {
 
 				// send to network
 				try {
-					Mediator m = Context.getInstance().getFirstMediator(_this, "e-RSB Network");
+					Mediator m = Context.getInstance().getFirstMediator(_this, "Network");
 					DataResponse res = (DataResponse) m.send(_this, new String(authorizationRequest.pack()));
 
 					// update bean
@@ -175,7 +175,7 @@ public class GenericNetworkUnitTest {
 
 				// send to network
 				try {
-					Mediator m = Context.getInstance().getFirstMediator(_this, "e-RSB Network");
+					Mediator m = Context.getInstance().getFirstMediator(_this, "Network");
 					DataResponse res = (DataResponse) m.send(_this, new String(authorizationRequest.pack()));
 
 					// update bean
@@ -323,7 +323,7 @@ public class GenericNetworkUnitTest {
 
 				// send to network
 				try {
-					Mediator m = Context.getInstance().getFirstMediator(_this, "e-RSB Network");
+					Mediator m = Context.getInstance().getFirstMediator(_this, "Network");
 					DataResponse res = (DataResponse) m.send(_this, new String(authorizationRequest.pack()));
 
 					// update bean

@@ -1,24 +1,60 @@
 package ep.strategies.fo;
 
-import model.component.ComponentIO;
+import java.net.URISyntaxException;
+import java.nio.file.Paths;
+import java.util.Calendar;
+import java.util.Date;
 
+import model.component.ComponentIO;
+import model.component.IOutput;
+import model.factory.MediatorFactory;
+import model.factory.MediatorFactory.EMediator;
+import model.mediator.Mediator;
+import model.response.DataResponse;
+import model.response.IResponse;
+import model.strategies.IStrategy;
+
+import org.jpos.iso.ISOException;
+import org.jpos.iso.ISOMsg;
+import org.jpos.iso.packager.GenericPackager;
 import org.junit.After;
+import org.junit.Assert;
 import org.junit.Before;
+import org.junit.Test;
+
+import ep.strategies.ept.EPTStrategy;
+import ep.strategies.fo.acquirer.FOAcquirerAuthorizationStrategy;
+import ep.strategies.fo.acquirer.FOAcquirerStrategy;
+import ep.strategies.fo.issuer.FOIssuerAuthorizationStrategy;
+import ep.strategies.fo.issuer.FOIssuerStrategy;
 
 import simulator.Context;
+import simulator.SimulatorFactory;
+import simulator.exception.SimulatorException;
+import utils.ISO7816Tools;
+import utils.ISO8583Tools;
 
 public class FOUnitTest {
 
+	private static ComponentIO ept;
+	private static Mediator m_ept_fo;
+	private static Mediator m_fo_foIssuer;
+	private static Mediator m_fo_foAcquirer;
+	private static Mediator m_foIssuer_FoIssuerAuthorization;
+	private static Mediator m_foAcquirer_FoAcquirerAuthorization;
+	private static Mediator m_foAcquirerAuthorization_foIssuerAuthorization;
+	MediatorFactory factory = MediatorFactory.getInstance();
+	
 	private static ComponentIO frontOffice;
 
 	/* Les trois grandes fonctions d'un FO */
 	private static ComponentIO issuer;
 	private static ComponentIO acceptor;
-	private static ComponentIO purchaser;
+	private static ComponentIO acquirer;
 
 	/* Différents modules de la fonction émetteur */
 
-	private static ComponentIO authorization;
+	private static ComponentIO issuerAuthorization;
 	private static ComponentIO controlesSecurite;
 	private static ComponentIO controlesCarte;
 	private static ComponentIO traitementsAutorisation;
@@ -54,6 +90,8 @@ public class FOUnitTest {
 
 	/* Différents modules de la fonction acquéreur */
 
+	private static ComponentIO acquirerAuthorization;
+	
 	private static ComponentIO GABHandler;
 
 	private static ComponentIO retrait;
@@ -69,7 +107,7 @@ public class FOUnitTest {
 	private static ComponentIO telecollection;
 	private static ComponentIO gestionCBPRCB2A;
 
-	private static ComponentIO paymentPurchaser;
+	private static ComponentIO paymentAcquirer;
 
 	private static ComponentIO paiementDeProximite;
 	private static ComponentIO preAutorisation;
@@ -90,39 +128,37 @@ public class FOUnitTest {
 
 		issuer = new ComponentIO("Issuer");
 		acceptor = new ComponentIO("Acceptor");
-		purchaser = new ComponentIO("Purchaser");
+		acquirer = new ComponentIO("Acquirer");
 
 		/* Ajout des trois grandes fonctions du front Office */
-		frontOffice.getChilds().add(1, issuer);
-		frontOffice.getChilds().add(2, acceptor);
-		frontOffice.getChilds().add(3, purchaser);
+		frontOffice.getChilds().add(issuer);
+		frontOffice.getChilds().add(acceptor);
+		frontOffice.getChilds().add(acquirer);
 
 		/* Ajout des modules émetteur */
-		authorization = new ComponentIO("Authorization");
+		issuerAuthorization = new ComponentIO("IssuerAuthorization");
 		gestionDeLaFraude = new ComponentIO("GestionDeLaFraude");
-		frontOffice.getChild("Issuer", ComponentIO.class).getChilds().add(1, authorization);
-		frontOffice.getChild("Issuer", ComponentIO.class).getChilds().add(2, gestionDeLaFraude);
+		issuer.getChilds().add(issuerAuthorization);
+		issuer.getChilds().add(gestionDeLaFraude);
 
 		/* Ajout des composants du module Autorisation */
 		controlesCarte = new ComponentIO("controlesCarte");
 		traitementsAutorisation = new ComponentIO("traitemntsAutorisation");
-		frontOffice.getChild("Issuer", ComponentIO.class).getChild("Authorization", ComponentIO.class).getChilds().add(1, controlesCarte);
-		frontOffice.getChild("Issuer", ComponentIO.class).getChild("Authorization", ComponentIO.class).getChilds().add(2, traitementsAutorisation);
+		issuerAuthorization.getChilds().add(controlesCarte);
+		issuerAuthorization.getChilds().add(traitementsAutorisation);
 
 		gestionDroitsCarte = new ComponentIO("gestionDroitsCarte");
 		gestionSoldeCompte = new ComponentIO("gestionSoldeCompte");
-		frontOffice.getChilds().get(1).getChilds().get(1).getChilds().get(2).getChilds()
-				.add(1, gestionDroitsCarte);
-		frontOffice.getChilds().get(1).getChilds().get(1).getChilds().get(2).getChilds()
-				.add(2, gestionSoldeCompte);
+		traitementsAutorisation.getChilds().add(gestionDroitsCarte);
+		traitementsAutorisation.getChilds().add(gestionSoldeCompte);
 
 		/* Ajout des modules accepteur */
 		systemeEncaissement = new ComponentIO("systemeEncaissement");
 		concentrateurMonetique = new ComponentIO("concentrateurMonetique");
 		telePaiement = new ComponentIO("telePaiement");
-		frontOffice.getChilds().get(2).getChilds().add(1, systemeEncaissement);
-		frontOffice.getChilds().get(2).getChilds().add(2, concentrateurMonetique);
-		frontOffice.getChilds().get(2).getChilds().add(3, telePaiement);
+		acceptor.getChilds().add(systemeEncaissement);
+		acceptor.getChilds().add(concentrateurMonetique);
+		acceptor.getChilds().add(telePaiement);
 
 		/* Ajout des composants du module systemeEncaissement */
 		gestionEncaissementsMultiples = new ComponentIO("gestionEncaissementsMultiples");
@@ -130,61 +166,55 @@ public class FOUnitTest {
 		gestionTickets = new ComponentIO("gestionTickets");
 		gestionPeripheriques = new ComponentIO("gestionPeripheriques");
 		editionDeFactures = new ComponentIO("editionDeFactures");
-		frontOffice.getChilds().get(2).getChilds().get(1).getChilds().add(1, gestionEncaissementsMultiples);
-		frontOffice.getChilds().get(2).getChilds().get(1).getChilds().add(2, gestionRolesDeCaisse);
-		frontOffice.getChilds().get(2).getChilds().get(1).getChilds().add(3, gestionTickets);
-		frontOffice.getChilds().get(2).getChilds().get(1).getChilds().add(4, gestionPeripheriques);
-		frontOffice.getChilds().get(2).getChilds().get(1).getChilds().add(5, editionDeFactures);
+		systemeEncaissement.getChilds().add(gestionEncaissementsMultiples);
+		systemeEncaissement.getChilds().add(gestionRolesDeCaisse);
+		systemeEncaissement.getChilds().add(gestionTickets);
+		systemeEncaissement.getChilds().add(gestionPeripheriques);
+		systemeEncaissement.getChilds().add(editionDeFactures);
 
 		/* Ajout des composants du module concentrateur Monétique */
 		gestionLigneDeCaisse = new ComponentIO("gestionLigneDeCaisse");
 		gestionTerminauxDePaiementGrappes = new ComponentIO("gestionTerminauxDePaiementGrappes");
-		frontOffice.getChilds().get(2).getChilds().get(2).getChilds().add(1, gestionLigneDeCaisse);
-		frontOffice.getChilds().get(2).getChilds().get(2).getChilds()
-				.add(2, gestionTerminauxDePaiementGrappes);
+		gestionRolesDeCaisse.getChilds().add(gestionLigneDeCaisse);
+		gestionRolesDeCaisse.getChilds().add(gestionTerminauxDePaiementGrappes);
 
 		/* Ajout des composants du module télépaiement */
 		passerelleTelepaiement = new ComponentIO("passerelleTelepaiement");
 		gestionnaireTelepaiement = new ComponentIO("gestionnaireTelepaiement");
-		frontOffice.getChilds().get(2).getChilds().get(3).getChilds().add(1, passerelleTelepaiement);
-		frontOffice.getChilds().get(2).getChilds().get(3).getChilds().add(2, gestionnaireTelepaiement);
+		telePaiement.getChilds().add(passerelleTelepaiement);
+		telePaiement.getChilds().add(gestionnaireTelepaiement);
 
 		acceptationPaiementPubliphone = new ComponentIO("acceptationPaiementPubliphone");
 		acceptationPaiementParInternet = new ComponentIO("acceptationPaiementParInternet");
 		acceptationPaiementParGSM = new ComponentIO("acceptationPaiementParGSM");
-		frontOffice.getChilds().get(2).getChilds().get(3).getChilds().get(1).getChilds()
-				.add(1, acceptationPaiementPubliphone);
-		frontOffice.getChilds().get(2).getChilds().get(3).getChilds().get(1).getChilds()
-				.add(2, acceptationPaiementParInternet);
-		frontOffice.getChilds().get(2).getChilds().get(3).getChilds().get(1).getChilds()
-				.add(3, acceptationPaiementParGSM);
+		passerelleTelepaiement.getChilds().add(acceptationPaiementPubliphone);
+		passerelleTelepaiement.getChilds().add(acceptationPaiementParInternet);
+		passerelleTelepaiement.getChilds().add(acceptationPaiementParGSM);
 
 		delivrancePaiement = new ComponentIO("delivrancePaiement");
 		gestionDesRemises = new ComponentIO("gestionDesRemises");
 		gestionDonneesFonctionnement = new ComponentIO("gestionDonneesFonctionnement");
-		frontOffice.getChilds().get(2).getChilds().get(3).getChilds().get(2).getChilds()
-				.add(1, delivrancePaiement);
-		frontOffice.getChilds().get(2).getChilds().get(3).getChilds().get(2).getChilds()
-				.add(1, gestionDesRemises);
-		frontOffice.getChilds().get(2).getChilds().get(3).getChilds().get(2).getChilds()
-				.add(1, gestionDonneesFonctionnement);
+		gestionnaireTelepaiement.getChilds().add(delivrancePaiement);
+		gestionnaireTelepaiement.getChilds().add(gestionDesRemises);
+		gestionnaireTelepaiement.getChilds().add(gestionDonneesFonctionnement);
 
 		/* Ajout des modules acquéreur */
-
+		acquirerAuthorization = new ComponentIO("AcquirerAuthorization");
 		GABHandler = new ComponentIO("GABHandler");
 		telecollection = new ComponentIO("telecollection");
-		paymentPurchaser = new ComponentIO("paymentPurchaser");
+		paymentAcquirer = new ComponentIO("paymentAcquirer");
 		compensationSingleMessage = new ComponentIO("compensationSingleMessage");
-		frontOffice.getChilds().get(3).getChilds().add(1, GABHandler);
-		frontOffice.getChilds().get(3).getChilds().add(2, telecollection);
-		frontOffice.getChilds().get(3).getChilds().add(3, paymentPurchaser);
-		frontOffice.getChilds().get(3).getChilds().add(4, compensationSingleMessage);
+		acquirer.getChilds().add(acquirerAuthorization);
+		acquirer.getChilds().add(GABHandler);
+		acquirer.getChilds().add(telecollection);
+		acquirer.getChilds().add(paymentAcquirer);
+		acquirer.getChilds().add(compensationSingleMessage);
 
 		/* Ajout des composants du module GABHandler" */
 		retrait = new ComponentIO("retrait");
 		libreServiceBancaire = new ComponentIO("libreServiceBancaire");
-		frontOffice.getChilds().get(3).getChilds().get(1).getChilds().add(1, retrait);
-		frontOffice.getChilds().get(3).getChilds().get(1).getChilds().add(2, libreServiceBancaire);
+		GABHandler.getChilds().add(retrait);
+		GABHandler.getChilds().add(libreServiceBancaire);
 
 		retraitAutoCompte = new ComponentIO("retraitAutoCompte");
 		depot = new ComponentIO("depot");
@@ -193,25 +223,19 @@ public class FOUnitTest {
 		demandeDeRIB = new ComponentIO("demandeDeRIB");
 		demandeDeSolde = new ComponentIO("demandeDeSolde");
 		historiqueOperations = new ComponentIO("historiqueOperations");
-		frontOffice.getChilds().get(3).getChilds().get(1).getChilds().get(2).getChilds()
-				.add(1, retraitAutoCompte);
-		frontOffice.getChilds().get(3).getChilds().get(1).getChilds().get(2).getChilds().add(2, depot);
-		frontOffice.getChilds().get(3).getChilds().get(1).getChilds().get(2).getChilds()
-				.add(3, virement);
-		frontOffice.getChilds().get(3).getChilds().get(1).getChilds().get(2).getChilds()
-				.add(4, commandeDeChequier);
-		frontOffice.getChilds().get(3).getChilds().get(1).getChilds().get(2).getChilds()
-				.add(5, demandeDeRIB);
-		frontOffice.getChilds().get(3).getChilds().get(1).getChilds().get(2).getChilds()
-				.add(6, demandeDeSolde);
-		frontOffice.getChilds().get(3).getChilds().get(1).getChilds().get(2).getChilds()
-				.add(7, historiqueOperations);
+		libreServiceBancaire.getChilds().add(retraitAutoCompte);
+		libreServiceBancaire.getChilds().add(depot);
+		libreServiceBancaire.getChilds().add(virement);
+		libreServiceBancaire.getChilds().add(commandeDeChequier);
+		libreServiceBancaire.getChilds().add(demandeDeRIB);
+		libreServiceBancaire.getChilds().add(demandeDeSolde);
+		libreServiceBancaire.getChilds().add(historiqueOperations);
 
 		/* Ajout des composants du module telecollection */
 		gestionCBPRCB2A = new ComponentIO("gestionCBPRCB2A");
-		frontOffice.getChilds().get(3).getChilds().get(2).getChilds().add(1, gestionCBPRCB2A);
+		telecollection.getChilds().add(gestionCBPRCB2A);
 
-		/* Ajout des composants du module paymentPurchaser */
+		/* Ajout des composants du module paymentAcquirer */
 		paiementDeProximite = new ComponentIO("paiementDeProximite");
 		preAutorisation = new ComponentIO("preAutorisation");
 		venteADistance = new ComponentIO("venteADistance");
@@ -220,20 +244,111 @@ public class FOUnitTest {
 		paiementTelevise = new ComponentIO("paiementTelevise");
 		quasiCash = new ComponentIO("quasiCash");
 		cashAdvance = new ComponentIO("cashAdvance");
-		frontOffice.getChilds().get(3).getChilds().get(3).getChilds().add(1, paiementDeProximite);
-		frontOffice.getChilds().get(3).getChilds().get(3).getChilds().add(2, preAutorisation);
-		frontOffice.getChilds().get(3).getChilds().get(3).getChilds().add(3, venteADistance);
-		frontOffice.getChilds().get(3).getChilds().get(3).getChilds().add(4, telePaiementGSM);
-		frontOffice.getChilds().get(3).getChilds().get(3).getChilds().add(5, paiementVocal);
-		frontOffice.getChilds().get(3).getChilds().get(3).getChilds().add(6, paiementTelevise);
-		frontOffice.getChilds().get(3).getChilds().get(3).getChilds().add(7, quasiCash);
-		frontOffice.getChilds().get(3).getChilds().get(3).getChilds().add(8, cashAdvance);
+		paymentAcquirer.getChilds().add(paiementDeProximite);
+		paymentAcquirer.getChilds().add(preAutorisation);
+		paymentAcquirer.getChilds().add(venteADistance);
+		paymentAcquirer.getChilds().add(telePaiementGSM);
+		paymentAcquirer.getChilds().add(paiementVocal);
+		paymentAcquirer.getChilds().add(paiementTelevise);
+		paymentAcquirer.getChilds().add(quasiCash);
+		paymentAcquirer.getChilds().add(cashAdvance);
+		
+		frontOffice.setStrategy(new FOStrategy());
+		acquirer.setStrategy(new FOAcquirerStrategy());
+		acquirerAuthorization.setStrategy(new FOAcquirerAuthorizationStrategy());
+		issuer.setStrategy(new FOIssuerStrategy());
+		issuerAuthorization.setStrategy(new FOIssuerAuthorizationStrategy());
+		
+		ept = new ComponentIO("Electronic Payment Terminal");
+		
+		
+		m_ept_fo = MediatorFactory.getInstance().getMediator(frontOffice, ept, EMediator.HALFDUPLEX);
+		m_fo_foIssuer = MediatorFactory.getInstance().getMediator(frontOffice, issuer, EMediator.HALFDUPLEX);
+		m_fo_foAcquirer = MediatorFactory.getInstance().getMediator(frontOffice, acquirer, EMediator.HALFDUPLEX);
+		m_foIssuer_FoIssuerAuthorization = MediatorFactory.getInstance().getMediator(issuer, issuerAuthorization, EMediator.HALFDUPLEX);
+		m_foAcquirer_FoAcquirerAuthorization = MediatorFactory.getInstance().getMediator(acquirer, acquirerAuthorization, EMediator.HALFDUPLEX);
+		m_foAcquirerAuthorization_foIssuerAuthorization = MediatorFactory.getInstance().getMediator(acquirerAuthorization, issuerAuthorization, EMediator.HALFDUPLEX);
+		
+		ept.setStrategy(new IStrategy<ComponentIO>() {
 
+			private static final long serialVersionUID = 2626955719622250036L;
+
+			@Override
+			public IResponse processMessage(ComponentIO _this, Mediator mediator, String data) {
+				// TODO Auto-generated method stub
+				return null;
+			}
+			
+			@Override
+			public void processEvent(ComponentIO _this, String event) {
+				// TODO Auto-generated method stub
+				System.out.println("evennnnnnnnnnnnnnnnnnnnnnnt !!!!");
+				ISOMsg authorizationRequest = new ISOMsg();
+				try {
+					authorizationRequest.setPackager(ISO8583Tools.getPackager());
+					authorizationRequest.setMTI("0100");
+					authorizationRequest.set(2, "0123456789123456"); // PAN
+					authorizationRequest.set(3, "000101"); // Type of Auth + accounts
+					authorizationRequest.set(4, "100"); // 100€
+					authorizationRequest.set(7, ISO7816Tools.writeDATETIME(Calendar.getInstance().getTime())); // date : MMDDhhmmss
+					authorizationRequest.set(11, "000001"); // System Trace Audit Number
+					authorizationRequest.set(38, "123456"); // Approval Code
+					authorizationRequest.set(42, "623598"); // Acceptor's ID
+					authorizationRequest.set(123, ISO7816Tools.FIELD_POSID); // POS Data Code
+				}
+				catch (ISOException e) {
+					e.printStackTrace();
+				}
+				
+				ISOMsg authorizationAnswer = null;
+				try {
+					authorizationAnswer = new ISOMsg();
+					authorizationAnswer.setPackager(ISO8583Tools.getPackager());
+					authorizationAnswer.unpack(
+							((DataResponse)m_ept_fo.send
+									(_this, new String(authorizationRequest.pack()))
+							).getData().getBytes());
+					Assert.assertTrue(authorizationAnswer.getValue(39).equals("00"));
+				}
+				catch (ISOException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+				
+				
+			}
+			
+			@Override
+			public void init(IOutput _this, Context ctx) {
+				// TODO Auto-generated method stub
+				ctx.subscribeEvent(_this, "AUTHORIZATION_CALL");
+			}
+		});
+		
+		
 	}
 
 	@After
 	public void clean() throws Exception {
 		Context.getInstance().reset();
+	}
+	
+	@Test
+	public void testAppelAutorisation () {
+		// on insert la carte dans le tpe, le tpe envoie des donnees a la carte
+		Context.getInstance().addStartPoint(new Date(), "AUTHORIZATION_CALL");
+		// execute simulation.
+				try {
+					SimulatorFactory.getSimulator().start();
+				}
+				catch (SimulatorException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+					Assert.assertFalse(true);
+				}		
+		
+		
+		
 	}
 
 }

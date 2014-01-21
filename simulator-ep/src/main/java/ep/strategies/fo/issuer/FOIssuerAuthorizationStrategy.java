@@ -17,6 +17,7 @@ import org.slf4j.LoggerFactory;
 import ep.strategies.fo.FOStrategy;
 
 import simulator.Context;
+import utils.ISO8583Tools;
 
 public class FOIssuerAuthorizationStrategy implements IStrategy<ComponentIO> {
 
@@ -29,7 +30,7 @@ public class FOIssuerAuthorizationStrategy implements IStrategy<ComponentIO> {
 	@Override
 	public IResponse processMessage(ComponentIO frontOfficeIssuer, Mediator m, String data) {
 		ISOMsg authorizationAnswer = new ISOMsg();
-		
+		authorizationAnswer.setPackager(ISO8583Tools.getPackager());
 		try {
 			authorizationAnswer.unpack(data.getBytes());
 			authorizationAnswer.setMTI("0110");
@@ -41,9 +42,10 @@ public class FOIssuerAuthorizationStrategy implements IStrategy<ComponentIO> {
 		}
 		
 		try {
-			return DataResponse.build(m, new String(authorizationAnswer.getBytes()));
+			return DataResponse.build(m, new String(authorizationAnswer.pack()));
 		}
 		catch (ISOException e) {
+			e.printStackTrace();
 			return VoidResponse.build();
 		} 
 	}

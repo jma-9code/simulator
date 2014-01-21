@@ -67,7 +67,8 @@ public class XmlDaoTest {
 	public void test_componentXml() {
 		DAO<Component> dao = DAOFactory.getFactory().getComponentDAO();
 		dao.create(card);
-		Assert.assertEquals(card.hashCode(), dao.find(card.getUuid()).hashCode());
+		Component c = dao.find(card.getUuid());
+		Assert.assertEquals(card.getName(), c.getName());
 
 		String path = Config.getProps().getProperty("config.xml.path.library.model");
 		// a commenter, si on veut voir le xml obtenu (library/model/name_uid)
@@ -80,7 +81,7 @@ public class XmlDaoTest {
 		DAO<ScenarioData> dao = DAOFactory.getFactory().getScenarioDataDAO();
 		ScenarioData data = new ScenarioData("test", ctx);
 		dao.create(data);
-		Assert.assertEquals(data, dao.find(data.getName()));
+		Assert.assertEquals(data.getName(), dao.find(data.getName()).getName());
 		String path = Config.getProps().getProperty("config.xml.path.library.scenario");
 		// a commenter, si on veut voir le xml obtenu (library/model/name_uid)
 		/*

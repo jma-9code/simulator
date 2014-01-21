@@ -34,33 +34,26 @@ public class EPTChipsetStrategy implements IStrategy<ComponentIO> {
 	public void init(IOutput _this, Context ctx) {
 		ctx.subscribeEvent(_this, "SMART_CARD_INSERTED");
 	}
-
-	public ISOMsg generateAuthorizationRequest(ComponentIO _this, Map<String, String> parsedData) {
+	
+	public ISOMsg generateAuthorizationRequest (ComponentIO _this, Map<String, String> parsedData) {
 		ISOMsg authorizationRequest = new ISOMsg();
 		GenericPackager packager;
 		try {
-			packager = new GenericPackager(EPTChipsetStrategy.class.getResourceAsStream("8583.xml"));
+			packager = new GenericPackager("resources/8583.xml");
 			authorizationRequest.setPackager(packager);
 			authorizationRequest.setMTI("0100");
 			authorizationRequest.set(2, parsedData.get(ISO7816Tools.FIELD_PAN)); // PAN
 			authorizationRequest.set(3, "000101"); // Type of Auth + accounts
 			authorizationRequest.set(4, parsedData.get(ISO7816Tools.FIELD_AMOUNT)); // 100€
-			authorizationRequest.set(7, ISO7816Tools.writeDATETIME(Calendar.getInstance().getTime())); // date
-																										// :
-																										// MMDDhhmmss
-			authorizationRequest.set(11, generateNextSTAN(_this, parsedData.get(ISO7816Tools.FIELD_STAN))); // System
-																											// Trace
-																											// Audit
-																											// Number
-			authorizationRequest.set(38, ISO7816Tools.FIELD_APPROVALCODE); // Approval
-																			// Code
+			authorizationRequest.set(7, ISO7816Tools.writeDATETIME(Calendar.getInstance().getTime())); // date : MMDDhhmmss
+			authorizationRequest.set(11, generateNextSTAN(_this, parsedData.get(ISO7816Tools.FIELD_STAN))); // System Trace Audit Number
+			authorizationRequest.set(38, parsedData.get(ISO7816Tools.FIELD_APPROVALCODE)); // Approval Code
 			authorizationRequest.set(42, "623598"); // Acceptor's ID
-			authorizationRequest.set(123, ISO7816Tools.FIELD_POSID); // POS Data
-																		// Code
+			authorizationRequest.set(123, parsedData.get(ISO7816Tools.FIELD_POSID)); // POS Data Code
 		}
 		catch (ISOException e) {
 			e.printStackTrace();
-		}
+		}	
 		return authorizationRequest;
 	}
 
@@ -90,25 +83,28 @@ public class EPTChipsetStrategy implements IStrategy<ComponentIO> {
 					ISOMsg authorizationAnswer = null;
 					try {
 						authorizationAnswer = new ISOMsg();
-						authorizationAnswer.unpack(((DataResponse) mediateurFrontOffice.send(_this, new String(
-								generateAuthorizationRequest(_this, parsedData).pack()))).getData().getBytes());
+						authorizationAnswer.unpack(
+								((DataResponse)mediateurFrontOffice.send
+										(_this, new String(generateAuthorizationRequest(_this, parsedData).pack()))
+								).getData().getBytes());
 					}
 					catch (ISOException e) {
 						// TODO Auto-generated catch block
 						e.printStackTrace();
 					}
-
+					
 					try {
 						if (authorizationAnswer.getValue(39) != "00") {
 							log.error("Authorization rejected by the bank");
-							return;
+							return ;
 						}
 					}
 					catch (ISOException e) {
 						// TODO Auto-generated catch block
 						e.printStackTrace();
 					}
-
+					
+					
 					// ...
 					Map<String, String> rpfromBank = new CaseInsensitiveMap();
 					rpfromBank.put("approvalcode", "07B56=");

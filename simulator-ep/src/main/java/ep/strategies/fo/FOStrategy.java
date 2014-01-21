@@ -17,6 +17,7 @@ import org.slf4j.LoggerFactory;
 import simulator.Context;
 import tools.ISO7816;
 import utils.ISO7816Tools;
+import utils.ISO8583Tools;
 
 public class FOStrategy implements IStrategy<ComponentIO> {
 
@@ -28,8 +29,8 @@ public class FOStrategy implements IStrategy<ComponentIO> {
 
 	@Override
 	public IResponse processMessage(ComponentIO frontOffice, Mediator m, String data) {
-		
 		ISOMsg message8583 = new ISOMsg();
+		message8583.setPackager(ISO8583Tools.getPackager());
 		ComponentIO composantCible = null;
 		Mediator mediateurAUtiliser;
 		// faire le lien avec le message8583
@@ -39,7 +40,7 @@ public class FOStrategy implements IStrategy<ComponentIO> {
 			message8583.unpack(data.getBytes());
 			switch (message8583.getMTI()) {
 				case "0100": 
-					composantCible = frontOffice.getChild("Purchaser", ComponentIO.class);	
+					composantCible = frontOffice.getChild("Acquirer", ComponentIO.class);	
 					break;
 					
 					default:

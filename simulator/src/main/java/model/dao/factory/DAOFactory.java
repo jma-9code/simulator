@@ -14,7 +14,7 @@ public abstract class DAOFactory {
 	 * double-checked locking !
 	 */
 	private static class DAOFactoryHolder {
-		public static DAOFactory factory = new VolatileDAOFactory();
+		public static DAOFactory factory = new XmlDAOFactory();
 	}
 
 	public abstract DAO<Component> getComponentDAO();

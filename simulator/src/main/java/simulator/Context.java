@@ -1,9 +1,7 @@
 package simulator;
 
 import java.util.ArrayList;
-import java.util.Calendar;
 import java.util.Collection;
-import java.util.Comparator;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -23,6 +21,7 @@ import model.mediator.ReverseHalfDuplexMediator;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import simulator.StartPoint.StartPointComparator;
 import simulator.exception.ContextException;
 
 /**
@@ -445,48 +444,6 @@ public class Context {
 		return ContextHolder.instance;
 	}
 
-	// POJO StartPoint
-	public final static class StartPoint {
-
-		protected Date time;
-		protected String event;
-
-		public StartPoint() {
-		}
-
-		public StartPoint(Date time, String event) {
-			super();
-			this.time = time != null ? time : Calendar.getInstance().getTime();
-			this.event = event;
-		}
-
-		public Date getTime() {
-			return time;
-		}
-
-		public String getEvent() {
-			return event;
-		}
-
-		public void setEvent(String event) {
-			this.event = event;
-		}
-
-		public void setTime(Date time) {
-			this.time = time;
-		}
-
-	}
-
-	public final class StartPointComparator implements Comparator<StartPoint> {
-
-		@Override
-		public int compare(StartPoint o1, StartPoint o2) {
-			return o1.time != null ? o1.time.compareTo(o2.time) : -1;
-		}
-
-	}
-
 	public List<Component> getComponents() {
 		return new ArrayList<Component>(components.values());
 	}
@@ -501,6 +458,14 @@ public class Context {
 
 	public void setMediators(List<Mediator> mediators) {
 		this.mediators = mediators;
+	}
+
+	public Map<String, List<IOutput>> getEvents() {
+		return events;
+	}
+
+	public void setEvents(Map<String, List<IOutput>> events) {
+		this.events = events;
 	}
 
 }

@@ -4,6 +4,7 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.StringTokenizer;
 import java.util.UUID;
 
 import javax.xml.bind.annotation.XmlAccessType;
@@ -33,6 +34,9 @@ public abstract class Component implements Serializable {
 	@XmlAttribute
 	@XmlID
 	protected String uuid;
+
+	@XmlTransient
+	private String acronym;
 
 	protected String name;
 
@@ -104,6 +108,19 @@ public abstract class Component implements Serializable {
 
 	public void setName(String name) {
 		this.name = name;
+	}
+
+	@XmlTransient
+	public String getAcronym() {
+		if (acronym == null) {
+			StringTokenizer token = new StringTokenizer(name, " ");
+			StringBuilder build = new StringBuilder(4);
+			while (token.hasMoreTokens()) {
+				build.append(token.nextToken().substring(0, 1).toUpperCase());
+			}
+			acronym = build.toString();
+		}
+		return acronym;
 	}
 
 	@XmlTransient
@@ -190,7 +207,7 @@ public abstract class Component implements Serializable {
 	public String getUuid() {
 		return uuid;
 	}
-	
+
 	/**
 	 * Instancie le composant
 	 */

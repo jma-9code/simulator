@@ -5,15 +5,6 @@ import java.nio.file.Paths;
 import java.util.Calendar;
 import java.util.Date;
 
-import model.component.ComponentIO;
-import model.component.IOutput;
-import model.factory.MediatorFactory;
-import model.factory.MediatorFactory.EMediator;
-import model.mediator.Mediator;
-import model.response.DataResponse;
-import model.response.IResponse;
-import model.strategies.IStrategy;
-
 import org.jpos.iso.ISOException;
 import org.jpos.iso.ISOMsg;
 import org.jpos.iso.packager.GenericPackager;
@@ -22,17 +13,25 @@ import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 
-import ep.strategies.ept.EPTStrategy;
-import ep.strategies.fo.acquirer.FOAcquirerAuthorizationStrategy;
-import ep.strategies.fo.acquirer.FOAcquirerStrategy;
-import ep.strategies.fo.issuer.FOIssuerAuthorizationStrategy;
-import ep.strategies.fo.issuer.FOIssuerStrategy;
-
-import simulator.Context;
-import simulator.SimulatorFactory;
-import simulator.exception.SimulatorException;
-import utils.ISO7816Tools;
-import utils.ISO8583Tools;
+import fr.ensicaen.simulator.model.component.ComponentIO;
+import fr.ensicaen.simulator.model.component.IOutput;
+import fr.ensicaen.simulator.model.factory.MediatorFactory;
+import fr.ensicaen.simulator.model.factory.MediatorFactory.EMediator;
+import fr.ensicaen.simulator.model.mediator.Mediator;
+import fr.ensicaen.simulator.model.response.DataResponse;
+import fr.ensicaen.simulator.model.response.IResponse;
+import fr.ensicaen.simulator.model.strategies.IStrategy;
+import fr.ensicaen.simulator.simulator.Context;
+import fr.ensicaen.simulator.simulator.SimulatorFactory;
+import fr.ensicaen.simulator.simulator.exception.SimulatorException;
+import fr.ensicaen.simulator_ep.ep.strategies.ept.EPTStrategy;
+import fr.ensicaen.simulator_ep.ep.strategies.fo.FOStrategy;
+import fr.ensicaen.simulator_ep.ep.strategies.fo.acquirer.FOAcquirerAuthorizationStrategy;
+import fr.ensicaen.simulator_ep.ep.strategies.fo.acquirer.FOAcquirerStrategy;
+import fr.ensicaen.simulator_ep.ep.strategies.fo.issuer.FOIssuerAuthorizationStrategy;
+import fr.ensicaen.simulator_ep.ep.strategies.fo.issuer.FOIssuerStrategy;
+import fr.ensicaen.simulator_ep.utils.ISO7816Tools;
+import fr.ensicaen.simulator_ep.utils.ISO8583Tools;
 
 public class FOUnitTest {
 

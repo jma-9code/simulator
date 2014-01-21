@@ -5,8 +5,8 @@ import java.util.Map;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import utils.ISO7816Exception;
-import utils.ISO7816Tools;
+import fr.ensicaen.simulator_ep.utils.ISO7816Exception;
+import fr.ensicaen.simulator_ep.utils.ISO7816Tools;
 
 public class ISO7816 {
 	private static Logger log = LoggerFactory.getLogger(ISO7816.class);

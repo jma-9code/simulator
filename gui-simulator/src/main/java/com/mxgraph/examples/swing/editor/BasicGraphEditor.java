@@ -1,7 +1,7 @@
 package com.mxgraph.examples.swing.editor;
 
-import gui.panel.ConsolePanel;
-import gui.panel.RightSplitPane;
+import fr.ensicaen.gui_simulator.gui.panel.ConsolePanel;
+import fr.ensicaen.gui_simulator.gui.panel.RightSplitPane;
 
 import java.awt.BorderLayout;
 import java.awt.Graphics;

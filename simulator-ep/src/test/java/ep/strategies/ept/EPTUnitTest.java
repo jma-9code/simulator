@@ -2,16 +2,6 @@ package ep.strategies.ept;
 
 import java.util.Date;
 
-import model.component.ComponentIO;
-import model.component.IOutput;
-import model.factory.MediatorFactory;
-import model.factory.MediatorFactory.EMediator;
-import model.mediator.Mediator;
-import model.response.DataResponse;
-import model.response.IResponse;
-import model.response.VoidResponse;
-import model.strategies.IStrategy;
-
 import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;
@@ -19,12 +9,24 @@ import org.junit.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import simulator.Context;
-import simulator.SimulatorFactory;
-import simulator.exception.SimulatorException;
 import tools.ISO7816;
-import utils.ISO7816Tools;
 import ep.strategies.card.CardTest;
+import fr.ensicaen.simulator.model.component.ComponentIO;
+import fr.ensicaen.simulator.model.component.IOutput;
+import fr.ensicaen.simulator.model.factory.MediatorFactory;
+import fr.ensicaen.simulator.model.factory.MediatorFactory.EMediator;
+import fr.ensicaen.simulator.model.mediator.Mediator;
+import fr.ensicaen.simulator.model.response.DataResponse;
+import fr.ensicaen.simulator.model.response.IResponse;
+import fr.ensicaen.simulator.model.response.VoidResponse;
+import fr.ensicaen.simulator.model.strategies.IStrategy;
+import fr.ensicaen.simulator.simulator.Context;
+import fr.ensicaen.simulator.simulator.SimulatorFactory;
+import fr.ensicaen.simulator.simulator.exception.SimulatorException;
+import fr.ensicaen.simulator_ep.ep.strategies.ept.EPTChipsetStrategy;
+import fr.ensicaen.simulator_ep.ep.strategies.ept.EPTSmartCardReaderStrategy;
+import fr.ensicaen.simulator_ep.ep.strategies.ept.EPTStrategy;
+import fr.ensicaen.simulator_ep.utils.ISO7816Tools;
 
 /**
  * Electronic Payment Terminal (EPT)
@@ -66,7 +68,7 @@ public class EPTUnitTest {
 		frontOffice = new ComponentIO("frontOffice");
 
 		smartCardReader = new ComponentIO("Smart Card Reader");
-		smartCardReader.setStrategy(new EPTSmartCardReader());
+		smartCardReader.setStrategy(new EPTSmartCardReaderStrategy());
 		ept.getChilds().add(smartCardReader);
 		factory.getMediator(ept, smartCardReader, EMediator.HALFDUPLEX);
 

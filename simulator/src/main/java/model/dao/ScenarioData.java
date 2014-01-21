@@ -13,6 +13,7 @@ import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlElementWrapper;
 import javax.xml.bind.annotation.XmlIDREF;
 import javax.xml.bind.annotation.XmlRootElement;
+import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 
 import model.component.Component;
 import model.component.IOutput;
@@ -47,6 +48,7 @@ public class ScenarioData implements Serializable {
 	@XmlElementWrapper
 	private Queue<StartPoint> startPoints = null;
 
+	@XmlJavaTypeAdapter(EventMapAdapter.class)
 	private Map<String, List<IOutput>> events = null;
 
 	/**

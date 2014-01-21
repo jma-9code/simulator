@@ -51,6 +51,7 @@ public class EPTUnitTest {
 	private static ComponentIO printer;
 	private static ComponentIO securePinPad;
 	private static ComponentIO networkInterface;
+	private static ComponentIO frontOffice;
 
 	@Before
 	public void setUp() throws Exception {
@@ -61,6 +62,8 @@ public class EPTUnitTest {
 
 		ept = new ComponentIO("Electronic Payment Terminal");
 		ept.setStrategy(new EPTStrategy());
+
+		frontOffice = new ComponentIO("frontOffice");
 
 		smartCardReader = new ComponentIO("Smart Card Reader");
 		smartCardReader.setStrategy(new EPTSmartCardReader());
@@ -86,6 +89,7 @@ public class EPTUnitTest {
 		ept.getChilds().add(networkInterface);
 
 		// static mediators
+		factory.getMediator(ept, frontOffice, EMediator.HALFDUPLEX);
 		factory.getMediator(smartCardReader, chipset, EMediator.HALFDUPLEX);
 		factory.getMediator(smartCardReader, fakeSmartCard, EMediator.HALFDUPLEX);
 	}

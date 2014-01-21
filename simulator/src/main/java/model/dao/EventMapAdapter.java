@@ -20,7 +20,7 @@ import model.dao.EventMapAdapter.EventMap;
 public final class EventMapAdapter extends XmlAdapter<EventMap, Map<String, List<IOutput>>> {
 
 	public static class EventMap {
-
+		@XmlElement
 		public List<MyMapEntryType> entry = new ArrayList<MyMapEntryType>();
 
 	}

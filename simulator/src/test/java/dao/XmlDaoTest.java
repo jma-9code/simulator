@@ -1,5 +1,7 @@
 package dao;
 
+import java.util.Calendar;
+
 import model.component.Component;
 import model.component.ComponentIO;
 import model.dao.DAO;
@@ -61,6 +63,9 @@ public class XmlDaoTest {
 
 		m_card_chip = MediatorFactory.getInstance().getMediator(card, chip, EMediator.HALFDUPLEX);
 		m_card_magstrippe = MediatorFactory.getInstance().getMediator(card, magstrippe, EMediator.HALFDUPLEX);
+
+		ctx.addStartPoint(Calendar.getInstance().getTime(), "TEST");
+		ctx.subscribeEvent(card, "TEST");
 	}
 
 	@Test

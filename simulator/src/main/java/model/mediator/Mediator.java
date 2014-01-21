@@ -1,6 +1,7 @@
 package model.mediator;
 
 import java.util.HashMap;
+import java.util.Map;
 
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
@@ -28,7 +29,7 @@ public abstract class Mediator {
 	@XmlElements({ @XmlElement(type = ComponentI.class), @XmlElement(type = ComponentIO.class) })
 	protected IInput receiver;
 
-	private HashMap<String, String> properties = null;
+	private Map<String, String> properties = null;
 
 	public Mediator() {
 
@@ -90,11 +91,11 @@ public abstract class Mediator {
 		return true;
 	}
 
-	public HashMap<String, String> getProperties() {
+	public Map<String, String> getProperties() {
 		return this.properties;
 	}
 
-	public void setProperties(HashMap<String, String> properties) {
+	public void setProperties(Map<String, String> properties) {
 		this.properties = properties;
 	}
 

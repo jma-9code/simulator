@@ -267,7 +267,9 @@ public class Context {
 			Mediator curMediator = iMediators.next();
 
 			if (whoWantYou.equalsIgnoreCase(curMediator.getReceiver().getName())
-					|| whoWantYou.equalsIgnoreCase(curMediator.getSender().getName())) {
+					|| whoWantYou.equalsIgnoreCase(curMediator.getSender().getName())
+					|| whoWantYou.equalsIgnoreCase(curMediator.getReceiver().getAcronym())
+					|| whoWantYou.equalsIgnoreCase(curMediator.getSender().getAcronym())) {
 				dstFiltered.add(curMediator);
 				log.debug("Mediator linking " + whoWantYou + " found : " + curMediator);
 			}

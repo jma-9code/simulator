@@ -14,6 +14,13 @@ public interface IOutput {
 	public String getName();
 
 	/**
+	 * Retourne l'acronyme de l'élément.
+	 * 
+	 * @return
+	 */
+	public String getAcronym();
+
+	/**
 	 * Event notification.
 	 * 
 	 * @param event

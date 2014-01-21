@@ -15,6 +15,13 @@ public interface IInput {
 	public String getName();
 
 	/**
+	 * Retourne l'acronyme de l'élément.
+	 * 
+	 * @return
+	 */
+	public String getAcronym();
+
+	/**
 	 * Receipt notification of an input invocation
 	 * 
 	 * @param m

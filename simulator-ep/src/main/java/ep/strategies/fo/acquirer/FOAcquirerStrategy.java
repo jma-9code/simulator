@@ -1,4 +1,4 @@
-package ep.strategies.fo.purchaser;
+package ep.strategies.fo.acquirer;
 
 import model.component.ComponentIO;
 import model.component.IOutput;

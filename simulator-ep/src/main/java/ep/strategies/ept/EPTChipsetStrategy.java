@@ -47,9 +47,9 @@ public class EPTChipsetStrategy implements IStrategy<ComponentIO> {
 			authorizationRequest.set(4, parsedData.get(ISO7816Tools.FIELD_AMOUNT)); // 100€
 			authorizationRequest.set(7, ISO7816Tools.writeDATETIME(Calendar.getInstance().getTime())); // date : MMDDhhmmss
 			authorizationRequest.set(11, generateNextSTAN(_this, parsedData.get(ISO7816Tools.FIELD_STAN))); // System Trace Audit Number
-			authorizationRequest.set(38, ISO7816Tools.FIELD_APPROVALCODE); // Approval Code
+			authorizationRequest.set(38, parsedData.get(ISO7816Tools.FIELD_APPROVALCODE)); // Approval Code
 			authorizationRequest.set(42, "623598"); // Acceptor's ID
-			authorizationRequest.set(123, ISO7816Tools.FIELD_POSID); // POS Data Code
+			authorizationRequest.set(123, parsedData.get(ISO7816Tools.FIELD_POSID)); // POS Data Code
 		}
 		catch (ISOException e) {
 			e.printStackTrace();

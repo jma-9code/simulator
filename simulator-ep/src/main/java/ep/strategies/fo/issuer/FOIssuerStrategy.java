@@ -26,7 +26,7 @@ public class FOIssuerStrategy implements IStrategy<ComponentIO> {
 	public IResponse processMessage(ComponentIO frontOfficeIssuer, Mediator m, String data) {
 		
 		// get chipset component reference
-		ComponentIO issuerAuthorization = frontOfficeIssuer.getChild("Authorization", ComponentIO.class);
+		ComponentIO issuerAuthorization = frontOfficeIssuer.getChild("IssuerAuthorization", ComponentIO.class);
 
 		// get mediator between the issuer and the authorization module
 		Mediator m_issuer_authorization = MediatorFactory.getInstance().getForwardMediator(m, issuerAuthorization);

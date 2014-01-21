@@ -23,16 +23,16 @@ public class FOAcquirerStrategy implements IStrategy<ComponentIO> {
 	}
 
 	@Override
-	public IResponse processMessage(ComponentIO frontOfficePurchaser, Mediator m, String data) {
+	public IResponse processMessage(ComponentIO frontOfficeAcquirer, Mediator m, String data) {
 		
 		// get chipset component reference
-		ComponentIO purchaserAuthorization = frontOfficePurchaser.getChild("Authorization", ComponentIO.class);
+		ComponentIO purchaserAuthorization = frontOfficeAcquirer.getChild("acquirerAuthorization", ComponentIO.class);
 
 		// get mediator between the issuer and the authorization module
 		Mediator m_purchaser_authorization = MediatorFactory.getInstance().getForwardMediator(m, purchaserAuthorization);
 
 		// forward to the chipset
-		return m_purchaser_authorization.send(frontOfficePurchaser, data);
+		return m_purchaser_authorization.send(frontOfficeAcquirer, data);
 		
 	
 	}

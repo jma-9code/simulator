@@ -24,12 +24,12 @@ public class FOAcquirerAuthorizationStrategy implements IStrategy<ComponentIO> {
 	}
 
 	@Override
-	public IResponse processMessage(ComponentIO FOPurchaserAuthorization, Mediator m, String data) {
+	public IResponse processMessage(ComponentIO FOAcquirerAuthorization, Mediator m, String data) {
 		
 		
 		try {
-			Mediator mediateurAUtiliser = Context.getInstance().getFirstMediator(FOPurchaserAuthorization, "IssuerAuthorization");
-			return mediateurAUtiliser.send(FOPurchaserAuthorization, data);
+			Mediator mediateurAUtiliser = Context.getInstance().getFirstMediator(FOAcquirerAuthorization, "IssuerAuthorization");
+			return mediateurAUtiliser.send(FOAcquirerAuthorization, data);
 		}
 		catch (ContextException e) {
 			// TODO Auto-generated catch block

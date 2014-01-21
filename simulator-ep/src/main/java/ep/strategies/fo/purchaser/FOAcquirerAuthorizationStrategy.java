@@ -15,7 +15,7 @@ import ep.strategies.fo.FOStrategy;
 import simulator.Context;
 import simulator.exception.ContextException;
 
-public class FOPurchaserAuthorizationStrategy implements IStrategy<ComponentIO> {
+public class FOAcquirerAuthorizationStrategy implements IStrategy<ComponentIO> {
 
 	private static Logger log = LoggerFactory.getLogger(FOStrategy.class);
 

@@ -14,7 +14,7 @@ import ep.strategies.fo.FOStrategy;
 
 import simulator.Context;
 
-public class FOPurchaserStrategy implements IStrategy<ComponentIO> {
+public class FOAcquirerStrategy implements IStrategy<ComponentIO> {
 
 	private static Logger log = LoggerFactory.getLogger(FOStrategy.class);
 

@@ -9,6 +9,7 @@ import model.factory.MediatorFactory.EMediator;
 import model.mediator.Mediator;
 import model.response.DataResponse;
 import model.response.IResponse;
+import model.response.VoidResponse;
 import model.strategies.IStrategy;
 
 import org.junit.After;
@@ -24,9 +25,6 @@ import simulator.exception.SimulatorException;
 import tools.ISO7816;
 import utils.ISO7816Tools;
 import ep.strategies.card.CardTest;
-import ep.strategies.ept.EPTChipsetStrategy;
-import ep.strategies.ept.EPTSmartCardReader;
-import ep.strategies.ept.EPTStrategy;
 
 /**
  * Electronic Payment Terminal (EPT)
@@ -186,7 +184,7 @@ public class EPTUnitTest {
 					Assert.assertFalse(true);
 				}
 
-				return DataResponse.build(null, null);
+				return VoidResponse.build();
 			}
 
 			@Override

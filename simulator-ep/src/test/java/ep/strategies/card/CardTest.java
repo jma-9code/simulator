@@ -9,6 +9,7 @@ import model.factory.MediatorFactory.EMediator;
 import model.mediator.Mediator;
 import model.response.DataResponse;
 import model.response.IResponse;
+import model.response.VoidResponse;
 import model.strategies.IStrategy;
 
 import org.junit.After;
@@ -23,8 +24,6 @@ import simulator.SimulatorFactory;
 import simulator.exception.SimulatorException;
 import tools.ISO7816;
 import utils.ISO7816Tools;
-import ep.strategies.card.CardChipStrategy;
-import ep.strategies.card.CardStrategy;
 
 public class CardTest {
 	private static Logger log = LoggerFactory.getLogger(CardTest.class);
@@ -128,7 +127,7 @@ public class CardTest {
 
 			@Override
 			public IResponse processMessage(ComponentIO _this, Mediator mediator, String data) {
-				return DataResponse.build(null, null);
+				return VoidResponse.build();
 			}
 
 			@Override

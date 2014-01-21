@@ -212,6 +212,41 @@ public class Context {
 	}
 
 	/**
+	 * Returns the mediator between the caller component and the component with
+	 * the name given and which respect the key/value constraint given.
+	 * 
+	 * @param whoAreYou
+	 *            Reference of caller component
+	 * @param whoWantYou
+	 *            Name of wanted component
+	 * @param key
+	 *            Key of property to check
+	 * @param value
+	 *            Value needed
+	 * @return Reference of mediator to use.
+	 * @throws ContextException
+	 */
+	public Mediator getFirstMediator(IOutput whoAreYou, String whoWantYou, String key, String value)
+			throws ContextException {
+		List<Mediator> mediators = getMediators(whoAreYou, whoWantYou);
+
+		for (Mediator m : mediators) {
+			if (m.getProperties() != null && m.getProperties().containsKey(key)) {
+				// getting mediator value to compare with value needed
+				String mValue = m.getProperties().get(key);
+				log.debug("mValue = " + mValue);
+				if (mValue != null && mValue.equals(value)) {
+					return m;
+				}
+			}
+		}
+
+		log.warn("No mediator found to " + whoWantYou + " with " + key + "=" + value);
+
+		return null;
+	}
+
+	/**
 	 * Returns mediators between the caller component and components with the
 	 * name given.
 	 * 

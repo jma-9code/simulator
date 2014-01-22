@@ -1,8 +1,6 @@
 package fr.ensicaen.simulator_ep.ep.strategies.ept;
 
 import java.text.SimpleDateFormat;
-import java.util.Calendar;
-import java.util.Map;
 
 import org.jpos.iso.ISOException;
 import org.jpos.iso.ISOMsg;
@@ -19,10 +17,10 @@ import fr.ensicaen.simulator.model.response.VoidResponse;
 import fr.ensicaen.simulator.model.strategies.IStrategy;
 import fr.ensicaen.simulator.simulator.Context;
 import fr.ensicaen.simulator.simulator.exception.ContextException;
-import fr.ensicaen.simulator.tools.CaseInsensitiveMap;
 import fr.ensicaen.simulator_ep.utils.ISO7816Exception;
 import fr.ensicaen.simulator_ep.utils.ISO7816Tools;
 import fr.ensicaen.simulator_ep.utils.ISO7816Tools.MessageType;
+import fr.ensicaen.simulator_ep.utils.ISO8583Exception;
 import fr.ensicaen.simulator_ep.utils.ISO8583Tools;
 
 public class EPTChipsetStrategy implements IStrategy<ComponentIO> {
@@ -39,95 +37,40 @@ public class EPTChipsetStrategy implements IStrategy<ComponentIO> {
 		ctx.subscribeEvent(_this, "SMART_CARD_INSERTED");
 	}
 
-	public ISOMsg generateAuthorizationRequest(ComponentIO _this, Map<String, String> parsedData) {
-		ISOMsg authorizationRequest = new ISOMsg();
-		try {
-			authorizationRequest.setPackager(ISO8583Tools.getPackager());
-			authorizationRequest.setMTI("0100");
-			authorizationRequest.set(2, parsedData.get(ISO7816Tools.FIELD_PAN)); // PAN
-			authorizationRequest.set(3, "000101"); // Type of Auth + accounts
-			authorizationRequest.set(4, parsedData.get(ISO7816Tools.FIELD_AMOUNT)); // 100€
-			authorizationRequest.set(7, ISO7816Tools.writeDATETIME(Calendar.getInstance().getTime())); // date
-																										// :
-																										// MMDDhhmmss
-			authorizationRequest.set(11, generateNextSTAN(_this, parsedData.get(ISO7816Tools.FIELD_STAN))); // System
-																											// Trace
-																											// Audit
-																											// Number
-			authorizationRequest.set(38, parsedData.get(ISO7816Tools.FIELD_APPROVALCODE)); // Approval
-																							// Code
-			authorizationRequest.set(42, "623598"); // Acceptor's ID
-			authorizationRequest.set(123, parsedData.get(ISO7816Tools.FIELD_POSID)); // POS
-																						// Data
-																						// Code
-		}
-		catch (ISOException e) {
-			e.printStackTrace();
-		}
-		return authorizationRequest;
-	}
-
 	@Override
 	public void processEvent(ComponentIO _this, String event) {
 		switch (event) {
 			case "SMART_CARD_INSERTED":
 				// setting secure channel with the card
 				// prepare initialization message
-				String msg = prepareSecureChannelRQ(_this);
+				ISOMsg msg = null;
 
 				// get the card linked
 				try {
+					msg = prepareSecureChannelRQ(_this);
 					Mediator m = Context.getInstance().getFirstMediator(_this, "Smart Card Reader");
-					DataResponse res = (DataResponse) m.send(_this, msg);
-
-					Map<String, String> parsedData = ISO7816Tools.read(res.getData());
+					DataResponse res = (DataResponse) m.send(_this, new String(msg.getBytes()));
+					ISOMsg sdata = ISO7816Tools.read(res.getData());
 
 					// card holder authentication (amount + PIN)
-					msg = prepareCardHolderAuthRQ(_this, parsedData);
-					res = (DataResponse) m.send(_this, msg);
-					parsedData = ISO7816Tools.read(res.getData());
+					msg = prepareCardHolderAuthRQ(_this, sdata);
+					res = (DataResponse) m.send(_this, new String(msg.getBytes()));
+					sdata = ISO7816Tools.read(res.getData());
 
 					// auth request to bank (TPE -> Bank and bank -> TPE)
-					// Create ISO Message
-					Mediator mediateurFrontOffice = Context.getInstance().getFirstMediator(_this, "FrontOffice");
-					ISOMsg authorizationAnswer = null;
-					try {
-						authorizationAnswer = new ISOMsg();
-						authorizationAnswer.unpack(((DataResponse) mediateurFrontOffice.send(_this, new String(
-								generateAuthorizationRequest(_this, parsedData).pack()))).getData().getBytes());
-					}
-					catch (ISOException e) {
-						// TODO Auto-generated catch block
-						e.printStackTrace();
-					}
-
-					try {
-						if (authorizationAnswer.getValue(39) != "00") {
-							log.error("Authorization rejected by the bank");
-							return;
-						}
-					}
-					catch (ISOException e) {
-						// TODO Auto-generated catch block
-						e.printStackTrace();
-					}
-
-					// ...
-					Map<String, String> rpfromBank = new CaseInsensitiveMap();
-					rpfromBank.put("approvalcode", "07B56=");
-					rpfromBank.put("responsecode", "00");
-					rpfromBank.put("pan", parsedData.get("PAN"));
-					rpfromBank.put("stan", ISO7816Tools.generateSTAN(_this.getProperty("STAN")));
-					rpfromBank.put("amount", parsedData.get("amount"));
-					rpfromBank.put(ISO7816Tools.FIELD_RRN, generateTransactid(_this));
+					Mediator mediateurFrontOffice = Context.getInstance().getFirstMediator(_this, "FO");
+					msg = generateAuthorizationRequest(_this, sdata);
+					ISOMsg authorizationAnswer = ISO8583Tools.create();
+					res = (DataResponse) mediateurFrontOffice.send(_this, new String(msg.pack()));
+					sdata = ISO8583Tools.read(res.getData());
 
 					// ARPC
-					msg = prepareARPC(_this, rpfromBank);
-					res = (DataResponse) m.send(_this, msg);
-					parsedData = ISO7816Tools.read(res.getData());
+					msg = prepareARPC(_this, authorizationAnswer);
+					res = (DataResponse) m.send(_this, new String(msg.getBytes()));
+					sdata = ISO7816Tools.read(res.getData());
 
 					// final agreement
-					manageFinalAgrement(_this, parsedData);
+					manageFinalAgrement(_this, sdata);
 
 				}
 				catch (ContextException e) {
@@ -137,6 +80,14 @@ public class EPTChipsetStrategy implements IStrategy<ComponentIO> {
 				catch (ISO7816Exception e) {
 					log.error("Get unreadable message from card", e);
 					return; // ABORT
+				}
+				catch (ISOException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+				catch (ISO8583Exception e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
 				}
 
 				break;
@@ -152,24 +103,16 @@ public class EPTChipsetStrategy implements IStrategy<ComponentIO> {
 		return VoidResponse.build();
 	}
 
-	private String prepareSecureChannelRQ(Component _this) {
-		StringBuilder sb = new StringBuilder();
-
-		// head
-		sb.append(ISO7816Tools.convertType2CodeMsg(MessageType.SECURE_CHANNEL_RQ));
-		sb.append("006");
-
-		// data
-		sb.append(ISO7816Tools.createformatTLV(ISO7816Tools.FIELD_POSID, _this.getProperty("pos_id")));
-		sb.append(ISO7816Tools.createformatTLV(ISO7816Tools.FIELD_PROTOCOLLIST, _this.getProperty("protocol_list")));
-		sb.append(ISO7816Tools.createformatTLV(ISO7816Tools.FIELD_PROTOCOLPREFERRED,
-				_this.getProperty("protocol_prefered")));
-		sb.append(ISO7816Tools.createformatTLV(ISO7816Tools.FIELD_STAN, _this.getProperty("stan")));
-		sb.append(ISO7816Tools.createformatTLV(ISO7816Tools.FIELD_RRN, generateTransactid(_this)));
-		sb.append(ISO7816Tools.createformatTLV(ISO7816Tools.FIELD_DATETIME,
-				ISO7816Tools.writeDATETIME(Calendar.getInstance().getTime())));
-
-		return sb.toString();
+	private ISOMsg prepareSecureChannelRQ(Component _this) throws ISOException {
+		ISOMsg ret = ISO7816Tools.create();
+		ret.setMTI(ISO7816Tools.convertType2CodeMsg(MessageType.SECURE_CHANNEL_RQ));
+		ret.set(ISO7816Tools.FIELD_POSID, _this.getProperty("pos_id"));
+		ret.set(ISO7816Tools.FIELD_PROTOCOLLIST, _this.getProperty("protocol_list"));
+		ret.set(ISO7816Tools.FIELD_PROTOCOLPREFERRED, _this.getProperty("protocol_prefered"));
+		ret.set(ISO7816Tools.FIELD_STAN, _this.getProperty("stan"));
+		ret.set(ISO7816Tools.FIELD_RRN, generateTransactid(_this));
+		ret.set(ISO7816Tools.FIELD_DATETIME, ISO7816Tools.writeDATETIME(Context.getInstance().getTime()));
+		return ret;
 	}
 
 	/**
@@ -177,72 +120,81 @@ public class EPTChipsetStrategy implements IStrategy<ComponentIO> {
 	 * 
 	 * @param _this
 	 * @return
+	 * @throws ISOException
 	 */
-	private String prepareCardHolderAuthRQ(Component _this, Map<String, String> data) {
-
-		StringBuilder sb = new StringBuilder();
-
-		// head
-		sb.append(ISO7816Tools.convertType2CodeMsg(MessageType.CARDHOLDER_AUTH_RQ));
-		sb.append("007");
-
-		// data
-		sb.append(ISO7816Tools.createformatTLV(ISO7816Tools.FIELD_POSID, _this.getProperty("pos_id")));
-		sb.append(ISO7816Tools.createformatTLV(ISO7816Tools.FIELD_OPCODE, "00")); // 00=purchase
-		sb.append(ISO7816Tools.createformatTLV(ISO7816Tools.FIELD_AMOUNT, ISO7816Tools.writeAMOUNT(80)));
-		sb.append(ISO7816Tools.createformatTLV(ISO7816Tools.FIELD_PINDATA, "1234")); // normally
-																						// ciphered
-		sb.append(ISO7816Tools.createformatTLV(ISO7816Tools.FIELD_STAN,
-				generateNextSTAN(_this, data.get(ISO7816Tools.FIELD_STAN))));
-		sb.append(ISO7816Tools.createformatTLV(ISO7816Tools.FIELD_RRN, generateTransactid(_this)));
-		sb.append(ISO7816Tools.createformatTLV(ISO7816Tools.FIELD_DATETIME,
-				ISO7816Tools.writeDATETIME(Calendar.getInstance().getTime())));
-
-		return sb.toString();
+	private ISOMsg prepareCardHolderAuthRQ(Component _this, ISOMsg data) throws ISOException {
+		String pan = data.getString(ISO7816Tools.FIELD_STAN);
+		ISOMsg ret = ISO7816Tools.create();
+		ret.setMTI(ISO7816Tools.convertType2CodeMsg(MessageType.CARDHOLDER_AUTH_RQ));
+		ret.set(ISO7816Tools.FIELD_POSID, _this.getProperty("pos_id"));
+		ret.set(ISO7816Tools.FIELD_OPCODE, "00");
+		ret.set(ISO7816Tools.FIELD_AMOUNT, ISO7816Tools.writeAMOUNT(80));
+		ret.set(ISO7816Tools.FIELD_PINDATA, "1234");
+		ret.set(ISO7816Tools.FIELD_STAN, generateNextSTAN(_this, pan));
+		ret.set(ISO7816Tools.FIELD_RRN, generateTransactid(_this));
+		ret.set(ISO7816Tools.FIELD_DATETIME, ISO7816Tools.writeDATETIME(Context.getInstance().getTime()));
+		return ret;
 	}
 
 	/**
-	 * Preparation de la requete de demande d'auth a la banque du tpe. 8583
+	 * Preparation du msg d'autorisation pour le FO
 	 * 
 	 * @param _this
+	 * @param parsedData
 	 * @return
+	 * @throws ISOException
 	 */
-	private String prepareBankAuthRQ(Component _this) {
-		return null;
+	public ISOMsg generateAuthorizationRequest(ComponentIO _this, ISOMsg parsedData) throws ISOException {
+		String pan = parsedData.getString(ISO7816Tools.FIELD_PAN);
+		String amount = parsedData.getString(ISO7816Tools.FIELD_AMOUNT);
+		String stan = parsedData.getString(ISO7816Tools.FIELD_STAN);
+		String apcode = parsedData.getString(ISO7816Tools.FIELD_APPROVALCODE);
+		String posid = parsedData.getString(ISO7816Tools.FIELD_POSID);
+
+		ISOMsg authorizationRequest = ISO8583Tools.create();
+
+		authorizationRequest.setMTI("0100");
+		authorizationRequest.set(2, pan); // PAN
+		authorizationRequest.set(3, "000101"); // Type of Auth + accounts
+		authorizationRequest.set(4, amount);
+		authorizationRequest.set(7, ISO7816Tools.writeDATETIME(Context.getInstance().getTime()));
+		authorizationRequest.set(11, generateNextSTAN(_this, stan));
+		authorizationRequest.set(38, apcode);
+		authorizationRequest.set(42, "623598"); // Acceptor's ID
+		authorizationRequest.set(123, posid);
+
+		return authorizationRequest;
 	}
 
 	/**
 	 * Preparation de l'arpc depuis les info donnees par le FO de la banque
 	 * 
 	 * @param _this
-	 * @return
+	 * @param data
+	 *            msg in format 8583
+	 * @return format 7816
+	 * @throws ISOException
 	 */
-	private String prepareARPC(Component _this, Map<String, String> data) {
-		/*
-		 * 04110070000000000POS.ID0100000623598000000000OP.CODE002000000000000A
-		 * MOUNT0100000008000000APPROVAL.CODE00607B56=000RESPONSE.CODE002000
-		 * 000000000000PAN016497671002564213000000000DATETIME0101008173026
-		 */
-		StringBuilder sb = new StringBuilder();
+	private ISOMsg prepareARPC(Component _this, ISOMsg data) throws ISOException {
+		String amount = data.getString(ISO7816Tools.FIELD_AMOUNT);
+		String apcode = data.getString(ISO7816Tools.FIELD_APPROVALCODE);
+		String rescode = data.getString(ISO7816Tools.FIELD_RESPONSECODE);
+		String pan = data.getString(ISO7816Tools.FIELD_PAN);
+		String stan = data.getString(ISO7816Tools.FIELD_STAN);
 
-		// head
-		sb.append(ISO7816Tools.convertType2CodeMsg(MessageType.AUTHORIZATION_RP_CRYPTO));
-		sb.append("009");
+		ISOMsg ret = ISO7816Tools.create();
+		ret.setMTI(ISO7816Tools.convertType2CodeMsg(MessageType.AUTHORIZATION_RP_CRYPTO));
+		ret.set(ISO7816Tools.FIELD_POSID, _this.getProperty("pos_id"));
+		ret.set(ISO7816Tools.FIELD_OPCODE, "00");
+		ret.set(ISO7816Tools.FIELD_AMOUNT, amount);
+		ret.set(ISO7816Tools.FIELD_APPROVALCODE, apcode);
+		ret.set(ISO7816Tools.FIELD_RESPONSECODE, rescode);
+		ret.set(ISO7816Tools.FIELD_PAN, pan);
+		ret.set(ISO7816Tools.FIELD_STAN, generateNextSTAN(_this, stan));
+		ret.set(ISO7816Tools.FIELD_RRN, generateTransactid(_this));
+		ret.set(ISO7816Tools.FIELD_DATETIME, ISO7816Tools.writeDATETIME(Context.getInstance().getTime()));
 
-		// data
-		sb.append(ISO7816Tools.createformatTLV(ISO7816Tools.FIELD_POSID, _this.getProperty("pos_id")));
-		sb.append(ISO7816Tools.createformatTLV(ISO7816Tools.FIELD_OPCODE, "00")); // 00=purchase
-		sb.append(ISO7816Tools.createformatTLV(ISO7816Tools.FIELD_AMOUNT, data.get("amount")));
-		sb.append(ISO7816Tools.createformatTLV(ISO7816Tools.FIELD_APPROVALCODE, data.get("approvalcode")));
-		sb.append(ISO7816Tools.createformatTLV(ISO7816Tools.FIELD_RESPONSECODE, data.get("responsecode")));
-		sb.append(ISO7816Tools.createformatTLV(ISO7816Tools.FIELD_PAN, data.get(ISO7816Tools.FIELD_PAN)));
-		sb.append(ISO7816Tools.createformatTLV(ISO7816Tools.FIELD_STAN,
-				generateNextSTAN(_this, data.get(ISO7816Tools.FIELD_STAN))));
-		sb.append(ISO7816Tools.createformatTLV(ISO7816Tools.FIELD_RRN, generateTransactid(_this)));
-		sb.append(ISO7816Tools.createformatTLV(ISO7816Tools.FIELD_DATETIME,
-				ISO7816Tools.writeDATETIME(Calendar.getInstance().getTime())));
-
-		return sb.toString();
+		return ret;
 	}
 
 	/**
@@ -253,10 +205,10 @@ public class EPTChipsetStrategy implements IStrategy<ComponentIO> {
 	 * @param _this
 	 * @param data
 	 */
-	private void manageFinalAgrement(Component _this, Map<String, String> data) {
+	private void manageFinalAgrement(Component _this, ISOMsg data) {
 		// stockage de la transaction
-		String datetime = data.get(ISO7816Tools.FIELD_DATETIME);
-		String stan = data.get(ISO7816Tools.FIELD_STAN);
+		String datetime = data.getString(ISO7816Tools.FIELD_DATETIME);
+		String stan = data.getString(ISO7816Tools.FIELD_STAN);
 		_this.getProperties().put(datetime + stan, data.toString());
 	}
 

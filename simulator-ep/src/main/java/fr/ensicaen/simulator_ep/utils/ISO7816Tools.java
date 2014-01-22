@@ -1,33 +1,56 @@
 package fr.ensicaen.simulator_ep.utils;
 
+import java.net.URISyntaxException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
-import java.util.HashMap;
 
-import fr.ensicaen.simulator.tools.CaseInsensitiveMap;
+import org.jpos.iso.ISOException;
+import org.jpos.iso.ISOMsg;
+import org.jpos.iso.packager.GenericPackager;
 
 public class ISO7816Tools {
+
+	private static GenericPackager packager = null;
+
+	public synchronized static GenericPackager getPackager() {
+		if (packager == null) {
+			try {
+				packager = new GenericPackager(ISO8583Tools.class.getResource("/7816.xml").toURI().getPath());
+			}
+			catch (ISOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+			catch (URISyntaxException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+			;
+			return packager;
+		}
+		return packager;
+	}
 
 	public enum MessageType {
 		SECURE_CHANNEL_RQ, SECURE_CHANNEL_RP, CARDHOLDER_AUTH_RQ, CARDHOLDER_AUTH_RP, AUTHORIZATION_RP_CRYPTO, TRANSCATION_VAL_NOTIF, TRANSACTION_VAL_ACK, UNKNOWN_TYPE;
 	}
 
 	// champs utilises dans la 7816
-	public static final String FIELD_POSID = "POS ID";
-	public static final String FIELD_PROTOCOLLIST = "PROTOCOL LIST";
-	public static final String FIELD_PROTOCOL = "PROTOCOL";
-	public static final String FIELD_DATETIME = "DATETIME";
-	public static final String FIELD_PROTOCOLPREFERRED = "PREFERRED";
-	public static final String FIELD_AMOUNT = "AMOUNT";
-	public static final String FIELD_OPCODE = "OP CODE";
-	public static final String FIELD_PINDATA = "PIN DATA";
-	public static final String FIELD_PINVERIFICATION = "PIN VERIFICATION";
-	public static final String FIELD_CARDAGREEMENT = "CARD AGREEMENT";
-	public static final String FIELD_PAN = "PAN";
-	public static final String FIELD_APPROVALCODE = "APPROVAL CODE";
-	public static final String FIELD_STAN = "STAN";//
-	public static final String FIELD_RRN = "RET REF NUMB";// transcaction ID
-	public static final String FIELD_RESPONSECODE = "RESPONSE CODE";
+	public static final int FIELD_POSID = 2;
+	public static final int FIELD_PROTOCOLLIST = 4;
+	public static final int FIELD_PROTOCOL = 5;
+	public static final int FIELD_DATETIME = 14;
+	public static final int FIELD_PROTOCOLPREFERRED = 9;
+	public static final int FIELD_AMOUNT = 6;
+	public static final int FIELD_OPCODE = 10;
+	public static final int FIELD_PINDATA = 11;
+	public static final int FIELD_PINVERIFICATION = 13;
+	public static final int FIELD_CARDAGREEMENT = 7;
+	public static final int FIELD_PAN = 3;
+	public static final int FIELD_APPROVALCODE = 8;
+	public static final int FIELD_STAN = 12;//
+	public static final int FIELD_RRN = 15;// transcaction ID
+	public static final int FIELD_RESPONSECODE = 16;
 
 	/**
 	 * Permet de faire STAN+1
@@ -179,59 +202,81 @@ public class ISO7816Tools {
 	}
 
 	/**
-	 * Permet de transformer le message normaliser vers une structure de donnees
-	 * de type hashmap.
+	 * Transform string to ISOMsg
 	 * 
 	 * @param data
 	 * @return
 	 * @throws ISO7816Exception
 	 */
-	public static HashMap<String, String> read(String data) throws ISO7816Exception {
-		HashMap<String, String> ret = new CaseInsensitiveMap();
-		// head
-		String head = data.substring(0, 4);
-		ret.put("type", convertCodeMsg2Type(head).name());
-		int nbFields = 0;
+	public static ISOMsg read(String data) throws ISO7816Exception {
+		ISOMsg rp = new ISOMsg();
+		rp.setPackager(getPackager());
 		try {
-			nbFields = Integer.parseInt(data.substring(4, 7));
-			ret.put("nbfields", "" + nbFields);
+			rp.unpack(data.getBytes());
 		}
-		catch (Exception e) {
-			throw new ISO7816Exception("Interpretation data problem", e);
+		catch (ISOException e) {
+			throw new ISO7816Exception(e);
 		}
-
-		// tag : 16 octets
-		// len : 3 octets
-		String tag = null;
-		int len = 0;
-		String value = null;
-		int c_index = 7;
-		while (c_index < data.length()) {
-			tag = data.substring(c_index, c_index + 16);
-			// remove 0 left padding
-			tag = tag.replaceFirst("^0+(?!$)", "");
-
-			c_index += 16;
-
-			try {
-				len = Integer.parseInt(data.substring(c_index, c_index + 3));
-				c_index += 3;
-			}
-			catch (Exception e) {
-				throw new ISO7816Exception("Interpretation data problem", e);
-			}
-
-			value = data.substring(c_index, c_index + len);
-			c_index += len;
-
-			ret.put(tag, value);
-		}
-
-		// petite verif nbFields=hashmap.size-2
-		if (nbFields != ret.size() - 2) {
-			throw new ISO7816Exception("Interpretation data problem, nbfields != fields parse");
-		}
-
-		return ret;
+		return rp;
 	}
+
+	/**
+	 * Create ISOMsg from specific normalization
+	 * 
+	 * @return
+	 */
+	public static ISOMsg create() {
+		ISOMsg rp = new ISOMsg();
+		rp.setPackager(getPackager());
+		return rp;
+	}
+
+	// HashMap<String, String> ret = new CaseInsensitiveMap();
+	// // head
+	// String head = data.substring(0, 4);
+	// ret.put("type", convertCodeMsg2Type(head).name());
+	// int nbFields = 0;
+	// try {
+	// nbFields = Integer.parseInt(data.substring(4, 7));
+	// ret.put("nbfields", "" + nbFields);
+	// }
+	// catch (Exception e) {
+	// throw new ISO7816Exception("Interpretation data problem", e);
+	// }
+	//
+	// // tag : 16 octets
+	// // len : 3 octets
+	// String tag = null;
+	// int len = 0;
+	// String value = null;
+	// int c_index = 7;
+	// while (c_index < data.length()) {
+	// tag = data.substring(c_index, c_index + 16);
+	// // remove 0 left padding
+	// tag = tag.replaceFirst("^0+(?!$)", "");
+	//
+	// c_index += 16;
+	//
+	// try {
+	// len = Integer.parseInt(data.substring(c_index, c_index + 3));
+	// c_index += 3;
+	// }
+	// catch (Exception e) {
+	// throw new ISO7816Exception("Interpretation data problem", e);
+	// }
+	//
+	// value = data.substring(c_index, c_index + len);
+	// c_index += len;
+	//
+	// ret.put(tag, value);
+	// }
+	//
+	// // petite verif nbFields=hashmap.size-2
+	// if (nbFields != ret.size() - 2) {
+	// throw new
+	// ISO7816Exception("Interpretation data problem, nbfields != fields parse");
+	// }
+	//
+	// return ret;
+	// }
 }

@@ -1,13 +1,10 @@
 package ep.strategies.fo;
 
-import java.net.URISyntaxException;
-import java.nio.file.Paths;
 import java.util.Calendar;
 import java.util.Date;
 
 import org.jpos.iso.ISOException;
 import org.jpos.iso.ISOMsg;
-import org.jpos.iso.packager.GenericPackager;
 import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;
@@ -24,7 +21,6 @@ import fr.ensicaen.simulator.model.strategies.IStrategy;
 import fr.ensicaen.simulator.simulator.Context;
 import fr.ensicaen.simulator.simulator.SimulatorFactory;
 import fr.ensicaen.simulator.simulator.exception.SimulatorException;
-import fr.ensicaen.simulator_ep.ep.strategies.ept.EPTStrategy;
 import fr.ensicaen.simulator_ep.ep.strategies.fo.FOStrategy;
 import fr.ensicaen.simulator_ep.ep.strategies.fo.acquirer.FOAcquirerAuthorizationStrategy;
 import fr.ensicaen.simulator_ep.ep.strategies.fo.acquirer.FOAcquirerStrategy;
@@ -43,7 +39,7 @@ public class FOUnitTest {
 	private static Mediator m_foAcquirer_FoAcquirerAuthorization;
 	private static Mediator m_foAcquirerAuthorization_foIssuerAuthorization;
 	MediatorFactory factory = MediatorFactory.getInstance();
-	
+
 	private static ComponentIO frontOffice;
 
 	/* Les trois grandes fonctions d'un FO */
@@ -90,7 +86,7 @@ public class FOUnitTest {
 	/* Différents modules de la fonction acquéreur */
 
 	private static ComponentIO acquirerAuthorization;
-	
+
 	private static ComponentIO GABHandler;
 
 	private static ComponentIO retrait;
@@ -251,23 +247,25 @@ public class FOUnitTest {
 		paymentAcquirer.getChilds().add(paiementTelevise);
 		paymentAcquirer.getChilds().add(quasiCash);
 		paymentAcquirer.getChilds().add(cashAdvance);
-		
+
 		frontOffice.setStrategy(new FOStrategy());
 		acquirer.setStrategy(new FOAcquirerStrategy());
 		acquirerAuthorization.setStrategy(new FOAcquirerAuthorizationStrategy());
 		issuer.setStrategy(new FOIssuerStrategy());
 		issuerAuthorization.setStrategy(new FOIssuerAuthorizationStrategy());
-		
+
 		ept = new ComponentIO("Electronic Payment Terminal");
-		
-		
+
 		m_ept_fo = MediatorFactory.getInstance().getMediator(frontOffice, ept, EMediator.HALFDUPLEX);
 		m_fo_foIssuer = MediatorFactory.getInstance().getMediator(frontOffice, issuer, EMediator.HALFDUPLEX);
 		m_fo_foAcquirer = MediatorFactory.getInstance().getMediator(frontOffice, acquirer, EMediator.HALFDUPLEX);
-		m_foIssuer_FoIssuerAuthorization = MediatorFactory.getInstance().getMediator(issuer, issuerAuthorization, EMediator.HALFDUPLEX);
-		m_foAcquirer_FoAcquirerAuthorization = MediatorFactory.getInstance().getMediator(acquirer, acquirerAuthorization, EMediator.HALFDUPLEX);
-		m_foAcquirerAuthorization_foIssuerAuthorization = MediatorFactory.getInstance().getMediator(acquirerAuthorization, issuerAuthorization, EMediator.HALFDUPLEX);
-		
+		m_foIssuer_FoIssuerAuthorization = MediatorFactory.getInstance().getMediator(issuer, issuerAuthorization,
+				EMediator.HALFDUPLEX);
+		m_foAcquirer_FoAcquirerAuthorization = MediatorFactory.getInstance().getMediator(acquirer,
+				acquirerAuthorization, EMediator.HALFDUPLEX);
+		m_foAcquirerAuthorization_foIssuerAuthorization = MediatorFactory.getInstance().getMediator(
+				acquirerAuthorization, issuerAuthorization, EMediator.HALFDUPLEX);
+
 		ept.setStrategy(new IStrategy<ComponentIO>() {
 
 			private static final long serialVersionUID = 2626955719622250036L;
@@ -277,7 +275,7 @@ public class FOUnitTest {
 				// TODO Auto-generated method stub
 				return null;
 			}
-			
+
 			@Override
 			public void processEvent(ComponentIO _this, String event) {
 				// TODO Auto-generated method stub
@@ -287,67 +285,65 @@ public class FOUnitTest {
 					authorizationRequest.setPackager(ISO8583Tools.getPackager());
 					authorizationRequest.setMTI("0100");
 					authorizationRequest.set(2, "0123456789123456"); // PAN
-					authorizationRequest.set(3, "000101"); // Type of Auth + accounts
+					authorizationRequest.set(3, "000101"); // Type of Auth +
+															// accounts
 					authorizationRequest.set(4, "100"); // 100€
-					authorizationRequest.set(7, ISO7816Tools.writeDATETIME(Calendar.getInstance().getTime())); // date : MMDDhhmmss
-					authorizationRequest.set(11, "000001"); // System Trace Audit Number
+					authorizationRequest.set(7, ISO7816Tools.writeDATETIME(Calendar.getInstance().getTime())); // date
+																												// :
+																												// MMDDhhmmss
+					authorizationRequest.set(11, "000001"); // System Trace
+															// Audit Number
 					authorizationRequest.set(38, "123456"); // Approval Code
 					authorizationRequest.set(42, "623598"); // Acceptor's ID
-					authorizationRequest.set(123, ISO7816Tools.FIELD_POSID); // POS Data Code
+					authorizationRequest.set(123, "21151168"); // POS Data Code
 				}
 				catch (ISOException e) {
 					e.printStackTrace();
 				}
-				
+
 				ISOMsg authorizationAnswer = null;
 				try {
 					authorizationAnswer = new ISOMsg();
 					authorizationAnswer.setPackager(ISO8583Tools.getPackager());
-					authorizationAnswer.unpack(
-							((DataResponse)m_ept_fo.send
-									(_this, new String(authorizationRequest.pack()))
-							).getData().getBytes());
+					authorizationAnswer.unpack(((DataResponse) m_ept_fo.send(_this,
+							new String(authorizationRequest.pack()))).getData().getBytes());
 					Assert.assertTrue(authorizationAnswer.getValue(39).equals("00"));
 				}
 				catch (ISOException e) {
 					// TODO Auto-generated catch block
 					e.printStackTrace();
 				}
-				
-				
+
 			}
-			
+
 			@Override
 			public void init(IOutput _this, Context ctx) {
 				// TODO Auto-generated method stub
 				ctx.subscribeEvent(_this, "AUTHORIZATION_CALL");
 			}
 		});
-		
-		
+
 	}
 
 	@After
 	public void clean() throws Exception {
 		Context.getInstance().reset();
 	}
-	
+
 	@Test
-	public void testAppelAutorisation () {
+	public void testAppelAutorisation() {
 		// on insert la carte dans le tpe, le tpe envoie des donnees a la carte
 		Context.getInstance().addStartPoint(new Date(), "AUTHORIZATION_CALL");
 		// execute simulation.
-				try {
-					SimulatorFactory.getSimulator().start();
-				}
-				catch (SimulatorException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-					Assert.assertFalse(true);
-				}		
-		
-		
-		
+		try {
+			SimulatorFactory.getSimulator().start();
+		}
+		catch (SimulatorException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+			Assert.assertFalse(true);
+		}
+
 	}
 
 }

@@ -14,6 +14,8 @@ import fr.ensicaen.simulator.model.response.VoidResponse;
 import fr.ensicaen.simulator.model.strategies.IStrategy;
 import fr.ensicaen.simulator.simulator.Context;
 import fr.ensicaen.simulator_ep.ep.strategies.fo.FOStrategy;
+import fr.ensicaen.simulator_ep.utils.ISO7816Tools;
+import fr.ensicaen.simulator_ep.utils.ISO8583Exception;
 import fr.ensicaen.simulator_ep.utils.ISO8583Tools;
 
 public class FOIssuerAuthorizationStrategy implements IStrategy<ComponentIO> {
@@ -31,15 +33,14 @@ public class FOIssuerAuthorizationStrategy implements IStrategy<ComponentIO> {
 
 	@Override
 	public IResponse processMessage(ComponentIO frontOfficeIssuer, Mediator m, String data) {
-		ISOMsg authorizationAnswer = new ISOMsg();
-		authorizationAnswer.setPackager(ISO8583Tools.getPackager());
+		ISOMsg authorizationAnswer = null;
 		try {
-			authorizationAnswer.unpack(data.getBytes());
+			authorizationAnswer = ISO8583Tools.read(data);
 			authorizationAnswer.setMTI("0110");
-			authorizationAnswer.set(7, "0810172400"); // date : MMDDhhmmss
+			authorizationAnswer.set(7, ISO7816Tools.writeDATETIME(Context.getInstance().getTime()));
 			authorizationAnswer.set(39, "00");
 		}
-		catch (ISOException e) {
+		catch (ISOException | ISO8583Exception e) {
 			e.printStackTrace();
 		}
 

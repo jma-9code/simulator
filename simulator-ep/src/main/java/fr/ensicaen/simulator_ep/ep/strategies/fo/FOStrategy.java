@@ -12,6 +12,7 @@ import fr.ensicaen.simulator.model.mediator.Mediator;
 import fr.ensicaen.simulator.model.response.IResponse;
 import fr.ensicaen.simulator.model.strategies.IStrategy;
 import fr.ensicaen.simulator.simulator.Context;
+import fr.ensicaen.simulator_ep.utils.ISO8583Exception;
 import fr.ensicaen.simulator_ep.utils.ISO8583Tools;
 
 public class FOStrategy implements IStrategy<ComponentIO> {
@@ -29,15 +30,14 @@ public class FOStrategy implements IStrategy<ComponentIO> {
 
 	@Override
 	public IResponse processMessage(ComponentIO frontOffice, Mediator m, String data) {
-		ISOMsg message8583 = new ISOMsg();
-		message8583.setPackager(ISO8583Tools.getPackager());
+		ISOMsg message8583 = null;
 		ComponentIO composantCible = null;
 		Mediator mediateurAUtiliser;
 		// faire le lien avec le message8583
 
 		/* Si c'est une demande d'autorisation ... */
 		try {
-			message8583.unpack(data.getBytes());
+			message8583 = ISO8583Tools.read(data);
 			switch (message8583.getMTI()) {
 				case "0100":
 					composantCible = frontOffice.getChild("Acquirer", ComponentIO.class);
@@ -48,7 +48,7 @@ public class FOStrategy implements IStrategy<ComponentIO> {
 					break;
 			}
 		}
-		catch (ISOException e) {
+		catch (ISO8583Exception | ISOException e) {
 			e.printStackTrace();
 		}
 

@@ -32,7 +32,7 @@ public class EPTSmartCardReaderStrategy implements IStrategy<ComponentIO> {
 	@Override
 	public IResponse processMessage(ComponentIO _this, Mediator mediator, String data) {
 		try {
-			Mediator m = Context.getInstance().getFirstMediator(_this, "Smart Card");
+			Mediator m = Context.getInstance().getFirstMediator(_this, "Smart Card Reader");
 			return m.send(_this, data);
 		}
 		catch (ContextException e) {

@@ -48,24 +48,23 @@ public class EPTChipsetStrategy implements IStrategy<ComponentIO> {
 				// get the card linked
 				try {
 					msg = prepareSecureChannelRQ(_this);
-					Mediator m = Context.getInstance().getFirstMediator(_this, "Smart Card Reader");
-					DataResponse res = (DataResponse) m.send(_this, new String(msg.getBytes()));
+					Mediator m = Context.getInstance().getFirstMediator(_this, "Smart Card");
+					DataResponse res = (DataResponse) m.send(_this, new String(msg.pack()));
 					ISOMsg sdata = ISO7816Tools.read(res.getData());
 
 					// card holder authentication (amount + PIN)
 					msg = prepareCardHolderAuthRQ(_this, sdata);
-					res = (DataResponse) m.send(_this, new String(msg.getBytes()));
+					res = (DataResponse) m.send(_this, new String(msg.pack()));
 					sdata = ISO7816Tools.read(res.getData());
 
 					// auth request to bank (TPE -> Bank and bank -> TPE)
 					Mediator mediateurFrontOffice = Context.getInstance().getFirstMediator(_this, "FO");
 					msg = generateAuthorizationRequest(_this, sdata);
-					ISOMsg authorizationAnswer = ISO8583Tools.create();
 					res = (DataResponse) mediateurFrontOffice.send(_this, new String(msg.pack()));
 					sdata = ISO8583Tools.read(res.getData());
 
 					// ARPC
-					msg = prepareARPC(_this, authorizationAnswer);
+					msg = prepareARPC(_this, sdata);
 					res = (DataResponse) m.send(_this, new String(msg.getBytes()));
 					sdata = ISO7816Tools.read(res.getData());
 
@@ -240,8 +239,8 @@ public class EPTChipsetStrategy implements IStrategy<ComponentIO> {
 	 * @return
 	 */
 	public static String generateTransactid(Component _this) {
-		SimpleDateFormat sdf = new SimpleDateFormat("yDhh");
-		return sdf.format(Context.getInstance().getTime()) + _this.getProperty("stan");
+		SimpleDateFormat sdf = new SimpleDateFormat("yDDDhh");
+		return sdf.format(Context.getInstance().getTime()).substring(3) + _this.getProperty("stan");
 	}
 
 	@Override

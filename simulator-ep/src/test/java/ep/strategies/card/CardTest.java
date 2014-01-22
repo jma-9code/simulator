@@ -75,7 +75,10 @@ public class CardTest {
 		m_ept_card = MediatorFactory.getInstance().getMediator(card, ept, EMediator.HALFDUPLEX);
 		m_card_chip = MediatorFactory.getInstance().getMediator(card, chip, EMediator.HALFDUPLEX);
 		m_card_magstrippe = MediatorFactory.getInstance().getMediator(card, magstrippe, EMediator.HALFDUPLEX);
+		generateTPEMsg();
+	}
 
+	public void generateTPEMsg() throws ISOException {
 		// MSG GENERER PAR LE TPE
 		tpe_sc.setMTI(ISO7816Tools.convertType2CodeMsg(MessageType.SECURE_CHANNEL_RQ));
 		tpe_sc.set(ISO7816Tools.FIELD_POSID, "0000623598");
@@ -105,7 +108,6 @@ public class CardTest {
 		tpe_finalagree.set(ISO7816Tools.FIELD_RRN, "320012000001");
 		tpe_finalagree.set(ISO7816Tools.FIELD_STAN, "000001");
 		tpe_finalagree.set(ISO7816Tools.FIELD_DATETIME, "1008170100");
-
 	}
 
 	@After

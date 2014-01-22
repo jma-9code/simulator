@@ -60,7 +60,7 @@ public class FOIssuerAuthorizationStrategy implements IStrategy<ComponentIO> {
 
 	@Override
 	public String toString() {
-		return "FOIssuer";
+		return "FO/Issuer/Authorization";
 	}
 
 }

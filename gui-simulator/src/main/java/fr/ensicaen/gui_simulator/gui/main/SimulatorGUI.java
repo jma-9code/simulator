@@ -1,17 +1,8 @@
 package fr.ensicaen.gui_simulator.gui.main;
 
-import fr.ensicaen.gui_simulator.gui.bridge.ComponentPaletteBridge;
-import fr.ensicaen.simulator.model.component.Component;
-import fr.ensicaen.simulator.model.component.ComponentI;
-import fr.ensicaen.simulator.model.component.ComponentIO;
-import fr.ensicaen.simulator.model.component.ComponentO;
-import fr.ensicaen.simulator.model.dao.DAO;
-import fr.ensicaen.simulator.model.dao.factory.DAOFactory;
-
 import java.awt.Color;
 import java.net.URL;
 import java.text.NumberFormat;
-import java.util.HashMap;
 
 import javax.swing.UIManager;
 
@@ -24,6 +15,11 @@ import com.mxgraph.util.mxConstants;
 import com.mxgraph.util.mxEvent;
 import com.mxgraph.util.mxResources;
 import com.mxgraph.view.mxGraph;
+
+import fr.ensicaen.gui_simulator.gui.bridge.ComponentPaletteBridge;
+import fr.ensicaen.simulator.model.component.Component;
+import fr.ensicaen.simulator.model.dao.DAO;
+import fr.ensicaen.simulator.model.dao.factory.DAOFactory;
 
 public class SimulatorGUI extends BasicGraphEditor {
 	/**
@@ -47,14 +43,14 @@ public class SimulatorGUI extends BasicGraphEditor {
 	static {
 		try {
 			mxResources.add("gui/resources/simulator-ep");
-		} catch (Exception e) {
+		}
+		catch (Exception e) {
 			e.printStackTrace();
 		}
 	}
 
 	public SimulatorGUI() {
-		this(mxResources.get("simulator-title"), new CustomGraphComponent(
-				new CustomGraph()));
+		this(mxResources.get("simulator-title"), new CustomGraphComponent(new CustomGraph()));
 	}
 
 	/**
@@ -67,41 +63,41 @@ public class SimulatorGUI extends BasicGraphEditor {
 		mxGraph graph = graphComponent.getGraph();
 
 		// link selection event
-		graph.getSelectionModel().addListener(mxEvent.CHANGE,
-				vRightSplit.getComponentPanel());
+		graph.getSelectionModel().addListener(mxEvent.CHANGE, vRightSplit.getComponentPanel());
 
 		// Creates the components palette for our electronic payment application
-		EditorPalette componentsPalette = insertPalette(mxResources
-				.get("components"));
-
-		// test à supprimer BEGIN
-		HashMap<String, String> test = new HashMap<>();
-		test.put("cou", "oj");
-		test.put("ceru", "oj");
-		test.put("ceeu", "oj");
+		EditorPalette componentsPalette = insertPalette(mxResources.get("components"));
 
 		// getting dao
 		DAO<Component> dao = DAOFactory.getFactory().getComponentDAO();
-		Component p = new ComponentIO("Card");
-		p.setProperties(test);
 
-		Component p1 = new ComponentIO("Test 1");
-		p1.getChilds().add(new ComponentIO("Test 3"));
-		p1.getChilds().add(new ComponentIO("Test 4"));
-		p.getChilds().add(p1);
-		p.getChilds().add(new ComponentIO("Test 2"));
-		dao.create(p);
-		dao.create(new ComponentIO("EPT"));
-		dao.create(new ComponentO("Output"));
-		dao.create(new ComponentI("Input"));
-		dao.create(new ComponentIO("Input/Output"));
-		dao.create(new ComponentIO("IS"));
-		dao.create(new ComponentIO("FO"));
-		dao.create(new ComponentIO("BO"));
-		// test à supprimer END
+		// // test à supprimer BEGIN
+		// HashMap<String, String> test = new HashMap<>();
+		// test.put("cou", "oj");
+		// test.put("ceru", "oj");
+		// test.put("ceeu", "oj");
+		//
+		// // getting dao
+		// DAO<Component> dao = DAOFactory.getFactory().getComponentDAO();
+		// Component p = new ComponentIO("Card");
+		// p.setProperties(test);
+		//
+		// Component p1 = new ComponentIO("Test 1");
+		// p1.getChilds().add(new ComponentIO("Test 3"));
+		// p1.getChilds().add(new ComponentIO("Test 4"));
+		// p.getChilds().add(p1);
+		// p.getChilds().add(new ComponentIO("Test 2"));
+		// dao.create(p);
+		// dao.create(new ComponentIO("EPT"));
+		// dao.create(new ComponentO("Output"));
+		// dao.create(new ComponentI("Input"));
+		// dao.create(new ComponentIO("Input/Output"));
+		// dao.create(new ComponentIO("IS"));
+		// dao.create(new ComponentIO("FO"));
+		// dao.create(new ComponentIO("BO"));
+		// // test à supprimer END
 
-		ComponentPaletteBridge bridge = new ComponentPaletteBridge(
-				componentsPalette, dao, graphComponent.getGraph());
+		ComponentPaletteBridge bridge = new ComponentPaletteBridge(componentsPalette, dao, graphComponent.getGraph());
 		bridge.refresh();
 	}
 
@@ -112,7 +108,8 @@ public class SimulatorGUI extends BasicGraphEditor {
 	public static void main(String[] args) {
 		try {
 			UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
-		} catch (Exception e1) {
+		}
+		catch (Exception e1) {
 			e1.printStackTrace();
 		}
 

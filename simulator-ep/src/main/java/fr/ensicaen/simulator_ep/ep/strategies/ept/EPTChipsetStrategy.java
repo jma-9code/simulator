@@ -245,6 +245,6 @@ public class EPTChipsetStrategy implements IStrategy<ComponentIO> {
 
 	@Override
 	public String toString() {
-		return "EPTChipset";
+		return "EPT/Chipset";
 	}
 }

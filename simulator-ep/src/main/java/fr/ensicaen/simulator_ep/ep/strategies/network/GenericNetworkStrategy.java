@@ -140,4 +140,9 @@ public class GenericNetworkStrategy implements IStrategy<ComponentIO> {
 			}
 		}
 	}
+
+	@Override
+	public String toString() {
+		return "Generic Network";
+	}
 }

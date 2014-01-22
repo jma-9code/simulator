@@ -112,4 +112,9 @@ public class GenericRouterStrategy implements IStrategy<ComponentIO> {
 		// anormal
 		return VoidResponse.build();
 	}
+
+	@Override
+	public String toString() {
+		return "Generic Router";
+	}
 }

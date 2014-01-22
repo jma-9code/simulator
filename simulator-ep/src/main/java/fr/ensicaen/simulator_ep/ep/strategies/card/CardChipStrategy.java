@@ -229,6 +229,6 @@ public class CardChipStrategy implements IStrategy<ComponentIO> {
 
 	@Override
 	public String toString() {
-		return "CardChip";
+		return "Card/Chip";
 	}
 }

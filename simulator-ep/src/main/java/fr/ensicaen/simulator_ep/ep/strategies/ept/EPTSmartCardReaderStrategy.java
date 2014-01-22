@@ -44,6 +44,6 @@ public class EPTSmartCardReaderStrategy implements IStrategy<ComponentIO> {
 
 	@Override
 	public String toString() {
-		return "EPTSmartCardReader";
+		return "EPT/SmartCardReader";
 	}
 }

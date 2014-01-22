@@ -1,6 +1,7 @@
 package fr.ensicaen.gui_simulator.gui.bridge;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Set;
 
@@ -14,12 +15,11 @@ import org.slf4j.LoggerFactory;
 import fr.ensicaen.simulator.model.component.Component;
 import fr.ensicaen.simulator.model.strategies.IStrategy;
 import fr.ensicaen.simulator.model.strategies.NullStrategy;
+import fr.ensicaen.simulator.tools.ComparatorFactory;
 
-public class StrategyComboBoxBridge extends AbstractListModel<IStrategy>
-		implements ComboBoxModel<IStrategy> {
+public class StrategyComboBoxBridge extends AbstractListModel<IStrategy> implements ComboBoxModel<IStrategy> {
 
-	private static Logger logger = LoggerFactory
-			.getLogger(StrategyComboBoxBridge.class);
+	private static Logger logger = LoggerFactory.getLogger(StrategyComboBoxBridge.class);
 
 	private List<IStrategy> strategies = new ArrayList<>();
 	// private DAO<IStrategy> dao;
@@ -39,17 +39,16 @@ public class StrategyComboBoxBridge extends AbstractListModel<IStrategy>
 		 */
 
 		Reflections reflections = new Reflections("fr.ensicaen");
-		Set<Class<? extends IStrategy>> classes = reflections
-				.getSubTypesOf(IStrategy.class);
+		Set<Class<? extends IStrategy>> classes = reflections.getSubTypesOf(IStrategy.class);
 		for (Class<? extends IStrategy> s : classes) {
 			try {
 				strategies.add(s.newInstance());
-			} catch (InstantiationException | IllegalAccessException
-					| IllegalArgumentException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
+			}
+			catch (InstantiationException | IllegalAccessException | IllegalArgumentException e) {
+				logger.error("Strategy instanciation failed for " + s.getName(), e);
 			}
 		}
+
 		// seek the null strategy (default)
 		for (IStrategy strategy : strategies) {
 			if (strategy instanceof NullStrategy) {
@@ -58,6 +57,9 @@ public class StrategyComboBoxBridge extends AbstractListModel<IStrategy>
 				break;
 			}
 		}
+
+		// alpha sort
+		Collections.sort(strategies, ComparatorFactory.withToString());
 	}
 
 	@Override
@@ -79,7 +81,8 @@ public class StrategyComboBoxBridge extends AbstractListModel<IStrategy>
 			}
 
 			component.setStrategy(nullStrategy);
-		} else {
+		}
+		else {
 			component.setStrategy((IStrategy) anItem);
 		}
 

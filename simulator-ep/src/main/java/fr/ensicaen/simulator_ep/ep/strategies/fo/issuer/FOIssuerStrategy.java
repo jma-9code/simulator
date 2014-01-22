@@ -18,7 +18,6 @@ public class FOIssuerStrategy implements IStrategy<ComponentIO> {
 
 	public FOIssuerStrategy() {
 		super();
-		// TODO Auto-generated constructor stub
 	}
 
 	@Override
@@ -46,7 +45,7 @@ public class FOIssuerStrategy implements IStrategy<ComponentIO> {
 
 	@Override
 	public String toString() {
-		return "FOIssuer";
+		return "FO/Issuer";
 	}
 
 }

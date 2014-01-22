@@ -1,12 +1,5 @@
 package fr.ensicaen.gui_simulator.gui.panel;
 
-import fr.ensicaen.gui_simulator.gui.bridge.ComponentWrapper;
-import fr.ensicaen.gui_simulator.gui.bridge.MapJTableBridge;
-import fr.ensicaen.gui_simulator.gui.bridge.MediatorWrapper;
-import fr.ensicaen.gui_simulator.gui.bridge.StrategyComboBoxBridge;
-import fr.ensicaen.simulator.model.component.Component;
-import fr.ensicaen.simulator.model.strategies.IStrategy;
-
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Dimension;
@@ -38,6 +31,13 @@ import com.mxgraph.util.mxEventSource.mxIEventListener;
 import com.mxgraph.util.mxResources;
 import com.mxgraph.view.mxGraphSelectionModel;
 
+import fr.ensicaen.gui_simulator.gui.bridge.ComponentWrapper;
+import fr.ensicaen.gui_simulator.gui.bridge.MapJTableBridge;
+import fr.ensicaen.gui_simulator.gui.bridge.MediatorWrapper;
+import fr.ensicaen.gui_simulator.gui.bridge.StrategyComboBoxBridge;
+import fr.ensicaen.simulator.model.component.Component;
+import fr.ensicaen.simulator.model.strategies.IStrategy;
+
 public class ComponentPanel extends JTabbedPane implements mxIEventListener, ListSelectionListener {
 
 	// properties table tab - BEGIN
@@ -49,6 +49,7 @@ public class ComponentPanel extends JTabbedPane implements mxIEventListener, Lis
 
 	// detail panel tab - BEGIN
 	private JLabel valName;
+	private JLabel valAcronym;
 	private JLabel valIdentifier;
 	private JComboBox<IStrategy> valStrategy;
 	private StrategyComboBoxBridge strategyModelComboBox;
@@ -76,15 +77,26 @@ public class ComponentPanel extends JTabbedPane implements mxIEventListener, Lis
 		layout.putConstraint(SpringLayout.WEST, valName, 10, SpringLayout.EAST, lblName);
 		detailPanelTab.add(valName);
 
+		JLabel lblAcronym = new JLabel(mxResources.get("acronym"));
+		layout.putConstraint(SpringLayout.NORTH, lblAcronym, 10, SpringLayout.SOUTH, lblName);
+		layout.putConstraint(SpringLayout.EAST, lblAcronym, 0, SpringLayout.EAST, lblName);
+		detailPanelTab.add(lblAcronym);
+
+		valAcronym = new JLabel("<nothing selected>");
+		layout.putConstraint(SpringLayout.NORTH, valAcronym, 0, SpringLayout.NORTH, lblAcronym);
+		layout.putConstraint(SpringLayout.WEST, valAcronym, 10, SpringLayout.EAST, lblAcronym);
+		detailPanelTab.add(valAcronym);
+
 		JLabel lblIdentifier = new JLabel(mxResources.get("identifier"));
-		layout.putConstraint(SpringLayout.NORTH, lblIdentifier, 10, SpringLayout.SOUTH, lblName);
-		layout.putConstraint(SpringLayout.EAST, lblIdentifier, 0, SpringLayout.EAST, lblName);
+		layout.putConstraint(SpringLayout.NORTH, lblIdentifier, 10, SpringLayout.SOUTH, lblAcronym);
+		layout.putConstraint(SpringLayout.EAST, lblIdentifier, 0, SpringLayout.EAST, lblAcronym);
 		detailPanelTab.add(lblIdentifier);
 
 		valIdentifier = new JLabel("<nothing selected>");
-		valIdentifier.setPreferredSize(new Dimension(155, 20));
+		valIdentifier.setPreferredSize(new Dimension(0, 20));
 		layout.putConstraint(SpringLayout.NORTH, valIdentifier, 0, SpringLayout.NORTH, lblIdentifier);
 		layout.putConstraint(SpringLayout.WEST, valIdentifier, 10, SpringLayout.EAST, lblIdentifier);
+		layout.putConstraint(SpringLayout.EAST, valIdentifier, -10, SpringLayout.EAST, detailPanelTab);
 		detailPanelTab.add(valIdentifier);
 
 		JLabel lblStrategy = new JLabel(mxResources.get("strategy"));
@@ -94,9 +106,10 @@ public class ComponentPanel extends JTabbedPane implements mxIEventListener, Lis
 
 		strategyModelComboBox = new StrategyComboBoxBridge();
 		valStrategy = new JComboBox<>(strategyModelComboBox);
-		valStrategy.setPreferredSize(new Dimension(155, 20));
+		valStrategy.setPreferredSize(new Dimension(0, 20));
 		layout.putConstraint(SpringLayout.NORTH, valStrategy, 0, SpringLayout.NORTH, lblStrategy);
 		layout.putConstraint(SpringLayout.WEST, valStrategy, 10, SpringLayout.EAST, lblStrategy);
+		layout.putConstraint(SpringLayout.EAST, valStrategy, -10, SpringLayout.EAST, detailPanelTab);
 		detailPanelTab.add(valStrategy);
 
 		return detailPanelTab;
@@ -203,12 +216,14 @@ public class ComponentPanel extends JTabbedPane implements mxIEventListener, Lis
 	private void updateDetailPanel(Component c) {
 		if (c != null) {
 			this.valName.setText(c.getName());
+			this.valAcronym.setText(c.getAcronym());
 			this.valIdentifier.setText(c.getInstanceName());
 			this.strategyModelComboBox.update(c);
 			this.valStrategy.setEnabled(true);
 		}
 		else {
 			this.valName.setText("");
+			this.valAcronym.setText("");
 			this.valIdentifier.setText("");
 			this.valStrategy.setEnabled(false);
 		}

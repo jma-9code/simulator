@@ -65,7 +65,11 @@ public class ScenarioData implements Serializable {
 
 	public ScenarioData(String _name, Context ctx) {
 		setName(_name);
-		components = ctx.getComponents();
+		Map<String, Component> tmp = new HashMap<>();
+		List<Component> c1 = organizeComponents(new ArrayList<Component>(ctx.getComponents().values()));
+		for (Component c : c1)
+			tmp.put(c.getUuid(), c);
+		components = tmp;
 		mediators = ctx.getMediators();
 		link_strat_component = computelinks(new ArrayList<Component>(components.values()));
 		startPoints = ctx.getStartPoints();
@@ -89,7 +93,8 @@ public class ScenarioData implements Serializable {
 	private static Map<String, Class> computelinks(List<Component> _components) {
 		Map<String, Class> ret = new HashMap<>();
 		for (Component c : _components) {
-			ret.put(c.getUuid(), c.getStrategy().getClass());
+			if (c.getStrategy() != null)
+				ret.put(c.getUuid(), c.getStrategy().getClass());
 		}
 		return ret;
 	}
@@ -147,6 +152,26 @@ public class ScenarioData implements Serializable {
 		else if (!name.equals(other.name))
 			return false;
 		return true;
+	}
+
+	/**
+	 * Recursive function to re-organize components.
+	 * 
+	 * @param components
+	 * @return
+	 */
+	public static List<Component> organizeComponents(List<Component> components) {
+		List<Component> ret = new ArrayList<>();
+		ret.addAll(components);
+		for (Component c : components) {
+			List<Component> tmp = organizeComponents(c.getChilds());
+			for (Component c1 : tmp) {
+				if (!components.contains(c1)) {
+					ret.add(c1);
+				}
+			}
+		}
+		return ret;
 	}
 
 	public Queue<StartPoint> getStartPoints() {

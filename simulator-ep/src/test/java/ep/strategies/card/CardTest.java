@@ -98,12 +98,12 @@ public class CardTest {
 		tpe_ch.set(ISO7816Tools.FIELD_DATETIME, "1008170100");
 
 		tpe_finalagree.setMTI(ISO7816Tools.convertType2CodeMsg(MessageType.AUTHORIZATION_RP_CRYPTO));
-		tpe_finalagree.set(ISO7816Tools.FIELD_POSID, "0000623598");
-		tpe_finalagree.set(ISO7816Tools.FIELD_OPCODE, "00");
+		tpe_finalagree.set(ISO7816Tools.FIELD_POSID, "0000623598");// num du tpe
+		tpe_finalagree.set(ISO7816Tools.FIELD_OPCODE, "00"); //
 		tpe_finalagree.set(ISO7816Tools.FIELD_AMOUNT, "0000008000");
-		tpe_finalagree.set(ISO7816Tools.FIELD_APPROVALCODE, "07B56=");
-		tpe_finalagree.set(ISO7816Tools.FIELD_RESPONSECODE, "00");
-		tpe_finalagree.set(ISO7816Tools.FIELD_APPROVALCODE, "07B56=");
+		tpe_finalagree.set(ISO7816Tools.FIELD_APPROVALCODE, "07B56="); // num
+																		// d'auth
+		tpe_finalagree.set(ISO7816Tools.FIELD_RESPONSECODE, "00"); // auth OK
 		tpe_finalagree.set(ISO7816Tools.FIELD_PAN, "4976710025642130");
 		tpe_finalagree.set(ISO7816Tools.FIELD_RRN, "320012000001");
 		tpe_finalagree.set(ISO7816Tools.FIELD_STAN, "000001");

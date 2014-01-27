@@ -1,16 +1,19 @@
 package fr.ensicaen.gui_simulator.gui.feature;
 
-import fr.ensicaen.gui_simulator.gui.bridge.ComponentWrapper;
-import fr.ensicaen.gui_simulator.gui.bridge.MediatorWrapper;
-import fr.ensicaen.gui_simulator.gui.main.CustomGraph;
-import fr.ensicaen.simulator.simulator.Context;
-
 import com.mxgraph.model.mxCell;
 import com.mxgraph.util.mxEvent;
 import com.mxgraph.util.mxEventObject;
 import com.mxgraph.util.mxEventSource.mxIEventListener;
 
+import fr.ensicaen.gui_simulator.gui.bridge.ComponentWrapper;
+import fr.ensicaen.gui_simulator.gui.bridge.SimulatorGUIBridge;
+import fr.ensicaen.gui_simulator.gui.bridge.MediatorWrapper;
+import fr.ensicaen.gui_simulator.gui.main.CustomGraph;
+import fr.ensicaen.simulator.simulator.Context;
+
 public class ComponentRegistrationFeature implements mxIEventListener {
+
+	private boolean pause = false;
 
 	@Override
 	public void invoke(Object obj, mxEventObject e) {
@@ -19,7 +22,17 @@ public class ComponentRegistrationFeature implements mxIEventListener {
 		Context ctx = Context.getInstance();
 
 		switch (e.getName()) {
+			case SimulatorGUIBridge.EVT_PAUSE_CTX_SYNC:
+				pause = true;
+				break;
+			case SimulatorGUIBridge.EVT_RESUME_CTX_SYNC:
+				pause = false;
+				break;
 			case mxEvent.CELLS_ADDED:
+				if (pause) {
+					break;
+				}
+
 				for (Object _cell : cells) {
 					mxCell cell = (mxCell) _cell;
 
@@ -31,9 +44,14 @@ public class ComponentRegistrationFeature implements mxIEventListener {
 						ctx.registerMediator(((MediatorWrapper) cell.getValue()).getMediator());
 					}
 				}
+
 				break;
 
 			case mxEvent.CELLS_REMOVED:
+				if (pause) {
+					break;
+				}
+
 				for (Object _cell : cells) {
 					mxCell cell = (mxCell) _cell;
 

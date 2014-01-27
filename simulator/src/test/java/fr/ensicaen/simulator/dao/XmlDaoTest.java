@@ -83,7 +83,7 @@ public class XmlDaoTest {
 	@Test
 	public void test_scenarioXml() {
 		DAO<ScenarioData> dao = DAOFactory.getFactory().getScenarioDataDAO();
-		ScenarioData data = new ScenarioData("test", ctx);
+		ScenarioData data = new ScenarioData("test", ctx, null);
 		dao.create(data);
 		Assert.assertEquals(data.getName(), dao.find(data.getName()).getName());
 		String path = Config.getProps().getProperty("config.xml.path.library.scenario");

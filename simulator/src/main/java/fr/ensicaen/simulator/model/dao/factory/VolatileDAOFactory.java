@@ -26,13 +26,13 @@ public class VolatileDAOFactory extends DAOFactory {
 	}
 
 	@Override
-	public boolean saveTo(ScenarioData d, String path) {
+	public boolean saveTo(ScenarioData d, String path, Class... additionnalJaxbContext) {
 		// TODO Auto-generated method stub
 		return false;
 	}
 
 	@Override
-	public ScenarioData loadFrom(String path) {
+	public ScenarioData loadFrom(String path, Class... additionnalJaxbContext) {
 		// TODO Auto-generated method stub
 		return null;
 	}

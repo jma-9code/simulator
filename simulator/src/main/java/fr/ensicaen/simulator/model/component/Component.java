@@ -211,7 +211,7 @@ public abstract class Component implements Serializable {
 	 * Instancie le composant
 	 */
 	public void instanciate() {
-		this.uuid = UUID.randomUUID().toString();
+		this.uuid = "c-" + UUID.randomUUID().toString();
 		log.info(getInstanceName() + " instancied");
 	}
 

@@ -95,6 +95,8 @@ public class SimulatorGUI extends BasicGraphEditor {
 		// dao.create(new ComponentIO("IS"));
 		// dao.create(new ComponentIO("FO"));
 		// dao.create(new ComponentIO("BO"));
+		// DAO<Component> dao = DAOFactory.getFactory().getComponentDAO();
+		// dao.create(new ComponentIO("Network Router"));
 		// // test à supprimer END
 
 		ComponentPaletteBridge bridge = new ComponentPaletteBridge(componentsPalette, dao, graphComponent.getGraph());

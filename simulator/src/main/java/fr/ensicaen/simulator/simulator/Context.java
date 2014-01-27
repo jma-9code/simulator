@@ -408,7 +408,7 @@ public class Context {
 	public void restoreContext(ScenarioData sd) throws InstantiationException, IllegalAccessException {
 		reset();
 		startPoints.addAll(sd.getStartPoints());
-		components.putAll(sd.getComponents());
+		components.putAll(sd.getRootComponents());
 		mediators.addAll(sd.getMediators());
 		events.putAll(sd.getEvents());
 

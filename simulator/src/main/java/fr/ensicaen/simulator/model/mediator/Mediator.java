@@ -1,10 +1,14 @@
 package fr.ensicaen.simulator.model.mediator;
 
+import java.io.Serializable;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.UUID;
 
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
+import javax.xml.bind.annotation.XmlAttribute;
+import javax.xml.bind.annotation.XmlID;
 import javax.xml.bind.annotation.XmlSeeAlso;
 import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 
@@ -17,7 +21,11 @@ import fr.ensicaen.simulator.model.response.IResponse;
 @XmlSeeAlso({ SimplexMediator.class, ReverseHalfDuplexMediator.class, ForwardMediator.class, PipedMediator.class,
 		HalfDuplexMediator.class })
 @XmlAccessorType(XmlAccessType.FIELD)
-public abstract class Mediator {
+public abstract class Mediator implements Serializable {
+
+	@XmlAttribute
+	@XmlID
+	protected String uuid;
 
 	@XmlJavaTypeAdapter(OutputAdapter.class)
 	protected IOutput sender;
@@ -28,13 +36,13 @@ public abstract class Mediator {
 	private Map<String, String> properties = null;
 
 	public Mediator() {
-
 	}
 
 	public Mediator(IOutput _sender, IInput _receiver) {
 		this.properties = new HashMap<>();
 		this.sender = _sender;
 		this.receiver = _receiver;
+		this.uuid = "m-" + UUID.randomUUID().toString();
 	}
 
 	/**
@@ -101,5 +109,9 @@ public abstract class Mediator {
 
 	public IInput getReceiver() {
 		return this.receiver;
+	}
+
+	public String getUuid() {
+		return uuid;
 	}
 }

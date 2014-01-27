@@ -6,6 +6,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
 
@@ -117,8 +118,14 @@ public class ScenarioDataXmlDAO extends DAO<ScenarioData> {
 	 * @return
 	 * @throws JAXBException
 	 */
-	public static ScenarioData loadFrom(String path) throws JAXBException {
-		JAXBContext jaxbContext = JAXBContext.newInstance(ScenarioData.class);
+	public static ScenarioData loadFrom(String path, Class... additionnalJaxbContext) throws JAXBException {
+		List<Class> clazz = new ArrayList<>(additionnalJaxbContext.length + 1);
+		if (additionnalJaxbContext.length > 0) {
+			Collections.addAll(clazz, additionnalJaxbContext);
+		}
+		clazz.add(ScenarioData.class);
+
+		JAXBContext jaxbContext = JAXBContext.newInstance(clazz.toArray(new Class[0]));
 		Unmarshaller jaxbUnmarshaller = jaxbContext.createUnmarshaller();
 		return (ScenarioData) jaxbUnmarshaller.unmarshal(Paths.get(path).toFile());
 	}
@@ -130,8 +137,14 @@ public class ScenarioDataXmlDAO extends DAO<ScenarioData> {
 	 * @param path
 	 * @throws JAXBException
 	 */
-	public static void saveTo(ScenarioData d, String path) throws JAXBException {
-		JAXBContext jaxbContext = JAXBContext.newInstance(d.getClass());
+	public static void saveTo(ScenarioData d, String path, Class... additionnalJaxbContext) throws JAXBException {
+		List<Class> clazz = new ArrayList<>(additionnalJaxbContext.length + 1);
+		if (additionnalJaxbContext.length > 0) {
+			Collections.addAll(clazz, additionnalJaxbContext);
+		}
+		clazz.add(d.getClass());
+
+		JAXBContext jaxbContext = JAXBContext.newInstance(clazz.toArray(new Class[0]));
 		Marshaller jaxbMarshaller = jaxbContext.createMarshaller();
 		jaxbMarshaller.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, true);
 		jaxbMarshaller.marshal(d, Paths.get(path).toFile());

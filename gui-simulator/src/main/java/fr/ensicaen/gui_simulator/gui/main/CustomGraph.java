@@ -1,14 +1,5 @@
 package fr.ensicaen.gui_simulator.gui.main;
 
-import fr.ensicaen.gui_simulator.gui.bridge.ComponentWrapper;
-import fr.ensicaen.gui_simulator.gui.bridge.MediatorWrapper;
-import fr.ensicaen.gui_simulator.gui.feature.ComponentAppearanceFeature;
-import fr.ensicaen.gui_simulator.gui.feature.ComponentRegistrationFeature;
-import fr.ensicaen.simulator.model.factory.MediatorFactory;
-import fr.ensicaen.simulator.model.mediator.HalfDuplexMediator;
-import fr.ensicaen.simulator.model.mediator.Mediator;
-import fr.ensicaen.simulator.model.mediator.SimplexMediator;
-
 import java.text.NumberFormat;
 import java.util.Iterator;
 import java.util.List;
@@ -20,6 +11,14 @@ import com.mxgraph.util.mxPoint;
 import com.mxgraph.util.mxResources;
 import com.mxgraph.view.mxCellState;
 import com.mxgraph.view.mxGraph;
+
+import fr.ensicaen.gui_simulator.gui.bridge.ComponentWrapper;
+import fr.ensicaen.gui_simulator.gui.bridge.MediatorWrapper;
+import fr.ensicaen.gui_simulator.gui.bridge.SimulatorGUIBridge;
+import fr.ensicaen.gui_simulator.gui.feature.ComponentAppearanceFeature;
+import fr.ensicaen.gui_simulator.gui.feature.ComponentRegistrationFeature;
+import fr.ensicaen.simulator.model.factory.MediatorFactory;
+import fr.ensicaen.simulator.model.mediator.Mediator;
 
 /**
  * A graph that creates new edges from a given template edge.
@@ -55,6 +54,8 @@ public class CustomGraph extends mxGraph {
 		ComponentRegistrationFeature registrationFeature = new ComponentRegistrationFeature();
 		addListener(mxEvent.CELLS_ADDED, registrationFeature);
 		addListener(mxEvent.CELLS_REMOVED, registrationFeature);
+		addListener(SimulatorGUIBridge.EVT_PAUSE_CTX_SYNC, registrationFeature);
+		addListener(SimulatorGUIBridge.EVT_RESUME_CTX_SYNC, registrationFeature);
 	}
 
 	/**
@@ -172,19 +173,9 @@ public class CustomGraph extends mxGraph {
 		Mediator m = factory.getMediator(source.getComponent(), target.getComponent());
 
 		if (m != null) {
-			edge.setValue(new MediatorWrapper(m));
-
-			if (m instanceof HalfDuplexMediator) {
-				edge.setStyle("lineHalfDuplex");
-			}
-			else if (m instanceof SimplexMediator && m.getSender() == source.getComponent()) {
-				edge.setStyle("lineSimplex");
-			}
-			/*
-			 * else if (m instanceof SimplexMediator && m.getSender() ==
-			 * target.getComponent()) { edge.setStyle("lineSimplexInverse"); }
-			 */
-
+			MediatorWrapper wrapper = new MediatorWrapper(m);
+			edge.setValue(wrapper);
+			edge.setStyle(wrapper.getStyle());
 			return "";
 		}
 		else {
@@ -207,4 +198,5 @@ public class CustomGraph extends mxGraph {
 	public boolean isValidTarget(Object arg0) {
 		return arg0 != null && ((mxCell) arg0).getValue() instanceof ComponentWrapper;
 	}
+
 }

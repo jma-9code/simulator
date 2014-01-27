@@ -23,9 +23,9 @@ public abstract class DAOFactory {
 
 	public abstract DAO<IStrategy> getStrategyDAO();
 
-	public abstract boolean saveTo(ScenarioData d, String path);
+	public abstract boolean saveTo(ScenarioData d, String path, Class... additionnalJaxbContext);
 
-	public abstract ScenarioData loadFrom(String path);
+	public abstract ScenarioData loadFrom(String path, Class... additionnalJaxbContext);
 
 	/**
 	 * Retourne la factory de DAO => localisation du point de changement actuel

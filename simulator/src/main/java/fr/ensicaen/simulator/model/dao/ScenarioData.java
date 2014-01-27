@@ -2,6 +2,7 @@ package fr.ensicaen.simulator.model.dao;
 
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -12,6 +13,7 @@ import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlElementWrapper;
+import javax.xml.bind.annotation.XmlIDREF;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 
@@ -39,7 +41,12 @@ public class ScenarioData implements Serializable {
 
 	@XmlElement
 	@XmlElementWrapper
-	private Map<String, Component> components = null;
+	private Map<String, Component> allComponents = null;
+
+	@XmlIDREF
+	@XmlElement
+	@XmlElementWrapper
+	private Collection<Component> rootComponents = null;
 
 	@XmlElement
 	@XmlElementWrapper
@@ -57,23 +64,39 @@ public class ScenarioData implements Serializable {
 	 * Permet de faire le lien entre un composant et sa strategie Key=uuid
 	 * component value=related strategy
 	 */
+	@XmlElement
+	@XmlElementWrapper
 	private Map<String, Class> link_strat_component = null;
 
-	public ScenarioData() {
+	/* BEGIN GUI */
 
+	@XmlElement
+	@XmlElementWrapper
+	private Map<String, Object> uiData = null;
+
+	/* END GUI */
+
+	public ScenarioData() {
 	}
 
-	public ScenarioData(String _name, Context ctx) {
+	public ScenarioData(String _name, Context ctx, Map<String, Object> uiData) {
 		setName(_name);
+
+		// root components
+		this.rootComponents = ctx.getComponents().values();
+
+		// all = root + childs components
 		Map<String, Component> tmp = new HashMap<>();
-		List<Component> c1 = organizeComponents(new ArrayList<Component>(ctx.getComponents().values()));
+		List<Component> c1 = organizeComponents(ctx.getComponents().values());
 		for (Component c : c1)
 			tmp.put(c.getUuid(), c);
-		components = tmp;
-		mediators = ctx.getMediators();
-		link_strat_component = computelinks(new ArrayList<Component>(components.values()));
-		startPoints = ctx.getStartPoints();
-		events = ctx.getEvents();
+		this.allComponents = tmp;
+
+		this.mediators = ctx.getMediators();
+		this.link_strat_component = computelinks(new ArrayList<Component>(allComponents.values()));
+		this.startPoints = ctx.getStartPoints();
+		this.events = ctx.getEvents();
+		this.uiData = uiData;
 	}
 
 	public String getName() {
@@ -90,7 +113,7 @@ public class ScenarioData implements Serializable {
 	 * @param _components
 	 * @return
 	 */
-	private static Map<String, Class> computelinks(List<Component> _components) {
+	private static Map<String, Class> computelinks(Collection<Component> _components) {
 		Map<String, Class> ret = new HashMap<>();
 		for (Component c : _components) {
 			if (c.getStrategy() != null)
@@ -111,7 +134,7 @@ public class ScenarioData implements Serializable {
 	public int hashCode() {
 		final int prime = 31;
 		int result = 1;
-		result = prime * result + ((components == null) ? 0 : components.hashCode());
+		result = prime * result + ((allComponents == null) ? 0 : allComponents.hashCode());
 		result = prime * result + ((link_strat_component == null) ? 0 : link_strat_component.hashCode());
 		result = prime * result + ((mediators == null) ? 0 : mediators.hashCode());
 		result = prime * result + ((name == null) ? 0 : name.hashCode());
@@ -127,11 +150,11 @@ public class ScenarioData implements Serializable {
 		if (getClass() != obj.getClass())
 			return false;
 		ScenarioData other = (ScenarioData) obj;
-		if (components == null) {
-			if (other.components != null)
+		if (allComponents == null) {
+			if (other.allComponents != null)
 				return false;
 		}
-		else if (!components.equals(other.components))
+		else if (!allComponents.equals(other.allComponents))
 			return false;
 		if (link_strat_component == null) {
 			if (other.link_strat_component != null)
@@ -160,7 +183,7 @@ public class ScenarioData implements Serializable {
 	 * @param components
 	 * @return
 	 */
-	public static List<Component> organizeComponents(List<Component> components) {
+	public static List<Component> organizeComponents(Collection<Component> components) {
 		List<Component> ret = new ArrayList<>();
 		ret.addAll(components);
 		for (Component c : components) {
@@ -199,10 +222,27 @@ public class ScenarioData implements Serializable {
 	}
 
 	public Map<String, Component> getComponents() {
-		return components;
+		return allComponents;
 	}
 
 	public void setComponents(Map<String, Component> components) {
-		this.components = components;
+		this.allComponents = components;
 	}
+
+	public Map<String, Object> getUiData() {
+		return uiData;
+	}
+
+	public void setUiData(Map<String, Object> uiData) {
+		this.uiData = uiData;
+	}
+
+	public Map<String, Component> getRootComponents() {
+		Map<String, Component> map = new HashMap<String, Component>();
+		for (Component c : rootComponents) {
+			map.put(c.getName(), c);
+		}
+		return map;
+	}
+
 }

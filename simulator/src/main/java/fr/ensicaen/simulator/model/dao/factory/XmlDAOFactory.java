@@ -29,9 +29,9 @@ public class XmlDAOFactory extends DAOFactory {
 	}
 
 	@Override
-	public boolean saveTo(ScenarioData d, String path) {
+	public boolean saveTo(ScenarioData d, String path, Class... additionnalJaxbContext) {
 		try {
-			ScenarioDataXmlDAO.saveTo(d, path);
+			ScenarioDataXmlDAO.saveTo(d, path, additionnalJaxbContext);
 			return true;
 		}
 		catch (JAXBException e) {
@@ -42,9 +42,9 @@ public class XmlDAOFactory extends DAOFactory {
 	}
 
 	@Override
-	public ScenarioData loadFrom(String path) {
+	public ScenarioData loadFrom(String path, Class... additionnalJaxbContext) {
 		try {
-			return ScenarioDataXmlDAO.loadFrom(path);
+			return ScenarioDataXmlDAO.loadFrom(path, additionnalJaxbContext);
 		}
 		catch (JAXBException e) {
 			// TODO Auto-generated catch block

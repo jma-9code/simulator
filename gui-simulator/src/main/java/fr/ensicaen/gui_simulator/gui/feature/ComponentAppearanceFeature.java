@@ -1,13 +1,13 @@
 package fr.ensicaen.gui_simulator.gui.feature;
 
-import fr.ensicaen.gui_simulator.gui.bridge.ComponentWrapper;
-import fr.ensicaen.gui_simulator.gui.main.CustomGraph;
-
 import com.mxgraph.layout.mxStackLayout;
 import com.mxgraph.model.mxCell;
 import com.mxgraph.util.mxEventObject;
 import com.mxgraph.util.mxEventSource.mxIEventListener;
 import com.mxgraph.view.mxGraph;
+
+import fr.ensicaen.gui_simulator.gui.bridge.ComponentWrapper;
+import fr.ensicaen.gui_simulator.gui.main.CustomGraph;
 
 public class ComponentAppearanceFeature implements mxIEventListener {
 
@@ -21,13 +21,26 @@ public class ComponentAppearanceFeature implements mxIEventListener {
 	@Override
 	public void invoke(Object obj, mxEventObject e) {
 		CustomGraph graph = (CustomGraph) obj;
-		mxCell cell = (mxCell) ((Object[]) e.getProperty("cells"))[0];
-		switch (e.getName()) {
-			case "foldCells":
-				// change style (image or shape) + auto layout
-				cellsFolded(graph, cell);
-				break;
+		if (e.getProperty("cells") != null) {
+			mxCell cell = (mxCell) ((Object[]) e.getProperty("cells"))[0];
+			switch (e.getName()) {
+				case "foldCells":
+					// change style (image or shape) + auto layout
+					cellsFolded(graph, cell);
+					break;
+			}
 		}
+	}
+
+	private void collapse(mxCell cell, ComponentWrapper wrapper) {
+		cell.setStyle(wrapper.getCollapsedStyle());
+		layout.execute(cell);
+	}
+
+	private void expand(mxCell cell, ComponentWrapper wrapper, CustomGraph graph) {
+		cell.setStyle(wrapper.getExpandedStyle());
+		layout.execute(cell);
+		graph.updateGroupBounds(new Object[] { cell }, 30, false);
 	}
 
 	private void cellsFolded(CustomGraph graph, mxCell cell) {
@@ -35,15 +48,10 @@ public class ComponentAppearanceFeature implements mxIEventListener {
 
 			ComponentWrapper wrapper = (ComponentWrapper) cell.getValue();
 			if (cell.isCollapsed()) {
-				cell.setStyle(wrapper.getCollapsedStyle());
-
-				layout.execute(cell);
+				collapse(cell, wrapper);
 			}
 			else {
-				cell.setStyle(wrapper.getExpandedStyle());
-
-				layout.execute(cell);
-				graph.updateGroupBounds(new Object[] { cell }, 30, false);
+				expand(cell, wrapper, graph);
 			}
 
 			if (!cell.getParent().getId().equals("1")) {

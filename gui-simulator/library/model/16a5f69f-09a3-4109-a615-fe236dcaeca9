@@ -1,0 +1,257 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<components>
+    <components xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:type="componentIO" uuid="16a5f69f-09a3-4109-a615-fe236dcaeca9">
+        <name>FO</name>
+        <properties/>
+        <childs>b3c1f3e4-c2b9-40dc-aadf-c9d01202da1c</childs>
+        <childs>521eb3a1-78fd-4fc7-950b-4d86097d8f2f</childs>
+        <childs>76389b4e-baa0-4eae-a380-40a7dd7b2675</childs>
+    </components>
+    <components xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:type="componentIO" uuid="b3c1f3e4-c2b9-40dc-aadf-c9d01202da1c">
+        <name>Issuer</name>
+        <properties/>
+        <childs>a1ed9c50-7fe8-4105-9a97-db8d4e4496bd</childs>
+        <childs>4d78a824-886f-444a-9fef-f8cd63162019</childs>
+    </components>
+    <components xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:type="componentIO" uuid="a1ed9c50-7fe8-4105-9a97-db8d4e4496bd">
+        <name>IssuerAuthorization</name>
+        <properties/>
+        <childs>f7f25854-1b99-4b44-9489-2242674384a4</childs>
+        <childs>f43ee2e9-e8ca-4523-9517-deb6c5e7823e</childs>
+    </components>
+    <components xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:type="componentIO" uuid="f7f25854-1b99-4b44-9489-2242674384a4">
+        <name>controlesCarte</name>
+        <properties/>
+    </components>
+    <components xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:type="componentIO" uuid="f43ee2e9-e8ca-4523-9517-deb6c5e7823e">
+        <name>traitemntsAutorisation</name>
+        <properties/>
+        <childs>7b40baa3-6b39-48e1-b1c6-3b99d3d6018c</childs>
+        <childs>04f04bdd-f319-4ad0-ab33-d30fca6a1398</childs>
+    </components>
+    <components xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:type="componentIO" uuid="7b40baa3-6b39-48e1-b1c6-3b99d3d6018c">
+        <name>gestionDroitsCarte</name>
+        <properties/>
+    </components>
+    <components xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:type="componentIO" uuid="04f04bdd-f319-4ad0-ab33-d30fca6a1398">
+        <name>gestionSoldeCompte</name>
+        <properties/>
+    </components>
+    <components xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:type="componentIO" uuid="4d78a824-886f-444a-9fef-f8cd63162019">
+        <name>GestionDeLaFraude</name>
+        <properties/>
+    </components>
+    <components xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:type="componentIO" uuid="521eb3a1-78fd-4fc7-950b-4d86097d8f2f">
+        <name>Acceptor</name>
+        <properties/>
+        <childs>4929157e-8d05-4842-890c-2aae8df3e372</childs>
+        <childs>991a74e1-8c5a-48c5-a4e6-f8820c855f04</childs>
+        <childs>7c74ad34-58dd-4e2b-81cd-9b908644f2ab</childs>
+    </components>
+    <components xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:type="componentIO" uuid="4929157e-8d05-4842-890c-2aae8df3e372">
+        <name>systemeEncaissement</name>
+        <properties/>
+        <childs>af11e73c-9b09-4d3e-9482-15ad52d8564d</childs>
+        <childs>0770265b-7bfe-44a2-8389-a82c92464a18</childs>
+        <childs>6abdfaa4-30cc-4aed-83c0-987b61e365fa</childs>
+        <childs>b0170877-168e-4edb-865a-5e0e077ce4a8</childs>
+        <childs>b2c50a8b-e75c-4c1f-aa74-bd9ecf34b92c</childs>
+    </components>
+    <components xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:type="componentIO" uuid="af11e73c-9b09-4d3e-9482-15ad52d8564d">
+        <name>gestionEncaissementsMultiples</name>
+        <properties/>
+    </components>
+    <components xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:type="componentIO" uuid="0770265b-7bfe-44a2-8389-a82c92464a18">
+        <name>gestionRolesDeCaisse</name>
+        <properties/>
+        <childs>1366ffe4-db3b-471d-a974-7230d1f165b8</childs>
+        <childs>170faaee-40ee-45ad-8fa2-a47b14e82570</childs>
+    </components>
+    <components xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:type="componentIO" uuid="1366ffe4-db3b-471d-a974-7230d1f165b8">
+        <name>gestionLigneDeCaisse</name>
+        <properties/>
+    </components>
+    <components xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:type="componentIO" uuid="170faaee-40ee-45ad-8fa2-a47b14e82570">
+        <name>gestionTerminauxDePaiementGrappes</name>
+        <properties/>
+    </components>
+    <components xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:type="componentIO" uuid="6abdfaa4-30cc-4aed-83c0-987b61e365fa">
+        <name>gestionTickets</name>
+        <properties/>
+    </components>
+    <components xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:type="componentIO" uuid="b0170877-168e-4edb-865a-5e0e077ce4a8">
+        <name>gestionPeripheriques</name>
+        <properties/>
+    </components>
+    <components xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:type="componentIO" uuid="b2c50a8b-e75c-4c1f-aa74-bd9ecf34b92c">
+        <name>editionDeFactures</name>
+        <properties/>
+    </components>
+    <components xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:type="componentIO" uuid="991a74e1-8c5a-48c5-a4e6-f8820c855f04">
+        <name>concentrateurMonetique</name>
+        <properties/>
+    </components>
+    <components xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:type="componentIO" uuid="7c74ad34-58dd-4e2b-81cd-9b908644f2ab">
+        <name>telePaiement</name>
+        <properties/>
+        <childs>aec32d73-31f7-4d3f-a431-b4c51de0d282</childs>
+        <childs>1a4d29f2-3023-461d-9ee2-05a9fd589aa3</childs>
+    </components>
+    <components xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:type="componentIO" uuid="aec32d73-31f7-4d3f-a431-b4c51de0d282">
+        <name>passerelleTelepaiement</name>
+        <properties/>
+        <childs>f2b9ef2b-4f54-414a-b1c3-7b030e926697</childs>
+        <childs>32dc2109-b550-4a85-a644-ca8542229a4f</childs>
+        <childs>d02717ec-e9dd-47e2-85db-4d91e04fae60</childs>
+    </components>
+    <components xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:type="componentIO" uuid="f2b9ef2b-4f54-414a-b1c3-7b030e926697">
+        <name>acceptationPaiementPubliphone</name>
+        <properties/>
+    </components>
+    <components xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:type="componentIO" uuid="32dc2109-b550-4a85-a644-ca8542229a4f">
+        <name>acceptationPaiementParInternet</name>
+        <properties/>
+    </components>
+    <components xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:type="componentIO" uuid="d02717ec-e9dd-47e2-85db-4d91e04fae60">
+        <name>acceptationPaiementParGSM</name>
+        <properties/>
+    </components>
+    <components xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:type="componentIO" uuid="1a4d29f2-3023-461d-9ee2-05a9fd589aa3">
+        <name>gestionnaireTelepaiement</name>
+        <properties/>
+        <childs>53226e9f-828c-4ba8-b89f-f6c507e9434e</childs>
+        <childs>49272b39-487c-4386-9b18-a69a74bdc478</childs>
+        <childs>defd313f-5ff9-46c5-836b-a4afe58ffaa9</childs>
+    </components>
+    <components xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:type="componentIO" uuid="53226e9f-828c-4ba8-b89f-f6c507e9434e">
+        <name>delivrancePaiement</name>
+        <properties/>
+    </components>
+    <components xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:type="componentIO" uuid="49272b39-487c-4386-9b18-a69a74bdc478">
+        <name>gestionDesRemises</name>
+        <properties/>
+    </components>
+    <components xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:type="componentIO" uuid="defd313f-5ff9-46c5-836b-a4afe58ffaa9">
+        <name>gestionDonneesFonctionnement</name>
+        <properties/>
+    </components>
+    <components xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:type="componentIO" uuid="76389b4e-baa0-4eae-a380-40a7dd7b2675">
+        <name>Acquirer</name>
+        <properties/>
+        <childs>c465e5e7-659b-44d1-b27d-c9a4a5edc4fd</childs>
+        <childs>b85685dc-af7a-4149-864a-78c57ea59338</childs>
+        <childs>e66e713a-e8f2-4f1b-9949-1aa250b7bff1</childs>
+        <childs>828becd7-5929-4121-8473-25065727660a</childs>
+        <childs>828a02b8-c6de-40db-b81c-9d7ae3133a72</childs>
+    </components>
+    <components xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:type="componentIO" uuid="c465e5e7-659b-44d1-b27d-c9a4a5edc4fd">
+        <name>AcquirerAuthorization</name>
+        <properties/>
+    </components>
+    <components xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:type="componentIO" uuid="b85685dc-af7a-4149-864a-78c57ea59338">
+        <name>GABHandler</name>
+        <properties/>
+        <childs>965718bf-9b7e-434e-a969-ca4d97d49189</childs>
+        <childs>134417ef-f31d-4f1d-b45d-33d144fc2743</childs>
+    </components>
+    <components xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:type="componentIO" uuid="965718bf-9b7e-434e-a969-ca4d97d49189">
+        <name>retrait</name>
+        <properties/>
+    </components>
+    <components xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:type="componentIO" uuid="134417ef-f31d-4f1d-b45d-33d144fc2743">
+        <name>libreServiceBancaire</name>
+        <properties/>
+        <childs>6167ee6c-dc2e-4815-8613-794e298f1cc8</childs>
+        <childs>b8ed1f9d-113a-4a7a-9984-398f91825da7</childs>
+        <childs>3d8d8b75-5007-4af3-9592-4187d777eb5d</childs>
+        <childs>2eea6104-f044-4f5a-afa4-e1176837045b</childs>
+        <childs>e57dabc2-e700-49e9-9213-284189fd8141</childs>
+        <childs>4d4b0038-85c4-4725-84a9-ff9dc746110e</childs>
+        <childs>59987139-2cb9-4881-906f-360e9e5904c6</childs>
+    </components>
+    <components xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:type="componentIO" uuid="6167ee6c-dc2e-4815-8613-794e298f1cc8">
+        <name>retraitAutoCompte</name>
+        <properties/>
+    </components>
+    <components xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:type="componentIO" uuid="b8ed1f9d-113a-4a7a-9984-398f91825da7">
+        <name>depot</name>
+        <properties/>
+    </components>
+    <components xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:type="componentIO" uuid="3d8d8b75-5007-4af3-9592-4187d777eb5d">
+        <name>virement</name>
+        <properties/>
+    </components>
+    <components xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:type="componentIO" uuid="2eea6104-f044-4f5a-afa4-e1176837045b">
+        <name>commandeDeChequier</name>
+        <properties/>
+    </components>
+    <components xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:type="componentIO" uuid="e57dabc2-e700-49e9-9213-284189fd8141">
+        <name>demandeDeRIB</name>
+        <properties/>
+    </components>
+    <components xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:type="componentIO" uuid="4d4b0038-85c4-4725-84a9-ff9dc746110e">
+        <name>demandeDeSolde</name>
+        <properties/>
+    </components>
+    <components xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:type="componentIO" uuid="59987139-2cb9-4881-906f-360e9e5904c6">
+        <name>historiqueOperations</name>
+        <properties/>
+    </components>
+    <components xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:type="componentIO" uuid="e66e713a-e8f2-4f1b-9949-1aa250b7bff1">
+        <name>telecollection</name>
+        <properties/>
+        <childs>5a99576a-1792-4a32-9799-a262ef888ead</childs>
+    </components>
+    <components xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:type="componentIO" uuid="5a99576a-1792-4a32-9799-a262ef888ead">
+        <name>gestionCBPRCB2A</name>
+        <properties/>
+    </components>
+    <components xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:type="componentIO" uuid="828becd7-5929-4121-8473-25065727660a">
+        <name>paymentAcquirer</name>
+        <properties/>
+        <childs>c2df9d44-3be7-4d27-9d0b-e7dcc542a33a</childs>
+        <childs>9e12d40a-e0b3-4891-8cee-e89300a800eb</childs>
+        <childs>bc3bd17e-863c-470f-848f-214be5459469</childs>
+        <childs>55118dd5-097a-4170-b61a-f24cdb49ff1d</childs>
+        <childs>3e300b53-263f-4eb5-9bd9-754c3fa064d4</childs>
+        <childs>b9eea2d0-d513-47c4-983c-be2fb24ff14f</childs>
+        <childs>231bb774-5f2b-48c5-9f44-13197f28e28f</childs>
+        <childs>eaea5259-aa64-46c5-ac40-d619ceaddc90</childs>
+    </components>
+    <components xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:type="componentIO" uuid="c2df9d44-3be7-4d27-9d0b-e7dcc542a33a">
+        <name>paiementDeProximite</name>
+        <properties/>
+    </components>
+    <components xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:type="componentIO" uuid="9e12d40a-e0b3-4891-8cee-e89300a800eb">
+        <name>preAutorisation</name>
+        <properties/>
+    </components>
+    <components xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:type="componentIO" uuid="bc3bd17e-863c-470f-848f-214be5459469">
+        <name>venteADistance</name>
+        <properties/>
+    </components>
+    <components xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:type="componentIO" uuid="55118dd5-097a-4170-b61a-f24cdb49ff1d">
+        <name>telePaiementGSM</name>
+        <properties/>
+    </components>
+    <components xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:type="componentIO" uuid="3e300b53-263f-4eb5-9bd9-754c3fa064d4">
+        <name>paiementVocal</name>
+        <properties/>
+    </components>
+    <components xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:type="componentIO" uuid="b9eea2d0-d513-47c4-983c-be2fb24ff14f">
+        <name>paiementTelevise</name>
+        <properties/>
+    </components>
+    <components xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:type="componentIO" uuid="231bb774-5f2b-48c5-9f44-13197f28e28f">
+        <name>quasiCash</name>
+        <properties/>
+    </components>
+    <components xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:type="componentIO" uuid="eaea5259-aa64-46c5-ac40-d619ceaddc90">
+        <name>cashAdvance</name>
+        <properties/>
+    </components>
+    <components xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:type="componentIO" uuid="828a02b8-c6de-40db-b81c-9d7ae3133a72">
+        <name>compensationSingleMessage</name>
+        <properties/>
+    </components>
+</components>

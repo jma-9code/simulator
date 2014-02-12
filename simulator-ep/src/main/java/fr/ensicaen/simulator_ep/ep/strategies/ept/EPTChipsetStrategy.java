@@ -48,7 +48,7 @@ public class EPTChipsetStrategy implements IStrategy<ComponentIO> {
 				// get the card linked
 				try {
 					msg = prepareSecureChannelRQ(_this);
-					Mediator m = Context.getInstance().getFirstMediator(_this, "Smart Card");
+					Mediator m = Context.getInstance().getFirstMediator(_this, "Card");
 					DataResponse res = (DataResponse) m.send(_this, new String(msg.pack()));
 					ISOMsg sdata = ISO7816Tools.read(res.getData());
 

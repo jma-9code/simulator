@@ -1,20 +1,11 @@
 package fr.ensicaen.gui_simulator.gui.panel;
 
-import fr.ensicaen.gui_simulator.gui.bridge.StartPointJTableBridge;
-import fr.ensicaen.gui_simulator.gui.editor.DateTimeCellEditor;
-import fr.ensicaen.gui_simulator.gui.renderer.DateTimeCellRenderer;
-import fr.ensicaen.simulator.simulator.AsyncSimulator;
-import fr.ensicaen.simulator.simulator.Context;
-import fr.ensicaen.simulator.simulator.SimulatorFactory;
-import fr.ensicaen.simulator.simulator.exception.SimulatorException;
-
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.FlowLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 
 import javax.swing.ImageIcon;
@@ -33,7 +24,16 @@ import javax.swing.table.TableColumn;
 import com.mxgraph.examples.swing.editor.BasicGraphEditor;
 import com.mxgraph.util.mxResources;
 
-public class SimulatorPanel extends JTabbedPane implements ListSelectionListener {
+import fr.ensicaen.gui_simulator.gui.bridge.StartPointJTableBridge;
+import fr.ensicaen.gui_simulator.gui.editor.DateTimeCellEditor;
+import fr.ensicaen.gui_simulator.gui.renderer.DateTimeCellRenderer;
+import fr.ensicaen.simulator.simulator.AsyncSimulator;
+import fr.ensicaen.simulator.simulator.Context;
+import fr.ensicaen.simulator.simulator.SimulatorFactory;
+import fr.ensicaen.simulator.simulator.exception.SimulatorException;
+
+public class SimulatorPanel extends JTabbedPane implements
+		ListSelectionListener {
 
 	private JTable startPointTable;
 	private StartPointJTableBridge startPointModelTable;
@@ -41,8 +41,10 @@ public class SimulatorPanel extends JTabbedPane implements ListSelectionListener
 
 	public SimulatorPanel(BasicGraphEditor frame) {
 		// tab
-		addTab(mxResources.get("start_points"), new JScrollPane(initTab_startPointTable()));
-		addTab(mxResources.get("simulator"), new JScrollPane(initTab_simulatorPanel()));
+		addTab(mxResources.get("start_points"), new JScrollPane(
+				initTab_startPointTable()));
+		addTab(mxResources.get("simulator"), new JScrollPane(
+				initTab_simulatorPanel()));
 	}
 
 	private JPanel initTab_startPointTable() {
@@ -51,8 +53,9 @@ public class SimulatorPanel extends JTabbedPane implements ListSelectionListener
 
 		// model
 		Context ctx = Context.getInstance();
-		ctx.addStartPoint(new Date(), "COUCOU");
-		ctx.addStartPoint(new Date(System.currentTimeMillis() + 3600 * 24 * 5), "LOL");
+		// ctx.addStartPoint(new Date(), "COUCOU");
+		// ctx.addStartPoint(new Date(System.currentTimeMillis() + 3600 * 24 *
+		// 5), "LOL");
 		startPointModelTable = new StartPointJTableBridge(ctx.getStartPoints());
 
 		// view
@@ -76,8 +79,12 @@ public class SimulatorPanel extends JTabbedPane implements ListSelectionListener
 		JPanel buttonsPanel = new JPanel();
 		buttonsPanel.setBackground(Color.WHITE);
 		buttonsPanel.setLayout(new FlowLayout(FlowLayout.RIGHT, 5, 5));
-		buttonsPanel.add(initButton("/com/mxgraph/examples/swing/images/new.gif", new AddEntryAction()));
-		buttonsPanel.add(initButton("/com/mxgraph/examples/swing/images/delete.gif", new DeleteEntryAction()));
+		buttonsPanel.add(initButton(
+				"/com/mxgraph/examples/swing/images/new.gif",
+				new AddEntryAction()));
+		buttonsPanel.add(initButton(
+				"/com/mxgraph/examples/swing/images/delete.gif",
+				new DeleteEntryAction()));
 		setButtonsState(0, true);
 
 		// add in parent layout
@@ -98,8 +105,7 @@ public class SimulatorPanel extends JTabbedPane implements ListSelectionListener
 				AsyncSimulator sim = SimulatorFactory.getAsyncSimulator();
 				try {
 					sim.start();
-				}
-				catch (SimulatorException e1) {
+				} catch (SimulatorException e1) {
 					e1.printStackTrace();
 				}
 			}
@@ -110,7 +116,8 @@ public class SimulatorPanel extends JTabbedPane implements ListSelectionListener
 	}
 
 	private JButton initButton(String iconPath, ActionListener action) {
-		JButton button = new JButton(new ImageIcon(SimulatorPanel.class.getResource(iconPath)));
+		JButton button = new JButton(new ImageIcon(
+				SimulatorPanel.class.getResource(iconPath)));
 		button.addActionListener(action);
 		button.setEnabled(false);
 
@@ -131,8 +138,7 @@ public class SimulatorPanel extends JTabbedPane implements ListSelectionListener
 			for (JButton btn : buttons) {
 				btn.setEnabled(enable);
 			}
-		}
-		else {
+		} else {
 			buttons.get(index).setEnabled(enable);
 		}
 	}
@@ -141,8 +147,7 @@ public class SimulatorPanel extends JTabbedPane implements ListSelectionListener
 	public void valueChanged(ListSelectionEvent e) {
 		if (startPointTable.getSelectedRow() != -1) {
 			setButtonsState(1, true);
-		}
-		else {
+		} else {
 			setButtonsState(1, false);
 		}
 
@@ -163,11 +168,13 @@ public class SimulatorPanel extends JTabbedPane implements ListSelectionListener
 
 		@Override
 		public void actionPerformed(ActionEvent e) {
-			int rep = JOptionPane.showConfirmDialog(SimulatorPanel.this, mxResources.get("delete_confirmation"),
-					mxResources.get("delete_confirmation_title"), JOptionPane.OK_CANCEL_OPTION,
-					JOptionPane.QUESTION_MESSAGE);
+			int rep = JOptionPane.showConfirmDialog(SimulatorPanel.this,
+					mxResources.get("delete_confirmation"),
+					mxResources.get("delete_confirmation_title"),
+					JOptionPane.OK_CANCEL_OPTION, JOptionPane.QUESTION_MESSAGE);
 			if (rep == JOptionPane.YES_OPTION) {
-				startPointModelTable.deleteRow(startPointTable.getSelectedRow());
+				startPointModelTable
+						.deleteRow(startPointTable.getSelectedRow());
 				setButtonsState(0, true);
 			}
 		}

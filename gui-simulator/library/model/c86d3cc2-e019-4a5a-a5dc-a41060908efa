@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<components>
+    <components xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:type="componentIO" uuid="c86d3cc2-e019-4a5a-a5dc-a41060908efa">
+        <name>BO</name>
+        <properties/>
+    </components>
+</components>

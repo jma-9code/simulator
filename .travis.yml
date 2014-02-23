@@ -3,9 +3,9 @@ jdk:
   - oraclejdk7
 install:
   - cd simulator && mvn install -DskipTests
-  - cd simulator-ep && mvn install -DskipTests
-  - cd gui-simulator && mvn install -DskipTests
+  - cd ../simulator-ep && mvn install -DskipTests
+  - cd ../gui-simulator && mvn install -DskipTests
 script:
   - cd simulator && mvn test
-  - cd simulator-ep && mvn test
-  - cd gui-simulator && mvn test
+  - cd ../simulator-ep && mvn test
+  - cd ../gui-simulator && mvn test

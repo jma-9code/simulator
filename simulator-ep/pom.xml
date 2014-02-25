@@ -45,15 +45,6 @@
   		<scope>test</scope>
   	</dependency>
   </dependencies>
-  <dependencyManagement>
-  	<dependencies>
-  		<dependency>
-  			<groupId>com.sleepycat</groupId>
-  			<artifactId>je</artifactId>
-  			<version>4.0.92</version>
-  		</dependency>
-  	</dependencies>
-  </dependencyManagement>
   <build>
     <plugins>
       <plugin>

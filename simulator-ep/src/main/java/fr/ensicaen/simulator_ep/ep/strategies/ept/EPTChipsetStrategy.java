@@ -221,7 +221,8 @@ public class EPTChipsetStrategy implements IStrategy<ComponentIO> {
 	 */
 	public static String generateNextSTAN(Component _this, String curStan) {
 		String ret = null;
-		int val_stan = Integer.parseInt(curStan);
+		int val_stan = Integer.parseInt(curStan); // NumberFormatException non
+													// gérée !!!
 		if (val_stan > 999999) {
 			ret = "000001";
 		}

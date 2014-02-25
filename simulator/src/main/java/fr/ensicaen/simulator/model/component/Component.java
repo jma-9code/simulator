@@ -19,6 +19,8 @@ import javax.xml.bind.annotation.XmlTransient;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import fr.ensicaen.simulator.model.factory.MediatorFactory;
+import fr.ensicaen.simulator.model.mediator.Mediator;
 import fr.ensicaen.simulator.model.strategies.IStrategy;
 import fr.ensicaen.simulator.model.strategies.NullStrategy;
 import fr.ensicaen.simulator.simulator.Context;
@@ -69,9 +71,13 @@ public abstract class Component implements Serializable {
 	 * @return Le composant ou null.
 	 */
 	public <T extends Component> T getChild(String name, Class<T> type) {
+		log.debug("Search child named " + name);
+
 		if (name != null) {
 			for (Component child : this.childs) {
-				if (name.equalsIgnoreCase(child.getName()) && child.getClass() == type) {
+				log.debug("Search child " + name + ", current " + child.getName());
+				if ((name.equalsIgnoreCase(child.getName()) || name.equalsIgnoreCase(child.getAcronym()))
+						&& child.getClass() == type) {
 					return (T) child;
 				}
 			}
@@ -95,6 +101,19 @@ public abstract class Component implements Serializable {
 
 	public List<Component> getChilds() {
 		return this.childs;
+	}
+
+	public void addChild(Component child) {
+		this.childs.add(child);
+
+		// auto create and register child mediator
+		Mediator m = MediatorFactory.getInstance().getMediator(this, child);
+		if (m != null) {
+			Context.getInstance().registerMediator(m);
+		}
+		else {
+			log.error("Child mediator registration failed.");
+		}
 	}
 
 	public void setChilds(List<Component> components) {

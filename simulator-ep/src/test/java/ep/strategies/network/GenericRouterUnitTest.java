@@ -130,7 +130,8 @@ public class GenericRouterUnitTest {
 				ISOMsg authorizationRequest = new ISOMsg();
 				try {
 
-					authorizationRequest.setPackager(new GenericPackager("8583.xml"));
+					authorizationRequest.setPackager(new GenericPackager(getClass().getResource("/8583.xml")
+							.toExternalForm()));
 					authorizationRequest.setMTI("0100");
 					authorizationRequest.set(2, "4970210000000000"); // PAN
 					authorizationRequest.set(4, "10000"); // 100€
@@ -218,8 +219,8 @@ public class GenericRouterUnitTest {
 				// auth request test
 				ISOMsg authorizationRequest = new ISOMsg();
 				try {
-
-					authorizationRequest.setPackager(new GenericPackager("8583.xml"));
+					authorizationRequest.setPackager(new GenericPackager(getClass().getResource("/8583.xml")
+							.toExternalForm()));
 					authorizationRequest.setMTI("0100");
 					authorizationRequest.set(2, "4670210000000000"); // PAN
 					authorizationRequest.set(4, "10000"); // 100€
@@ -308,7 +309,8 @@ public class GenericRouterUnitTest {
 				ISOMsg authorizationRequest = new ISOMsg();
 				try {
 
-					authorizationRequest.setPackager(new GenericPackager("8583.xml"));
+					authorizationRequest.setPackager(new GenericPackager(getClass().getResource("/8583.xml")
+							.toExternalForm()));
 					authorizationRequest.setMTI("0100");
 					authorizationRequest.set(2, "5670210000000000"); // PAN
 					authorizationRequest.set(4, "10000"); // 100€
@@ -350,5 +352,4 @@ public class GenericRouterUnitTest {
 
 		TestPass.assertTest();
 	}
-
 }

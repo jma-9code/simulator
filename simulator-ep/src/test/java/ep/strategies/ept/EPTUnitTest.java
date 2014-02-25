@@ -24,6 +24,7 @@ import fr.ensicaen.simulator.model.strategies.IStrategy;
 import fr.ensicaen.simulator.simulator.Context;
 import fr.ensicaen.simulator.simulator.SimulatorFactory;
 import fr.ensicaen.simulator.simulator.exception.SimulatorException;
+import fr.ensicaen.simulator.tools.TestPass;
 import fr.ensicaen.simulator_ep.ep.strategies.ept.EPTChipsetStrategy;
 import fr.ensicaen.simulator_ep.ep.strategies.ept.EPTSmartCardReaderStrategy;
 import fr.ensicaen.simulator_ep.ep.strategies.ept.EPTStrategy;
@@ -64,45 +65,53 @@ public class EPTUnitTest {
 	private static ComponentIO fakeSmartCard;
 
 	@Before
-	public void setUp() throws Exception {
+	public void init() throws Exception {
+		TestPass.init();
+
 		MediatorFactory factory = MediatorFactory.getInstance();
 
 		Context.getInstance().autoRegistrationMode();
-		fakeSmartCard = new ComponentIO("Smart Card");
-
-		ept = new ComponentIO("Electronic Payment Terminal");
-		ept.setStrategy(new EPTStrategy());
 
 		frontOffice = new ComponentIO("Front Office");
 
+		fakeSmartCard = new ComponentIO("Card");
+
+		/* ******** Définition du TPE ******** BEGIN */
+		ept = new ComponentIO("Electronic Payment Terminal");
+		ept.setStrategy(new EPTStrategy());
+
+		/* Enfant : lecteur de carte */
 		smartCardReader = new ComponentIO("Smart Card Reader");
 		smartCardReader.setStrategy(new EPTSmartCardReaderStrategy());
-		ept.getChilds().add(smartCardReader);
-		factory.getMediator(ept, smartCardReader, EMediator.HALFDUPLEX);
+		ept.addChild(smartCardReader);
 
+		/* Enfant : chipset */
 		chipset = new ComponentIO("Chipset");
 		chipset.setStrategy(new EPTChipsetStrategy());
 		chipset.getProperties().put("pos_id", "0000623598");
 		chipset.getProperties().put("stan", "000001");
 		chipset.getProperties().put("protocol_list", "ISO7816 ISO8583 CB2A-T");
 		chipset.getProperties().put("protocol_prefered", "ISO7816");
-		ept.getChilds().add(chipset);
-		factory.getMediator(ept, chipset, EMediator.HALFDUPLEX);
+		ept.addChild(chipset);
 
+		/* Enfant : imprimante */
 		printer = new ComponentIO("Printer");
-		ept.getChilds().add(printer);
+		ept.addChild(printer);
 
+		/* Enfant : Pin pad */
 		securePinPad = new ComponentIO("Secure pin pad");
-		ept.getChilds().add(securePinPad);
+		ept.addChild(securePinPad);
 
-		networkInterface = new ComponentIO("Network interface");
-		ept.getChilds().add(networkInterface);
+		/* ******** Définition du TPE ******** END */
 
 		// static mediators
 		factory.getMediator(ept, frontOffice, EMediator.HALFDUPLEX);
-		factory.getMediator(chipset, frontOffice, EMediator.HALFDUPLEX);
-		factory.getMediator(smartCardReader, chipset, EMediator.HALFDUPLEX);
-		factory.getMediator(smartCardReader, fakeSmartCard, EMediator.HALFDUPLEX);
+		factory.getMediator(ept, fakeSmartCard, EMediator.HALFDUPLEX);
+		// factory.getMediator(smartCardReader, fakeSmartCard,
+		// EMediator.HALFDUPLEX);
+		// factory.getMediator(chipset, frontOffice, EMediator.HALFDUPLEX);
+		// factory.getMediator(smartCardReader, chipset, EMediator.HALFDUPLEX);
+
 		generateMsg();
 	}
 
@@ -172,17 +181,19 @@ public class EPTUnitTest {
 
 			@Override
 			public IResponse processMessage(ComponentIO _this, Mediator mediator, String data) {
+				TestPass.passed();
 				return DataResponse.build(mediator, "TEST ANSWER CARD");
 			}
 
 		});
-		// chipset.notifyEvent("SMART_CARD_INSERTED");
 
 		// add start point for the simulator
 		Context.getInstance().addStartPoint(new Date(), "SMART_CARD_INSERTED");
 
 		// execute simulation.
 		SimulatorFactory.getSimulator().start();
+
+		TestPass.assertTest();
 	}
 
 	@Test
@@ -274,9 +285,8 @@ public class EPTUnitTest {
 			SimulatorFactory.getSimulator().start();
 		}
 		catch (SimulatorException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
-			Assert.assertFalse(true);
+			Assert.assertTrue(false);
 		}
 		log.debug("----TEST EPT<->CARD END----");
 	}

@@ -4,7 +4,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import fr.ensicaen.simulator.model.component.ComponentIO;
-import fr.ensicaen.simulator.model.component.ComponentO;
 import fr.ensicaen.simulator.model.component.IOutput;
 import fr.ensicaen.simulator.model.factory.MediatorFactory;
 import fr.ensicaen.simulator.model.mediator.Mediator;
@@ -33,7 +32,8 @@ public class CardStrategy implements IStrategy<ComponentIO> {
 	public IResponse processMessage(ComponentIO card, Mediator m, String data) {
 		// tout les traitements de donnees sont gerees par la puce
 		ComponentIO chip = card.getChild("chip", ComponentIO.class);
-		ComponentO magstrippe = card.getChild("magstrippe", ComponentO.class);
+		// ComponentO magstrippe = card.getChild("magstrippe",
+		// ComponentO.class);
 
 		// get mediator between chip and card
 		Mediator m_card_chip = MediatorFactory.getInstance().getForwardMediator(m, chip);

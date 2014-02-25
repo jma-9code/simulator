@@ -16,10 +16,6 @@ import fr.ensicaen.simulator.model.response.IResponse;
 import fr.ensicaen.simulator.model.response.VoidResponse;
 import fr.ensicaen.simulator.model.strategies.IStrategy;
 import fr.ensicaen.simulator.model.strategies.NullStrategy;
-import fr.ensicaen.simulator.simulator.AsyncSimulator;
-import fr.ensicaen.simulator.simulator.Context;
-import fr.ensicaen.simulator.simulator.Simulator;
-import fr.ensicaen.simulator.simulator.SimulatorFactory;
 import fr.ensicaen.simulator.simulator.exception.SimulatorException;
 
 public class SimulatorTest {
@@ -27,6 +23,10 @@ public class SimulatorTest {
 	@Before
 	public void beforeTest() {
 		System.out.println("---------NEW TEST---------");
+
+		Context ctx = Context.getInstance();
+		ctx.reset();
+		ctx.autoRegistrationMode();
 	}
 
 	@Test(expected = SimulatorException.class)
@@ -68,7 +68,7 @@ public class SimulatorTest {
 		account.getProperties().put("porteur", "florent moisson");
 		account.getProperties().put("montant", "1500");
 		account.getProperties().put("plafond", "9000");
-		bank.getChilds().add(account);
+		bank.addChild(account);
 		account.setStrategy(new NullStrategy());
 
 		// TODO : va surement poser pb si on doit passer les types hérités
@@ -105,7 +105,7 @@ public class SimulatorTest {
 		account.getProperties().put("porteur", "florent moisson");
 		account.getProperties().put("montant", "1500");
 		account.getProperties().put("plafond", "9000");
-		bank.getChilds().add(account);
+		bank.addChild(account);
 
 		// TODO : va surement poser pb si on doit passer les types hérités
 		// A l'instanciation, je vois plus passer Component mais on sait pas si
@@ -162,6 +162,7 @@ public class SimulatorTest {
 			@Override
 			public void processEvent(Component _this, String event) {
 				if ("TEST EVENT 2".equals(event)) {
+					System.out.println("Test Event 2");
 					Context ctx = Context.getInstance();
 					ctx.addStartPoint(new Date(System.currentTimeMillis() - 3600 * 4 * 1000), "TEST EVENT 3");
 					ctx.addStartPoint(new Date(System.currentTimeMillis() + 3600 * 4 * 1000), "TEST EVENT 4");
@@ -173,7 +174,7 @@ public class SimulatorTest {
 		account.getProperties().put("porteur", "florent moisson");
 		account.getProperties().put("montant", "1500");
 		account.getProperties().put("plafond", "9000");
-		bank.getChilds().add(account);
+		bank.addChild(account);
 		account.setStrategy(new NullStrategy());
 
 		// TODO : va surement poser pb si on doit passer les types hérités

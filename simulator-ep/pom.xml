@@ -10,6 +10,13 @@
   		<groupId>fr.ensicaen</groupId>
   		<artifactId>simulator</artifactId>
   		<version>0.0.1</version>
+  		<type>test-jar</type>
+  		<scope>test</scope>
+  	</dependency>
+  	<dependency>
+  		<groupId>fr.ensicaen</groupId>
+  		<artifactId>simulator</artifactId>
+  		<version>0.0.1</version>
   	</dependency>
   	<dependency>
   		<groupId>org.jpos</groupId>

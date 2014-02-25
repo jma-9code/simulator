@@ -46,7 +46,7 @@ public class GenericNetworkStrategy implements IStrategy<ComponentIO> {
 		ISOMsg input = new ISOMsg();
 
 		try {
-			input.setPackager(new GenericPackager("8583.xml"));
+			input.setPackager(new GenericPackager(getClass().getResource("/8583.xml").toExternalForm()));
 			input.unpack(data.getBytes());
 
 			if (!input.isRequest()) {

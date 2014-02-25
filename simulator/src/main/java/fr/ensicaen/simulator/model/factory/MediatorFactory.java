@@ -2,10 +2,15 @@ package fr.ensicaen.simulator.model.factory;
 
 import java.util.Hashtable;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import fr.ensicaen.simulator.model.component.Component;
 import fr.ensicaen.simulator.model.component.IInput;
 import fr.ensicaen.simulator.model.component.IInputOutput;
 import fr.ensicaen.simulator.model.component.IOutput;
+import fr.ensicaen.simulator.model.mediator.ChildHalfDuplexMediator;
+import fr.ensicaen.simulator.model.mediator.ChildSimplexMediator;
 import fr.ensicaen.simulator.model.mediator.ForwardMediator;
 import fr.ensicaen.simulator.model.mediator.HalfDuplexMediator;
 import fr.ensicaen.simulator.model.mediator.Mediator;
@@ -15,8 +20,10 @@ import fr.ensicaen.simulator.model.mediator.SimplexMediator;
 
 public class MediatorFactory {
 
+	private static Logger log = LoggerFactory.getLogger(MediatorFactory.class);
+
 	public enum EMediator {
-		SIMPLEX, HALFDUPLEX;
+		SIMPLEX, HALFDUPLEX, HALFDUPLEX_CHILD, SIMPLEX_CHILD;
 	}
 
 	private Hashtable<String, Mediator> mediators;
@@ -40,9 +47,19 @@ public class MediatorFactory {
 						mediator = new HalfDuplexMediator((IInputOutput) src, (IInputOutput) dst);
 					}
 					break;
+				case HALFDUPLEX_CHILD:
+					if (src instanceof IInputOutput && dst instanceof IInputOutput) {
+						mediator = new ChildHalfDuplexMediator((IInputOutput) src, (IInputOutput) dst);
+					}
+					break;
 				case SIMPLEX:
 					if (src instanceof IOutput && dst instanceof IInput) {
 						mediator = new SimplexMediator((IOutput) src, (IInput) dst);
+					}
+					break;
+				case SIMPLEX_CHILD:
+					if (src instanceof IOutput && dst instanceof IInput) {
+						mediator = new ChildSimplexMediator((IOutput) src, (IInput) dst);
 					}
 					break;
 			}
@@ -51,16 +68,14 @@ public class MediatorFactory {
 	}
 
 	public Mediator getMediator(Component src, Component dst) {
+		boolean isChild = src.getChilds().contains(dst);
+
 		if (src instanceof IInputOutput && dst instanceof IInputOutput) {
-			return getMediator(src, dst, EMediator.HALFDUPLEX);
+			return getMediator(src, dst, isChild ? EMediator.HALFDUPLEX_CHILD : EMediator.HALFDUPLEX);
 		}
 		else if (src instanceof IOutput && dst instanceof IInput) {
-			return getMediator(src, dst, EMediator.SIMPLEX);
+			return getMediator(src, dst, isChild ? EMediator.SIMPLEX_CHILD : EMediator.SIMPLEX);
 		}
-		/*
-		 * else if (src instanceof IInput && dst instanceof IOutput) { return
-		 * getMediator(dst, src, EMediator.SIMPLEX); }
-		 */
 		else {
 			return null;
 		}
@@ -77,6 +92,11 @@ public class MediatorFactory {
 	 * @throws MediatorException
 	 */
 	public Mediator getForwardMediator(Mediator origin, IInput dst) {
+		if (dst == null) {
+			log.error("Destination is null !");
+			return null;
+		}
+
 		return new ForwardMediator(origin, dst);
 	}
 

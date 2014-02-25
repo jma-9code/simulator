@@ -275,6 +275,8 @@ public class Context {
 			}
 		}
 
+		log.debug("End of mediator filter with destination");
+
 		// try to find mediator with depth = 1
 		iMediators = dstFiltered.iterator();
 		while (iMediators.hasNext()) {

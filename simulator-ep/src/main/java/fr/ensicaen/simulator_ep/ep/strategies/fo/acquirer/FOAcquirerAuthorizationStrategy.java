@@ -29,8 +29,7 @@ public class FOAcquirerAuthorizationStrategy implements IStrategy<ComponentIO> {
 	public IResponse processMessage(ComponentIO FOAcquirerAuthorization, Mediator m, String data) {
 
 		try {
-			Mediator mediateurAUtiliser = Context.getInstance().getFirstMediator(FOAcquirerAuthorization,
-					"IssuerAuthorization");
+			Mediator mediateurAUtiliser = Context.getInstance().getFirstMediator(FOAcquirerAuthorization, "Router");
 			return mediateurAUtiliser.send(FOAcquirerAuthorization, data);
 		}
 		catch (ContextException e) {

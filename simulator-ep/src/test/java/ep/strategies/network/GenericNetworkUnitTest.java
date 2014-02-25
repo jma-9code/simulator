@@ -74,6 +74,9 @@ public class GenericNetworkUnitTest {
 		// no strategy
 
 		m_test_ersb = MediatorFactory.getInstance().getMediator(testLauncher, eRSBNetwork, EMediator.HALFDUPLEX);
+		m_ersb_iam1 = MediatorFactory.getInstance().getMediator(eRSBNetwork, iam1, EMediator.HALFDUPLEX);
+		m_ersb_iam2 = MediatorFactory.getInstance().getMediator(eRSBNetwork, iam2, EMediator.HALFDUPLEX);
+
 	}
 
 	@After
@@ -96,7 +99,8 @@ public class GenericNetworkUnitTest {
 				// auth request test
 				ISOMsg authorizationRequest = new ISOMsg();
 				try {
-					authorizationRequest.setPackager(new GenericPackager("8583.xml"));
+					authorizationRequest.setPackager(new GenericPackager(getClass().getResource("/8583.xml")
+							.toExternalForm()));
 					authorizationRequest.setMTI("0100");
 					authorizationRequest.set(2, "4670210000000000"); // PAN
 					authorizationRequest.set(4, "10000"); // 100€
@@ -122,6 +126,7 @@ public class GenericNetworkUnitTest {
 				}
 				catch (Exception e) {
 					e.printStackTrace();
+					Assert.assertTrue(false);
 				}
 			}
 
@@ -140,7 +145,7 @@ public class GenericNetworkUnitTest {
 		}
 		catch (SimulatorException e) {
 			e.printStackTrace();
-			Assert.assertFalse(true);
+			Assert.assertTrue(false);
 		}
 	}
 
@@ -163,7 +168,8 @@ public class GenericNetworkUnitTest {
 				ISOMsg authorizationRequest = new ISOMsg();
 				try {
 
-					authorizationRequest.setPackager(new GenericPackager("8583.xml"));
+					authorizationRequest.setPackager(new GenericPackager(getClass().getResource("/8583.xml")
+							.toExternalForm()));
 					authorizationRequest.setMTI("0100");
 					authorizationRequest.set(2, "4670210000000000"); // PAN
 					authorizationRequest.set(4, "10000"); // 100€
@@ -171,6 +177,7 @@ public class GenericNetworkUnitTest {
 				}
 				catch (ISOException e) {
 					e.printStackTrace();
+					Assert.assertTrue(false);
 				}
 
 				// send to network
@@ -189,6 +196,7 @@ public class GenericNetworkUnitTest {
 				}
 				catch (Exception e) {
 					e.printStackTrace();
+					Assert.assertTrue(false);
 				}
 			}
 
@@ -207,7 +215,7 @@ public class GenericNetworkUnitTest {
 		}
 		catch (SimulatorException e) {
 			e.printStackTrace();
-			Assert.assertFalse(true);
+			Assert.assertTrue(false);
 		}
 	}
 
@@ -243,7 +251,8 @@ public class GenericNetworkUnitTest {
 				ISOMsg authorizationRequest = new ISOMsg();
 				try {
 
-					authorizationRequest.setPackager(new GenericPackager("8583.xml"));
+					authorizationRequest.setPackager(new GenericPackager(getClass().getResource("/8583.xml")
+							.toExternalForm()));
 					authorizationRequest.unpack(data.getBytes());
 
 					authorizationRequest.set(39, CB2AValues.Field39.TRANSACTION_APPROVED);
@@ -309,7 +318,8 @@ public class GenericNetworkUnitTest {
 				ISOMsg authorizationRequest = new ISOMsg();
 				try {
 
-					authorizationRequest.setPackager(new GenericPackager("8583.xml"));
+					authorizationRequest.setPackager(new GenericPackager(getClass().getResource("/8583.xml")
+							.toExternalForm()));
 					authorizationRequest.setMTI("0100");
 					authorizationRequest.set(2, "4670210000000000"); // PAN
 					authorizationRequest.set(4, "10000"); // 100€

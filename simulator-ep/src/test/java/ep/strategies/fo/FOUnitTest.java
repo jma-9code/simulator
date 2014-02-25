@@ -119,41 +119,41 @@ public class FOUnitTest {
 	@Before
 	public void init() throws Exception {
 		Context.getInstance().autoRegistrationMode();
-		frontOffice = new ComponentIO("FrontOffice");
+		frontOffice = new ComponentIO("Front Office");
 
 		issuer = new ComponentIO("Issuer");
 		acceptor = new ComponentIO("Acceptor");
 		acquirer = new ComponentIO("Acquirer");
 
 		/* Ajout des trois grandes fonctions du front Office */
-		frontOffice.getChilds().add(issuer);
-		frontOffice.getChilds().add(acceptor);
-		frontOffice.getChilds().add(acquirer);
+		frontOffice.addChild(issuer);
+		frontOffice.addChild(acceptor);
+		frontOffice.addChild(acquirer);
 
 		/* Ajout des modules émetteur */
 		issuerAuthorization = new ComponentIO("IssuerAuthorization");
 		gestionDeLaFraude = new ComponentIO("GestionDeLaFraude");
-		issuer.getChilds().add(issuerAuthorization);
-		issuer.getChilds().add(gestionDeLaFraude);
+		issuer.addChild(issuerAuthorization);
+		issuer.addChild(gestionDeLaFraude);
 
 		/* Ajout des composants du module Autorisation */
 		controlesCarte = new ComponentIO("controlesCarte");
 		traitementsAutorisation = new ComponentIO("traitemntsAutorisation");
-		issuerAuthorization.getChilds().add(controlesCarte);
-		issuerAuthorization.getChilds().add(traitementsAutorisation);
+		issuerAuthorization.addChild(controlesCarte);
+		issuerAuthorization.addChild(traitementsAutorisation);
 
 		gestionDroitsCarte = new ComponentIO("gestionDroitsCarte");
 		gestionSoldeCompte = new ComponentIO("gestionSoldeCompte");
-		traitementsAutorisation.getChilds().add(gestionDroitsCarte);
-		traitementsAutorisation.getChilds().add(gestionSoldeCompte);
+		traitementsAutorisation.addChild(gestionDroitsCarte);
+		traitementsAutorisation.addChild(gestionSoldeCompte);
 
 		/* Ajout des modules accepteur */
 		systemeEncaissement = new ComponentIO("systemeEncaissement");
 		concentrateurMonetique = new ComponentIO("concentrateurMonetique");
 		telePaiement = new ComponentIO("telePaiement");
-		acceptor.getChilds().add(systemeEncaissement);
-		acceptor.getChilds().add(concentrateurMonetique);
-		acceptor.getChilds().add(telePaiement);
+		acceptor.addChild(systemeEncaissement);
+		acceptor.addChild(concentrateurMonetique);
+		acceptor.addChild(telePaiement);
 
 		/* Ajout des composants du module systemeEncaissement */
 		gestionEncaissementsMultiples = new ComponentIO("gestionEncaissementsMultiples");
@@ -161,37 +161,37 @@ public class FOUnitTest {
 		gestionTickets = new ComponentIO("gestionTickets");
 		gestionPeripheriques = new ComponentIO("gestionPeripheriques");
 		editionDeFactures = new ComponentIO("editionDeFactures");
-		systemeEncaissement.getChilds().add(gestionEncaissementsMultiples);
-		systemeEncaissement.getChilds().add(gestionRolesDeCaisse);
-		systemeEncaissement.getChilds().add(gestionTickets);
-		systemeEncaissement.getChilds().add(gestionPeripheriques);
-		systemeEncaissement.getChilds().add(editionDeFactures);
+		systemeEncaissement.addChild(gestionEncaissementsMultiples);
+		systemeEncaissement.addChild(gestionRolesDeCaisse);
+		systemeEncaissement.addChild(gestionTickets);
+		systemeEncaissement.addChild(gestionPeripheriques);
+		systemeEncaissement.addChild(editionDeFactures);
 
 		/* Ajout des composants du module concentrateur Monétique */
 		gestionLigneDeCaisse = new ComponentIO("gestionLigneDeCaisse");
 		gestionTerminauxDePaiementGrappes = new ComponentIO("gestionTerminauxDePaiementGrappes");
-		gestionRolesDeCaisse.getChilds().add(gestionLigneDeCaisse);
-		gestionRolesDeCaisse.getChilds().add(gestionTerminauxDePaiementGrappes);
+		gestionRolesDeCaisse.addChild(gestionLigneDeCaisse);
+		gestionRolesDeCaisse.addChild(gestionTerminauxDePaiementGrappes);
 
 		/* Ajout des composants du module télépaiement */
 		passerelleTelepaiement = new ComponentIO("passerelleTelepaiement");
 		gestionnaireTelepaiement = new ComponentIO("gestionnaireTelepaiement");
-		telePaiement.getChilds().add(passerelleTelepaiement);
-		telePaiement.getChilds().add(gestionnaireTelepaiement);
+		telePaiement.addChild(passerelleTelepaiement);
+		telePaiement.addChild(gestionnaireTelepaiement);
 
 		acceptationPaiementPubliphone = new ComponentIO("acceptationPaiementPubliphone");
 		acceptationPaiementParInternet = new ComponentIO("acceptationPaiementParInternet");
 		acceptationPaiementParGSM = new ComponentIO("acceptationPaiementParGSM");
-		passerelleTelepaiement.getChilds().add(acceptationPaiementPubliphone);
-		passerelleTelepaiement.getChilds().add(acceptationPaiementParInternet);
-		passerelleTelepaiement.getChilds().add(acceptationPaiementParGSM);
+		passerelleTelepaiement.addChild(acceptationPaiementPubliphone);
+		passerelleTelepaiement.addChild(acceptationPaiementParInternet);
+		passerelleTelepaiement.addChild(acceptationPaiementParGSM);
 
 		delivrancePaiement = new ComponentIO("delivrancePaiement");
 		gestionDesRemises = new ComponentIO("gestionDesRemises");
 		gestionDonneesFonctionnement = new ComponentIO("gestionDonneesFonctionnement");
-		gestionnaireTelepaiement.getChilds().add(delivrancePaiement);
-		gestionnaireTelepaiement.getChilds().add(gestionDesRemises);
-		gestionnaireTelepaiement.getChilds().add(gestionDonneesFonctionnement);
+		gestionnaireTelepaiement.addChild(delivrancePaiement);
+		gestionnaireTelepaiement.addChild(gestionDesRemises);
+		gestionnaireTelepaiement.addChild(gestionDonneesFonctionnement);
 
 		/* Ajout des modules acquéreur */
 		acquirerAuthorization = new ComponentIO("AcquirerAuthorization");
@@ -199,17 +199,17 @@ public class FOUnitTest {
 		telecollection = new ComponentIO("telecollection");
 		paymentAcquirer = new ComponentIO("paymentAcquirer");
 		compensationSingleMessage = new ComponentIO("compensationSingleMessage");
-		acquirer.getChilds().add(acquirerAuthorization);
-		acquirer.getChilds().add(GABHandler);
-		acquirer.getChilds().add(telecollection);
-		acquirer.getChilds().add(paymentAcquirer);
-		acquirer.getChilds().add(compensationSingleMessage);
+		acquirer.addChild(acquirerAuthorization);
+		acquirer.addChild(GABHandler);
+		acquirer.addChild(telecollection);
+		acquirer.addChild(paymentAcquirer);
+		acquirer.addChild(compensationSingleMessage);
 
 		/* Ajout des composants du module GABHandler" */
 		retrait = new ComponentIO("retrait");
 		libreServiceBancaire = new ComponentIO("libreServiceBancaire");
-		GABHandler.getChilds().add(retrait);
-		GABHandler.getChilds().add(libreServiceBancaire);
+		GABHandler.addChild(retrait);
+		GABHandler.addChild(libreServiceBancaire);
 
 		retraitAutoCompte = new ComponentIO("retraitAutoCompte");
 		depot = new ComponentIO("depot");
@@ -218,17 +218,17 @@ public class FOUnitTest {
 		demandeDeRIB = new ComponentIO("demandeDeRIB");
 		demandeDeSolde = new ComponentIO("demandeDeSolde");
 		historiqueOperations = new ComponentIO("historiqueOperations");
-		libreServiceBancaire.getChilds().add(retraitAutoCompte);
-		libreServiceBancaire.getChilds().add(depot);
-		libreServiceBancaire.getChilds().add(virement);
-		libreServiceBancaire.getChilds().add(commandeDeChequier);
-		libreServiceBancaire.getChilds().add(demandeDeRIB);
-		libreServiceBancaire.getChilds().add(demandeDeSolde);
-		libreServiceBancaire.getChilds().add(historiqueOperations);
+		libreServiceBancaire.addChild(retraitAutoCompte);
+		libreServiceBancaire.addChild(depot);
+		libreServiceBancaire.addChild(virement);
+		libreServiceBancaire.addChild(commandeDeChequier);
+		libreServiceBancaire.addChild(demandeDeRIB);
+		libreServiceBancaire.addChild(demandeDeSolde);
+		libreServiceBancaire.addChild(historiqueOperations);
 
 		/* Ajout des composants du module telecollection */
 		gestionCBPRCB2A = new ComponentIO("gestionCBPRCB2A");
-		telecollection.getChilds().add(gestionCBPRCB2A);
+		telecollection.addChild(gestionCBPRCB2A);
 
 		/* Ajout des composants du module paymentAcquirer */
 		paiementDeProximite = new ComponentIO("paiementDeProximite");
@@ -239,32 +239,58 @@ public class FOUnitTest {
 		paiementTelevise = new ComponentIO("paiementTelevise");
 		quasiCash = new ComponentIO("quasiCash");
 		cashAdvance = new ComponentIO("cashAdvance");
-		paymentAcquirer.getChilds().add(paiementDeProximite);
-		paymentAcquirer.getChilds().add(preAutorisation);
-		paymentAcquirer.getChilds().add(venteADistance);
-		paymentAcquirer.getChilds().add(telePaiementGSM);
-		paymentAcquirer.getChilds().add(paiementVocal);
-		paymentAcquirer.getChilds().add(paiementTelevise);
-		paymentAcquirer.getChilds().add(quasiCash);
-		paymentAcquirer.getChilds().add(cashAdvance);
+		paymentAcquirer.addChild(paiementDeProximite);
+		paymentAcquirer.addChild(preAutorisation);
+		paymentAcquirer.addChild(venteADistance);
+		paymentAcquirer.addChild(telePaiementGSM);
+		paymentAcquirer.addChild(paiementVocal);
+		paymentAcquirer.addChild(paiementTelevise);
+		paymentAcquirer.addChild(quasiCash);
+		paymentAcquirer.addChild(cashAdvance);
 
+		// front office
 		frontOffice.setStrategy(new FOStrategy());
+
+		// module acquéreur
 		acquirer.setStrategy(new FOAcquirerStrategy());
 		acquirerAuthorization.setStrategy(new FOAcquirerAuthorizationStrategy());
+
+		// module émetteur
 		issuer.setStrategy(new FOIssuerStrategy());
 		issuerAuthorization.setStrategy(new FOIssuerAuthorizationStrategy());
 
 		ept = new ComponentIO("Electronic Payment Terminal");
 
 		m_ept_fo = MediatorFactory.getInstance().getMediator(frontOffice, ept, EMediator.HALFDUPLEX);
-		m_fo_foIssuer = MediatorFactory.getInstance().getMediator(frontOffice, issuer, EMediator.HALFDUPLEX);
-		m_fo_foAcquirer = MediatorFactory.getInstance().getMediator(frontOffice, acquirer, EMediator.HALFDUPLEX);
-		m_foIssuer_FoIssuerAuthorization = MediatorFactory.getInstance().getMediator(issuer, issuerAuthorization,
-				EMediator.HALFDUPLEX);
-		m_foAcquirer_FoAcquirerAuthorization = MediatorFactory.getInstance().getMediator(acquirer,
-				acquirerAuthorization, EMediator.HALFDUPLEX);
-		m_foAcquirerAuthorization_foIssuerAuthorization = MediatorFactory.getInstance().getMediator(
-				acquirerAuthorization, issuerAuthorization, EMediator.HALFDUPLEX);
+		// m_fo_foIssuer =
+		// MediatorFactory.getInstance().getMediator(frontOffice, issuer,
+		// EMediator.HALFDUPLEX);
+		// m_fo_foAcquirer =
+		// MediatorFactory.getInstance().getMediator(frontOffice, acquirer,
+		// EMediator.HALFDUPLEX);
+		// m_foIssuer_FoIssuerAuthorization =
+		// MediatorFactory.getInstance().getMediator(issuer,
+		// issuerAuthorization,
+		// EMediator.HALFDUPLEX);
+		// m_foAcquirer_FoAcquirerAuthorization =
+		// MediatorFactory.getInstance().getMediator(acquirer,
+		// acquirerAuthorization, EMediator.HALFDUPLEX);
+		// m_foAcquirerAuthorization_foIssuerAuthorization =
+		// MediatorFactory.getInstance().getMediator(
+		// acquirerAuthorization, issuerAuthorization, EMediator.HALFDUPLEX);
+
+	}
+
+	@After
+	public void clean() throws Exception {
+		Context.getInstance().reset();
+	}
+
+	@Test
+	public void testAppelAutorisation() {
+		// fake issuer authorization module as router
+		issuerAuthorization.setName("Router");
+		MediatorFactory.getInstance().getMediator(issuerAuthorization, acquirerAuthorization);
 
 		ept.setStrategy(new IStrategy<ComponentIO>() {
 
@@ -278,8 +304,6 @@ public class FOUnitTest {
 
 			@Override
 			public void processEvent(ComponentIO _this, String event) {
-				// TODO Auto-generated method stub
-				System.out.println("evennnnnnnnnnnnnnnnnnnnnnnt !!!!");
 				ISOMsg authorizationRequest = new ISOMsg();
 				try {
 					authorizationRequest.setPackager(ISO8583Tools.getPackager());
@@ -310,36 +334,26 @@ public class FOUnitTest {
 					Assert.assertTrue(authorizationAnswer.getValue(39).equals("00"));
 				}
 				catch (ISOException e) {
-					// TODO Auto-generated catch block
 					e.printStackTrace();
+					Assert.assertTrue(false);
 				}
 
 			}
 
 			@Override
 			public void init(IOutput _this, Context ctx) {
-				// TODO Auto-generated method stub
 				ctx.subscribeEvent(_this, "AUTHORIZATION_CALL");
 			}
 		});
 
-	}
-
-	@After
-	public void clean() throws Exception {
-		Context.getInstance().reset();
-	}
-
-	@Test
-	public void testAppelAutorisation() {
 		// on insert la carte dans le tpe, le tpe envoie des donnees a la carte
 		Context.getInstance().addStartPoint(new Date(), "AUTHORIZATION_CALL");
+
 		// execute simulation.
 		try {
 			SimulatorFactory.getSimulator().start();
 		}
 		catch (SimulatorException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 			Assert.assertFalse(true);
 		}

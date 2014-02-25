@@ -32,12 +32,12 @@ public class FOStrategy implements IStrategy<ComponentIO> {
 	public IResponse processMessage(ComponentIO frontOffice, Mediator m, String data) {
 		ISOMsg message8583 = null;
 		ComponentIO composantCible = null;
-		Mediator mediateurAUtiliser;
 		// faire le lien avec le message8583
 
 		/* Si c'est une demande d'autorisation ... */
 		try {
 			message8583 = ISO8583Tools.read(data);
+			log.info("MTI " + message8583.getMTI());
 			switch (message8583.getMTI()) {
 				case "0100":
 					composantCible = frontOffice.getChild("Acquirer", ComponentIO.class);
@@ -52,38 +52,14 @@ public class FOStrategy implements IStrategy<ComponentIO> {
 			e.printStackTrace();
 		}
 
-		mediateurAUtiliser = MediatorFactory.getInstance().getForwardMediator(m, composantCible);
-		// forward to the chipset
-		return mediateurAUtiliser.send(composantCible, data);
+		Mediator mForward = MediatorFactory.getInstance().getForwardMediator(m, composantCible);
 
-		// Pour Antoine Michels ... ici on traite les messages entrants (ex: une
-		// auto arrive ...)
-		// Il faut que tu réutilises ta hiérarchie de composant que j'ai remis
-		// dans le package test
-		// FOUnitTest et que tu routes ces messages aux bons sous composants ...
-		// car FOStrategy
-		// est le premier niveau et comme une carte par exemple, la réel
-		// intelligence est dans la chip
-		// donc on route à la chip. Toi tu auras un switch à faire en fct du
-		// message de façon à ce que
-		// si on branche un tpe sur le fo ça fasse pareil que si n le branchait
-		// sur le module destinataire.
+		// forward to the chipset
+		return mForward.send(composantCible, data);
 	}
 
 	@Override
 	public void processEvent(ComponentIO _this, String event) {
-		// Ici on réagit à des évènements, ils peuvent être programmé par
-		// l'utilisateur voire par
-		// les stratégies si elles en ont le besoin ... exemple, la compensation
-		// est déclenchée
-		// en différée (du pdv temporel) par rapport au paiement.
-		// Donc en résumé tu dois te poser la question ... est-ce que le FO est
-		// maître de la situation
-		// dans tel ou tel scénario. Est-ce qu'il doit déclencher une échange
-		// avec un autre composant.
-		// Tout en considérant la notion hirarchique, normalement au niveau FO
-		// on aura rien je pense
-		// mais dans les sous module ...
 	}
 
 	@Override

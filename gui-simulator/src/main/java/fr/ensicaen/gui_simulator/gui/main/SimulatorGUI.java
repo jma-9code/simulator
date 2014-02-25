@@ -83,10 +83,10 @@ public class SimulatorGUI extends BasicGraphEditor {
 		// p.setProperties(test);
 		//
 		// Component p1 = new ComponentIO("Test 1");
-		// p1.getChilds().add(new ComponentIO("Test 3"));
-		// p1.getChilds().add(new ComponentIO("Test 4"));
-		// p.getChilds().add(p1);
-		// p.getChilds().add(new ComponentIO("Test 2"));
+		// p1.addChild(new ComponentIO("Test 3"));
+		// p1.addChild(new ComponentIO("Test 4"));
+		// p.addChild(p1);
+		// p.addChild(new ComponentIO("Test 2"));
 		// dao.create(p);
 		// dao.create(new ComponentIO("EPT"));
 		// dao.create(new ComponentO("Output"));

@@ -53,10 +53,10 @@ public class XmlDaoTest {
 		magstrippe = new ComponentIO("magstrippe");
 		magstrippe.getProperties().put("iso2", "59859595985888648468454684");
 
-		card.getChilds().add(magstrippe);
-		card.getChilds().add(chip);
-		card.getChilds().add(chip);
-		chip.getChilds().add(magstrippe);
+		card.addChild(magstrippe);
+		card.addChild(chip);
+		card.addChild(chip);
+		chip.addChild(magstrippe);
 
 		card.setStrategy(new NullStrategy());
 

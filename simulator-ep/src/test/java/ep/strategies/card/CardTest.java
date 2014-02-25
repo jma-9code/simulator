@@ -65,8 +65,8 @@ public class CardTest {
 		magstrippe = new ComponentIO("magstrippe");
 		magstrippe.getProperties().put("iso2", "59859595985888648468454684");
 
-		card.getChilds().add(magstrippe);
-		card.getChilds().add(chip);
+		card.addChild(magstrippe);
+		card.addChild(chip);
 
 		ept = new ComponentIO("ept");
 
@@ -126,19 +126,17 @@ public class CardTest {
 					log.info("tpe send secure channel");
 					DataResponse rp = (DataResponse) m_ept_card.send(_this, new String(tpe_sc.pack()));
 					log.debug("card rp :" + rp.getData());
-					boolean res = true;
-					Assert.assertTrue(res);
+					Assert.assertTrue(true);
 
 					log.info("tpe send card holder");
 					rp = (DataResponse) m_ept_card.send(_this, new String(tpe_ch.pack()));
 					log.debug("card rp :" + rp.getData());
-					res = true;
-					Assert.assertTrue(res);
+					Assert.assertTrue(true);
+
 					log.info("tpe send final agreement");
 					rp = (DataResponse) m_ept_card.send(_this, new String(tpe_finalagree.pack()));
 					log.debug("card rp :" + rp.getData());
-					res = true;
-					Assert.assertTrue(res);
+					Assert.assertTrue(true);
 				}
 				catch (Exception e) {
 					// TODO Auto-generated catch block

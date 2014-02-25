@@ -16,6 +16,30 @@
 					<target>1.7</target>
 				</configuration>
 			</plugin>
+			<plugin>
+				<artifactId>maven-assembly-plugin</artifactId>
+				<configuration>
+					<descriptorRefs>
+						<descriptorRef>jar-with-dependencies</descriptorRef>
+					</descriptorRefs>
+					<appendAssemblyId>false</appendAssemblyId>
+					<finalName>${project.artifactId}-${project.version}</finalName>
+					<outputDirectory>${basedir}\\build</outputDirectory>
+					<archive>
+						<manifest>
+							<mainClass>fr.ensicaen.gui_simulator.gui.main.SimulatorGUI</mainClass>
+						</manifest>
+					</archive>
+				</configuration>
+				<executions>
+					<execution>
+						<phase>package</phase>
+						<goals>
+							<goal>single</goal>
+						</goals>
+					</execution>
+				</executions>
+			</plugin>
 		</plugins>
 	</build>
 	<dependencies>
@@ -35,11 +59,9 @@
 			<version>0.9.9-RC1</version>
 		</dependency>
 		<dependency>
-			<groupId>com.mxgraph</groupId>
+			<groupId>org.tinyjee.jgraphx</groupId>
 			<artifactId>jgraphx</artifactId>
-			<version>2.3.0.3</version>
-			<scope>system</scope>
-			<systemPath>${basedir}/lib/jgraphx-2.3.0.3.jar</systemPath>
+			<version>2.0.0.1</version>
 		</dependency>
 	</dependencies>
 </project>

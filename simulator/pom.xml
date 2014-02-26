@@ -3,7 +3,7 @@
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>fr.ensicaen</groupId>
 	<artifactId>simulator</artifactId>
-	<version>0.0.1</version>
+	<version>1.0.0</version>
 	<name>simulator</name>
 
 	<dependencies>

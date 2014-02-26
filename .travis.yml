@@ -9,4 +9,4 @@ script:
   - cd ../simulator && mvn test
   - cd ../simulator-ep && mvn test
   - cd ../gui-simulator && mvn test
-  - cd build && curl -T gui-simulator-ep-1.0.0.jar -ufloww:1c649a45b9a04d95d8a9d051492203ae8d20c712 https://api.bintray.com/content/floww/Simulator/gui-simulator-ep/1.0.0/
+  - cd build && curl -T gui-simulator-ep-1.0.0.jar -ufloww:1c649a45b9a04d95d8a9d051492203ae8d20c712 https://api.bintray.com/content/floww/Simulator/gui-simulator-ep/1.0.0/gui-simulator-ep-1.0.0.jar

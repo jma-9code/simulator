@@ -108,8 +108,8 @@ public class EPTChipsetStrategy implements IStrategy<ComponentIO> {
 		ret.set(ISO7816Tools.FIELD_POSID, _this.getProperty("pos_id"));
 		ret.set(ISO7816Tools.FIELD_PROTOCOLLIST, _this.getProperty("protocol_list"));
 		ret.set(ISO7816Tools.FIELD_PROTOCOLPREFERRED, _this.getProperty("protocol_prefered"));
-		ret.set(ISO7816Tools.FIELD_STAN, _this.getProperty("stan"));
-		ret.set(ISO7816Tools.FIELD_RRN, generateTransactid(_this));
+		// ret.set(ISO7816Tools.FIELD_STAN, _this.getProperty("stan"));
+		// ret.set(ISO7816Tools.FIELD_RRN, generateTransactid(_this));
 		ret.set(ISO7816Tools.FIELD_DATETIME, ISO7816Tools.writeDATETIME(Context.getInstance().getTime()));
 		return ret;
 	}
@@ -128,9 +128,9 @@ public class EPTChipsetStrategy implements IStrategy<ComponentIO> {
 		ret.set(ISO7816Tools.FIELD_POSID, _this.getProperty("pos_id"));
 		ret.set(ISO7816Tools.FIELD_OPCODE, "00");
 		ret.set(ISO7816Tools.FIELD_AMOUNT, ISO7816Tools.writeAMOUNT(80));
-		ret.set(ISO7816Tools.FIELD_PINDATA, "1234");
-		ret.set(ISO7816Tools.FIELD_STAN, generateNextSTAN(_this, pan));
-		ret.set(ISO7816Tools.FIELD_RRN, generateTransactid(_this));
+		ret.set(ISO7816Tools.FIELD_PINDATA, _this.getProperty("pin_enter"));
+		// ret.set(ISO7816Tools.FIELD_STAN, generateNextSTAN(_this, pan));
+		// ret.set(ISO7816Tools.FIELD_RRN, generateTransactid(_this));
 		ret.set(ISO7816Tools.FIELD_DATETIME, ISO7816Tools.writeDATETIME(Context.getInstance().getTime()));
 		return ret;
 	}
@@ -148,7 +148,6 @@ public class EPTChipsetStrategy implements IStrategy<ComponentIO> {
 		String amount = parsedData.getString(ISO7816Tools.FIELD_AMOUNT);
 		String stan = parsedData.getString(ISO7816Tools.FIELD_STAN);
 		String apcode = parsedData.getString(ISO7816Tools.FIELD_APPROVALCODE);
-		String posid = parsedData.getString(ISO7816Tools.FIELD_POSID);
 
 		ISOMsg authorizationRequest = ISO8583Tools.create();
 
@@ -157,10 +156,11 @@ public class EPTChipsetStrategy implements IStrategy<ComponentIO> {
 		authorizationRequest.set(3, "000101"); // Type of Auth + accounts
 		authorizationRequest.set(4, amount);
 		authorizationRequest.set(7, ISO7816Tools.writeDATETIME(Context.getInstance().getTime()));
-		authorizationRequest.set(11, generateNextSTAN(_this, stan));
+		// authorizationRequest.set(11, generateNextSTAN(_this, stan));
 		authorizationRequest.set(38, apcode);
-		authorizationRequest.set(42, "623598"); // Acceptor's ID
-		authorizationRequest.set(123, posid);
+		authorizationRequest.set(42, _this.getProperty("acceptor_id")); // Acceptor's
+																		// ID
+		authorizationRequest.set(123, _this.getProperty("posdatacode"));
 
 		return authorizationRequest;
 	}
@@ -189,8 +189,8 @@ public class EPTChipsetStrategy implements IStrategy<ComponentIO> {
 		ret.set(ISO7816Tools.FIELD_APPROVALCODE, apcode);
 		ret.set(ISO7816Tools.FIELD_RESPONSECODE, rescode);
 		ret.set(ISO7816Tools.FIELD_PAN, pan);
-		ret.set(ISO7816Tools.FIELD_STAN, generateNextSTAN(_this, stan));
-		ret.set(ISO7816Tools.FIELD_RRN, generateTransactid(_this));
+		// ret.set(ISO7816Tools.FIELD_STAN, generateNextSTAN(_this, stan));
+		// ret.set(ISO7816Tools.FIELD_RRN, generateTransactid(_this));
 		ret.set(ISO7816Tools.FIELD_DATETIME, ISO7816Tools.writeDATETIME(Context.getInstance().getTime()));
 
 		return ret;
@@ -207,8 +207,8 @@ public class EPTChipsetStrategy implements IStrategy<ComponentIO> {
 	private void manageFinalAgrement(Component _this, ISOMsg data) {
 		// stockage de la transaction
 		String datetime = data.getString(ISO7816Tools.FIELD_DATETIME);
-		String stan = data.getString(ISO7816Tools.FIELD_STAN);
-		_this.getProperties().put(datetime + stan, data.toString());
+		// String stan = data.getString(ISO7816Tools.FIELD_STAN);
+		_this.getProperties().put(datetime /* + stan */, data.toString());
 	}
 
 	/**

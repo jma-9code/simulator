@@ -57,7 +57,7 @@ public class CardTest {
 		chip = new ComponentIO("chip");
 		chip.getProperties().put("protocol", "ISO7816");
 		chip.getProperties().put("pan", "4976710025642130");
-		chip.getProperties().put("bccs", "12421874");
+		chip.getProperties().put("pin", "1234");
 		chip.getProperties().put("ceil", "400");
 		chip.getProperties().put("approvalcode", "07B56=");
 		chip.getProperties().put("state", "OFF");
@@ -73,8 +73,6 @@ public class CardTest {
 		card.setStrategy(new CardStrategy());
 		chip.setStrategy(new CardChipStrategy());
 		m_ept_card = MediatorFactory.getInstance().getMediator(card, ept, EMediator.HALFDUPLEX);
-		m_card_chip = MediatorFactory.getInstance().getMediator(card, chip, EMediator.HALFDUPLEX);
-		m_card_magstrippe = MediatorFactory.getInstance().getMediator(card, magstrippe, EMediator.HALFDUPLEX);
 		generateTPEMsg();
 	}
 
@@ -84,8 +82,8 @@ public class CardTest {
 		tpe_sc.set(ISO7816Tools.FIELD_POSID, "0000623598");
 		tpe_sc.set(ISO7816Tools.FIELD_PROTOCOLLIST, "ISO7816 ISO8583 CB2A-T");
 		tpe_sc.set(ISO7816Tools.FIELD_PROTOCOLPREFERRED, "ISO7816");
-		tpe_sc.set(ISO7816Tools.FIELD_RRN, "320012000001");
-		tpe_sc.set(ISO7816Tools.FIELD_STAN, "000001");
+		// tpe_sc.set(ISO7816Tools.FIELD_RRN, "320012000001");
+		// tpe_sc.set(ISO7816Tools.FIELD_STAN, "000001");
 		tpe_sc.set(ISO7816Tools.FIELD_DATETIME, "1008170100");
 
 		tpe_ch.setMTI(ISO7816Tools.convertType2CodeMsg(MessageType.CARDHOLDER_AUTH_RQ));
@@ -93,8 +91,8 @@ public class CardTest {
 		tpe_ch.set(ISO7816Tools.FIELD_OPCODE, "00");
 		tpe_ch.set(ISO7816Tools.FIELD_AMOUNT, "0000008000");
 		tpe_ch.set(ISO7816Tools.FIELD_PINDATA, "1234");
-		tpe_ch.set(ISO7816Tools.FIELD_RRN, "320012000001");
-		tpe_ch.set(ISO7816Tools.FIELD_STAN, "000001");
+		// tpe_ch.set(ISO7816Tools.FIELD_RRN, "320012000001");
+		// tpe_ch.set(ISO7816Tools.FIELD_STAN, "000003");
 		tpe_ch.set(ISO7816Tools.FIELD_DATETIME, "1008170100");
 
 		tpe_finalagree.setMTI(ISO7816Tools.convertType2CodeMsg(MessageType.AUTHORIZATION_RP_CRYPTO));
@@ -105,8 +103,8 @@ public class CardTest {
 																		// d'auth
 		tpe_finalagree.set(ISO7816Tools.FIELD_RESPONSECODE, "00"); // auth OK
 		tpe_finalagree.set(ISO7816Tools.FIELD_PAN, "4976710025642130");
-		tpe_finalagree.set(ISO7816Tools.FIELD_RRN, "320012000001");
-		tpe_finalagree.set(ISO7816Tools.FIELD_STAN, "000001");
+		// tpe_finalagree.set(ISO7816Tools.FIELD_RRN, "320012000001");
+		// tpe_finalagree.set(ISO7816Tools.FIELD_STAN, "000005");
 		tpe_finalagree.set(ISO7816Tools.FIELD_DATETIME, "1008170100");
 	}
 
@@ -123,24 +121,53 @@ public class CardTest {
 			@Override
 			public void processEvent(ComponentIO _this, String event) {
 				try {
+					ISOMsg rpdata = null;
 					log.info("tpe send secure channel");
 					DataResponse rp = (DataResponse) m_ept_card.send(_this, new String(tpe_sc.pack()));
-					log.debug("card rp :" + rp.getData());
-					Assert.assertTrue(true);
+					rpdata = ISO7816Tools.read(rp.getData());
+
+					// verification du MTI
+					Assert.assertEquals(ISO7816Tools.convertType2CodeMsg(MessageType.SECURE_CHANNEL_RP),
+							rpdata.getMTI());
+					Assert.assertEquals(rpdata.getString(ISO7816Tools.FIELD_PROTOCOL), "ISO7816");
+					Assert.assertEquals(rpdata.getString(ISO7816Tools.FIELD_POSID), "0000623598");
+					// Assert.assertEquals(rpdata.getString(ISO7816Tools.FIELD_STAN),
+					// "000002");
+					log.debug("card rp :" + rpdata);
 
 					log.info("tpe send card holder");
 					rp = (DataResponse) m_ept_card.send(_this, new String(tpe_ch.pack()));
-					log.debug("card rp :" + rp.getData());
-					Assert.assertTrue(true);
+					rpdata = ISO7816Tools.read(rp.getData());
+					// verification du MTI
+					Assert.assertEquals(ISO7816Tools.convertType2CodeMsg(MessageType.CARDHOLDER_AUTH_RP),
+							rpdata.getMTI());
+					Assert.assertEquals(rpdata.getString(ISO7816Tools.FIELD_AMOUNT), "0000008000");
+					Assert.assertEquals(rpdata.getString(ISO7816Tools.FIELD_OPCODE), "00");
+					Assert.assertEquals(rpdata.getString(ISO7816Tools.FIELD_POSID), "0000623598");
+					Assert.assertEquals(rpdata.getString(ISO7816Tools.FIELD_PINVERIFICATION), "1");
+					Assert.assertEquals(rpdata.getString(ISO7816Tools.FIELD_CARDAGREEMENT), "1");
+					// Assert.assertEquals(rpdata.getString(ISO7816Tools.FIELD_STAN),
+					// "000004");
+					log.debug("card rp :" + rpdata);
 
 					log.info("tpe send final agreement");
 					rp = (DataResponse) m_ept_card.send(_this, new String(tpe_finalagree.pack()));
-					log.debug("card rp :" + rp.getData());
-					Assert.assertTrue(true);
+					rpdata = ISO7816Tools.read(rp.getData());
+					Assert.assertEquals(ISO7816Tools.convertType2CodeMsg(MessageType.TRANSCATION_VAL_NOTIF),
+							rpdata.getMTI());
+					Assert.assertEquals(rpdata.getString(ISO7816Tools.FIELD_AMOUNT), "0000008000");
+					Assert.assertEquals(rpdata.getString(ISO7816Tools.FIELD_OPCODE), "00");
+					Assert.assertEquals(rpdata.getString(ISO7816Tools.FIELD_POSID), "0000623598");
+					Assert.assertEquals(rpdata.getString(ISO7816Tools.FIELD_RESPONSECODE), "00");
+					Assert.assertEquals(rpdata.getString(ISO7816Tools.FIELD_APPROVALCODE), "07B56=");
+					// Assert.assertEquals(rpdata.getString(ISO7816Tools.FIELD_STAN),
+					// "000006");
+
+					log.debug("card rp :" + rpdata);
 				}
 				catch (Exception e) {
 					// TODO Auto-generated catch block
-					e.printStackTrace();
+					// e.printStackTrace();
 					Assert.assertFalse(true);
 				}
 
@@ -165,8 +192,6 @@ public class CardTest {
 			SimulatorFactory.getSimulator().start();
 		}
 		catch (SimulatorException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
 			Assert.assertFalse(true);
 		}
 		log.info("----TEST CARD END----");

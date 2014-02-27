@@ -1,5 +1,8 @@
 package fr.ensicaen.simulator_ep.ep.strategies.fo.issuer;
 
+import java.math.BigInteger;
+import java.util.Random;
+
 import org.jpos.iso.ISOException;
 import org.jpos.iso.ISOMsg;
 import org.slf4j.Logger;
@@ -34,11 +37,39 @@ public class FOIssuerAuthorizationStrategy implements IStrategy<ComponentIO> {
 	@Override
 	public IResponse processMessage(ComponentIO frontOfficeIssuer, Mediator m, String data) {
 		ISOMsg authorizationAnswer = null;
+		Random r = new Random();
 		try {
 			authorizationAnswer = ISO8583Tools.read(data);
+
 			authorizationAnswer.setMTI("0110");
 			authorizationAnswer.set(7, ISO7816Tools.writeDATETIME(Context.getInstance().getTime()));
-			authorizationAnswer.set(39, "00");
+			// FO utilisation du champs acceptance afin de definir la strategie
+			// d'approbation ou non de l'auth
+			int auth_approval = Integer.parseInt(frontOfficeIssuer.getProperties().get("acceptance"));
+			String approval_code = new BigInteger(130, r).toString(6);
+			switch (auth_approval) {
+				case 0:
+					authorizationAnswer.set(39, "00");// Response Code
+					authorizationAnswer.set(38, approval_code); // Approval Code
+					break;
+				case 1:
+					authorizationAnswer.set(39, "01");// Response Code
+					break;
+				case 2:
+					if (r.nextBoolean()) {
+						authorizationAnswer.set(39, "00");// Response Code
+						authorizationAnswer.set(38, approval_code); // Approval
+																	// Code
+					}
+					else {
+						authorizationAnswer.set(39, "01");// Response Code
+					}
+					break;
+				default:
+					authorizationAnswer.set(39, "01");// Response Code
+					break;
+			}
+
 		}
 		catch (ISOException | ISO8583Exception e) {
 			e.printStackTrace();

@@ -102,7 +102,8 @@ public class CardChipStrategy implements IStrategy<ComponentIO> {
 		String apcode_tpe = data.getString(ISO7816Tools.FIELD_APPROVALCODE);
 		String rpcode = data.getString(ISO7816Tools.FIELD_RESPONSECODE);
 		String transactID = data.getString(ISO7816Tools.FIELD_RRN);
-		String stan = ISO7816Tools.generateSTAN(data.getString(ISO7816Tools.FIELD_STAN));
+		// String stan =
+		// ISO7816Tools.generateSTAN(data.getString(ISO7816Tools.FIELD_STAN));
 		String pan = chip.getProperties().get("pan");
 		String apcode_cb = chip.getProperties().get("approvalcode");
 
@@ -114,8 +115,8 @@ public class CardChipStrategy implements IStrategy<ComponentIO> {
 			rp.set(ISO7816Tools.FIELD_APPROVALCODE, apcode_cb);
 			rp.set(ISO7816Tools.FIELD_RESPONSECODE, rpcode);
 			rp.set(ISO7816Tools.FIELD_PAN, pan);
-			rp.set(ISO7816Tools.FIELD_STAN, stan);
-			rp.set(ISO7816Tools.FIELD_RRN, transactID);
+			// rp.set(ISO7816Tools.FIELD_STAN, stan);
+			// rp.set(ISO7816Tools.FIELD_RRN, transactID);
 			rp.set(ISO7816Tools.FIELD_DATETIME, ISO7816Tools.writeDATETIME(Context.getInstance().getTime()));
 		}
 		else {
@@ -142,7 +143,8 @@ public class CardChipStrategy implements IStrategy<ComponentIO> {
 		String pan = chip.getProperties().get("pan");
 		String protocol = chip.getProperties().get(ISO7816Tools.FIELD_POSID + "-" + posID);
 		String transactID = data.getString(ISO7816Tools.FIELD_RRN);
-		String stan = ISO7816Tools.generateSTAN(data.getString(ISO7816Tools.FIELD_STAN));
+		// String stan =
+		// ISO7816Tools.generateSTAN(data.getString(ISO7816Tools.FIELD_STAN));
 		// TODO verif prot != null, sinn erreur
 
 		// Construction de la rp
@@ -152,10 +154,6 @@ public class CardChipStrategy implements IStrategy<ComponentIO> {
 		rp.set(ISO7816Tools.FIELD_OPCODE, opcode);
 		rp.set(ISO7816Tools.FIELD_AMOUNT, amount);
 
-		rp.set(ISO7816Tools.FIELD_POSID, posID);
-		rp.set(ISO7816Tools.FIELD_POSID, posID);
-		rp.set(ISO7816Tools.FIELD_POSID, posID);
-
 		// test plafond de la carte
 		if (ISO7816Tools.readAMOUNT(amount) > Integer.parseInt(chip.getProperties().get("ceil"))) {
 			rp.set(ISO7816Tools.FIELD_CARDAGREEMENT, "0");
@@ -163,10 +161,16 @@ public class CardChipStrategy implements IStrategy<ComponentIO> {
 		else {
 			rp.set(ISO7816Tools.FIELD_CARDAGREEMENT, "1");
 		}
-		rp.set(ISO7816Tools.FIELD_PINVERIFICATION, "1");
+		if (pinData.equals(chip.getProperties().get("pin"))) {
+			rp.set(ISO7816Tools.FIELD_PINVERIFICATION, "1");
+		}
+		else {
+			rp.set(ISO7816Tools.FIELD_PINVERIFICATION, "0");
+		}
+
 		rp.set(ISO7816Tools.FIELD_PAN, pan);
-		rp.set(ISO7816Tools.FIELD_STAN, stan);
-		rp.set(ISO7816Tools.FIELD_RRN, transactID);
+		// rp.set(ISO7816Tools.FIELD_STAN, stan);
+		// rp.set(ISO7816Tools.FIELD_RRN, transactID);
 		rp.set(ISO7816Tools.FIELD_DATETIME, ISO7816Tools.writeDATETIME(Context.getInstance().getTime()));
 		return rp;
 
@@ -186,7 +190,8 @@ public class CardChipStrategy implements IStrategy<ComponentIO> {
 		String pref_protocol_tpe = data.getString(ISO7816Tools.FIELD_PROTOCOLPREFERRED);
 		String posID = data.getString(ISO7816Tools.FIELD_POSID);
 		String transactID = data.getString(ISO7816Tools.FIELD_RRN);
-		String stan = ISO7816Tools.generateSTAN(data.getString(ISO7816Tools.FIELD_STAN));
+		// String stan =
+		// ISO7816Tools.generateSTAN(data.getString(ISO7816Tools.FIELD_STAN));
 
 		// la carte gere le protocol voulu par le tpe
 		if (protocols.contains(pref_protocol_tpe)) {
@@ -214,8 +219,8 @@ public class CardChipStrategy implements IStrategy<ComponentIO> {
 		rp.setMTI(ISO7816Tools.convertType2CodeMsg(MessageType.SECURE_CHANNEL_RP));
 		rp.set(ISO7816Tools.FIELD_POSID, posID);
 		rp.set(ISO7816Tools.FIELD_PROTOCOL, protocol_choice);
-		rp.set(ISO7816Tools.FIELD_STAN, stan);
-		rp.set(ISO7816Tools.FIELD_RRN, transactID);
+		// rp.set(ISO7816Tools.FIELD_STAN, stan);
+		// rp.set(ISO7816Tools.FIELD_RRN, transactID);
 		rp.set(ISO7816Tools.FIELD_DATETIME, ISO7816Tools.writeDATETIME(Context.getInstance().getTime()));
 		rp.set(ISO7816Tools.FIELD_POSID, posID);
 		return rp;

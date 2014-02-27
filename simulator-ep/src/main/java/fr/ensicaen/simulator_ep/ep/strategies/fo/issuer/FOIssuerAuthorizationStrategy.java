@@ -46,7 +46,7 @@ public class FOIssuerAuthorizationStrategy implements IStrategy<ComponentIO> {
 			// FO utilisation du champs acceptance afin de definir la strategie
 			// d'approbation ou non de l'auth
 			int auth_approval = Integer.parseInt(frontOfficeIssuer.getProperties().get("acceptance"));
-			String approval_code = new BigInteger(130, r).toString(6);
+			String approval_code = new BigInteger(20, r).toString();
 			switch (auth_approval) {
 				case 0:
 					authorizationAnswer.set(39, "00");// Response Code

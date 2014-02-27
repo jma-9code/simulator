@@ -65,7 +65,7 @@ public class EPTChipsetStrategy implements IStrategy<ComponentIO> {
 
 					// ARPC
 					msg = prepareARPC(_this, sdata);
-					res = (DataResponse) m.send(_this, new String(msg.getBytes()));
+					res = (DataResponse) m.send(_this, new String(msg.pack()));
 					sdata = ISO7816Tools.read(res.getData());
 
 					// final agreement
@@ -175,11 +175,10 @@ public class EPTChipsetStrategy implements IStrategy<ComponentIO> {
 	 * @throws ISOException
 	 */
 	private ISOMsg prepareARPC(Component _this, ISOMsg data) throws ISOException {
-		String amount = data.getString(ISO7816Tools.FIELD_AMOUNT);
-		String apcode = data.getString(ISO7816Tools.FIELD_APPROVALCODE);
-		String rescode = data.getString(ISO7816Tools.FIELD_RESPONSECODE);
-		String pan = data.getString(ISO7816Tools.FIELD_PAN);
-		String stan = data.getString(ISO7816Tools.FIELD_STAN);
+		String amount = data.getString(4);
+		String apcode = data.getString(38);
+		String rescode = data.getString(39);
+		String pan = data.getString(2);
 
 		ISOMsg ret = ISO7816Tools.create();
 		ret.setMTI(ISO7816Tools.convertType2CodeMsg(MessageType.AUTHORIZATION_RP_CRYPTO));

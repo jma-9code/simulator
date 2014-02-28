@@ -1,6 +1,9 @@
 package fr.ensicaen.simulator_ep.utils;
 
 import java.net.URISyntaxException;
+import java.text.DecimalFormat;
+import java.text.DecimalFormatSymbols;
+import java.text.NumberFormat;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
@@ -53,6 +56,11 @@ public class ISO7816Tools {
 	public static final int FIELD_RESPONSECODE = 16;
 
 	/**
+	 * Formatteur des montants
+	 */
+	public static NumberFormat formatter_amount = new DecimalFormat("0000000000.00");;
+
+	/**
 	 * Permet de faire STAN+1
 	 * 
 	 * @param stan
@@ -100,9 +108,10 @@ public class ISO7816Tools {
 	 * @return
 	 */
 	public static String writeAMOUNT(double d) {
-		String r = String.format("%.2f", d);
-		r = r.replace(",", "");
-		return ("0000000000" + r).substring(r.length());
+		String r = formatter_amount.format(d);
+
+		// delete decimal separator
+		return r.replace(DecimalFormatSymbols.getInstance().getDecimalSeparator() + "", "");
 	}
 
 	/**

@@ -11,7 +11,6 @@ import org.junit.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import ep.strategies.card.CardTest;
 import fr.ensicaen.simulator.model.component.ComponentIO;
 import fr.ensicaen.simulator.model.component.IOutput;
 import fr.ensicaen.simulator.model.factory.MediatorFactory;
@@ -49,7 +48,7 @@ import fr.ensicaen.simulator_ep.utils.ISO8583Tools;
  * @author Flo
  */
 public class EPTUnitTest {
-	private static Logger log = LoggerFactory.getLogger(CardTest.class);
+	private static Logger log = LoggerFactory.getLogger(EPTUnitTest.class);
 
 	private static ISOMsg card_sc = ISO7816Tools.create();
 	private static ISOMsg card_ch = ISO7816Tools.create();

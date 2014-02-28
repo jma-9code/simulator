@@ -30,6 +30,7 @@ import fr.ensicaen.simulator_ep.ep.strategies.ept.EPTSmartCardReaderStrategy;
 import fr.ensicaen.simulator_ep.ep.strategies.ept.EPTStrategy;
 import fr.ensicaen.simulator_ep.utils.ISO7816Tools;
 import fr.ensicaen.simulator_ep.utils.ISO7816Tools.MessageType;
+import fr.ensicaen.simulator_ep.utils.ISO8583Exception;
 import fr.ensicaen.simulator_ep.utils.ISO8583Tools;
 
 /**
@@ -89,9 +90,12 @@ public class EPTUnitTest {
 		chipset = new ComponentIO("Chipset");
 		chipset.setStrategy(new EPTChipsetStrategy());
 		chipset.getProperties().put("pos_id", "0000623598");
-		chipset.getProperties().put("stan", "000001");
+		chipset.getProperties().put("acceptor_id", "0000623598");
+		chipset.getProperties().put("posdatacode", "510101511326105");
+		// chipset.getProperties().put("stan", "000001");
 		chipset.getProperties().put("protocol_list", "ISO7816 ISO8583 CB2A-T");
 		chipset.getProperties().put("protocol_prefered", "ISO7816");
+		chipset.getProperties().put("pin_enter", "1234");
 		ept.addChild(chipset);
 
 		/* Enfant : imprimante */
@@ -107,10 +111,6 @@ public class EPTUnitTest {
 		// static mediators
 		factory.getMediator(ept, frontOffice, EMediator.HALFDUPLEX);
 		factory.getMediator(ept, fakeSmartCard, EMediator.HALFDUPLEX);
-		// factory.getMediator(smartCardReader, fakeSmartCard,
-		// EMediator.HALFDUPLEX);
-		// factory.getMediator(chipset, frontOffice, EMediator.HALFDUPLEX);
-		// factory.getMediator(smartCardReader, chipset, EMediator.HALFDUPLEX);
 
 		generateMsg();
 	}
@@ -120,8 +120,8 @@ public class EPTUnitTest {
 		card_sc.set(ISO7816Tools.FIELD_POSID, "0000623598");
 		card_sc.set(ISO7816Tools.FIELD_PROTOCOL, "ISO7816");
 		card_sc.set(ISO7816Tools.FIELD_PAN, "4976710025642130");
-		card_sc.set(ISO7816Tools.FIELD_RRN, "320012000001");
-		card_sc.set(ISO7816Tools.FIELD_STAN, "000002");
+		// card_sc.set(ISO7816Tools.FIELD_RRN, "320012000001");
+		// card_sc.set(ISO7816Tools.FIELD_STAN, "000002");
 		card_sc.set(ISO7816Tools.FIELD_DATETIME, "1008170100");
 
 		card_ch.setMTI(ISO7816Tools.convertType2CodeMsg(MessageType.CARDHOLDER_AUTH_RP));
@@ -131,8 +131,8 @@ public class EPTUnitTest {
 		card_ch.set(ISO7816Tools.FIELD_PINVERIFICATION, "1");
 		card_ch.set(ISO7816Tools.FIELD_CARDAGREEMENT, "1");
 		card_sc.set(ISO7816Tools.FIELD_PAN, "4976710025642130");
-		card_ch.set(ISO7816Tools.FIELD_RRN, "320012000001");
-		card_ch.set(ISO7816Tools.FIELD_STAN, "000004");
+		// card_ch.set(ISO7816Tools.FIELD_RRN, "320012000001");
+		// card_ch.set(ISO7816Tools.FIELD_STAN, "000004");
 		card_ch.set(ISO7816Tools.FIELD_DATETIME, "1008170100");
 
 		card_finalagree.setMTI(ISO7816Tools.convertType2CodeMsg(MessageType.TRANSCATION_VAL_NOTIF));
@@ -142,24 +142,20 @@ public class EPTUnitTest {
 		card_finalagree.set(ISO7816Tools.FIELD_APPROVALCODE, "07B56=");
 		card_finalagree.set(ISO7816Tools.FIELD_RESPONSECODE, "00");
 		card_finalagree.set(ISO7816Tools.FIELD_PAN, "4976710025642130");
-		card_finalagree.set(ISO7816Tools.FIELD_RRN, "320012000001");
-		card_finalagree.set(ISO7816Tools.FIELD_STAN, "000001");
+		// card_finalagree.set(ISO7816Tools.FIELD_RRN, "320012000001");
+		// card_finalagree.set(ISO7816Tools.FIELD_STAN, "000006");
 		card_finalagree.set(ISO7816Tools.FIELD_DATETIME, "1008170100");
 
 		fo_authrp.setMTI("0110");
-		fo_authrp.set(7, "1008170100");
-		fo_authrp.set(39, "00");
-		// @TODO
-		// fo_authrp.set(c);
-		// fo_authrp.set(c);
-		// fo_authrp.set(c);
-		// fo_authrp.set(c);
-		//
-		// String amount = data.getString(ISO7816Tools.FIELD_AMOUNT);
-		// String apcode = data.getString(ISO7816Tools.FIELD_APPROVALCODE);
-		// String rescode = data.getString(ISO7816Tools.FIELD_RESPONSECODE);
-		// String pan = data.getString(ISO7816Tools.FIELD_PAN);
-		// String stan = data.getString(ISO7816Tools.FIELD_STAN);
+		fo_authrp.set(2, "4976710025642130"); // PAN
+		fo_authrp.set(3, "000101"); // Type of Auth + accounts
+		fo_authrp.set(4, "0000008000"); // 80€
+		fo_authrp.set(7, "1008170100"); // date : MMDDhhmmss
+		// fo_authrp.set(11, "000004"); // System Trace Audit Number
+		fo_authrp.set(38, "07B56="); // Approval Code
+		fo_authrp.set(39, "00"); // Response Code
+		fo_authrp.set(42, "0000623598"); // Acceptor's ID
+		fo_authrp.set(123, "510101511326105"); // POS Data Code
 	}
 
 	@After
@@ -210,32 +206,53 @@ public class EPTUnitTest {
 			@Override
 			public IResponse processMessage(ComponentIO _this, Mediator mediator, String data) {
 				try {
-					boolean res = false;
+					ISOMsg rpdata = ISO7816Tools.read(data);
 					msg++;
 					switch (msg) {
 						case 0:
 							log.debug("card receiv secure channel");
-							res = true;
-							Assert.assertTrue(res);
+
+							// verification du MTI
+							Assert.assertEquals(ISO7816Tools.convertType2CodeMsg(MessageType.SECURE_CHANNEL_RQ),
+									rpdata.getMTI());
+							Assert.assertEquals(rpdata.getString(ISO7816Tools.FIELD_PROTOCOLLIST),
+									"ISO7816 ISO8583 CB2A-T");
+							Assert.assertEquals(rpdata.getString(ISO7816Tools.FIELD_POSID), "0000623598");
+							Assert.assertEquals(rpdata.getString(ISO7816Tools.FIELD_PROTOCOLPREFERRED), "ISO7816");
+							// Assert.assertEquals(rpdata.getString(ISO7816Tools.FIELD_STAN),
+							// "000001");
 							return DataResponse.build(mediator, new String(card_sc.pack()));
 						case 1:
 							log.debug("card receiv card holder");
-							res = true;
-							Assert.assertTrue(res);
+							// verification du MTI
+							Assert.assertEquals(ISO7816Tools.convertType2CodeMsg(MessageType.CARDHOLDER_AUTH_RQ),
+									rpdata.getMTI());
+							Assert.assertEquals(rpdata.getString(ISO7816Tools.FIELD_POSID), "0000623598");
+							Assert.assertEquals(rpdata.getString(ISO7816Tools.FIELD_OPCODE), "00");
+							Assert.assertEquals(rpdata.getString(ISO7816Tools.FIELD_AMOUNT), "0000008000");
+							Assert.assertEquals(rpdata.getString(ISO7816Tools.FIELD_PINDATA), "1234");
+							// Assert.assertEquals(rpdata.getString(ISO7816Tools.FIELD_STAN),
+							// "000003");
 							return DataResponse.build(mediator, new String(card_ch.pack()));
 						case 2:
 							log.debug("card receiv final agreement");
-							res = true;
-							Assert.assertTrue(res);
+							// verification du MTI
+							Assert.assertEquals(ISO7816Tools.convertType2CodeMsg(MessageType.AUTHORIZATION_RP_CRYPTO),
+									rpdata.getMTI());
+							Assert.assertEquals(rpdata.getString(ISO7816Tools.FIELD_POSID), "0000623598");
+							Assert.assertEquals(rpdata.getString(ISO7816Tools.FIELD_OPCODE), "00");
+							Assert.assertEquals(rpdata.getString(ISO7816Tools.FIELD_AMOUNT), "0000008000");
+							Assert.assertEquals(rpdata.getString(ISO7816Tools.FIELD_APPROVALCODE), "07B56=");
+							Assert.assertEquals(rpdata.getString(ISO7816Tools.FIELD_RESPONSECODE), "00");
+							// Assert.assertEquals(rpdata.getString(ISO7816Tools.FIELD_STAN),
+							// "000005");
 							return DataResponse.build(mediator, new String(card_finalagree.pack()));
 						default:
+							Assert.assertTrue(false);
 							break;
 					}
 				}
 				catch (Exception e) {
-
-					// TODO Auto-generated catch block
-					e.printStackTrace();
 					Assert.assertFalse(true);
 				}
 
@@ -267,11 +284,19 @@ public class EPTUnitTest {
 			public IResponse processMessage(ComponentIO _this, Mediator mediator, String data) {
 				Assert.assertTrue(true);
 				try {
+					ISOMsg rpdata = null;
+					log.debug("fo receiv auth");
+					rpdata = ISO8583Tools.read(data);
+					// verification du MTI
+					Assert.assertEquals("0100", rpdata.getMTI());
+					Assert.assertEquals(rpdata.getString(3), "000101");//
+					Assert.assertEquals(rpdata.getString(4), "0000008000");// amount
+					Assert.assertEquals(rpdata.getString(42), "0000623598");
+					Assert.assertEquals(rpdata.getString(123), "510101511326105");// pos
 					return DataResponse.build(mediator, new String(fo_authrp.pack()));
 				}
-				catch (ISOException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
+				catch (ISOException | ISO8583Exception e) {
+
 				}
 				return null;
 			}
@@ -285,9 +310,7 @@ public class EPTUnitTest {
 			SimulatorFactory.getSimulator().start();
 		}
 		catch (SimulatorException e) {
-			e.printStackTrace();
-			// TODO JULIEN A CORRIGER !
-			// Assert.assertTrue(false);
+			Assert.assertTrue(false);
 		}
 		log.debug("----TEST EPT<->CARD END----");
 	}

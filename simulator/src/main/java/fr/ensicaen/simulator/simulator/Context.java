@@ -20,6 +20,8 @@ import fr.ensicaen.simulator.model.factory.MediatorFactory;
 import fr.ensicaen.simulator.model.mediator.HalfDuplexMediator;
 import fr.ensicaen.simulator.model.mediator.Mediator;
 import fr.ensicaen.simulator.model.mediator.ReverseHalfDuplexMediator;
+import fr.ensicaen.simulator.model.properties.listener.DefaultPropertyListenerImpl;
+import fr.ensicaen.simulator.model.properties.listener.PropertyListener;
 import fr.ensicaen.simulator.model.strategies.IStrategy;
 import fr.ensicaen.simulator.simulator.StartPoint.StartPointComparator;
 import fr.ensicaen.simulator.simulator.exception.ContextException;
@@ -65,7 +67,18 @@ public class Context {
 	 */
 	private boolean autoRegistrationMode = false;
 
+	/**
+	 * Liste des composants enregistrés pour un évènement key = Evènement value
+	 * = Liste des composants
+	 */
 	private Map<String, List<IOutput>> events;
+
+	/**
+	 * Property listener à utiliser. Ce découplage permet à la couche GUI de
+	 * définir un listener particulier (ex : popup de renseignement de
+	 * l'information nécessaire).
+	 */
+	private PropertyListener propertyListener = new DefaultPropertyListenerImpl();
 
 	public Context() {
 		this.startPoints = new PriorityQueue<>(1, new StartPointComparator());
@@ -493,6 +506,14 @@ public class Context {
 
 	public void setEvents(Map<String, List<IOutput>> events) {
 		this.events = events;
+	}
+
+	public PropertyListener getPropertyListener() {
+		return propertyListener;
+	}
+
+	public void setPropertyListener(PropertyListener propertyListener) {
+		this.propertyListener = propertyListener;
 	}
 
 }

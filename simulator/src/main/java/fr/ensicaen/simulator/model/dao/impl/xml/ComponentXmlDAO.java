@@ -23,6 +23,7 @@ import fr.ensicaen.simulator.model.component.Component;
 import fr.ensicaen.simulator.model.dao.DAO;
 import fr.ensicaen.simulator.model.dao.source.DaoSource;
 import fr.ensicaen.simulator.model.dao.source.XmlSource;
+import fr.ensicaen.simulator.model.properties.PropertiesPlus;
 
 public class ComponentXmlDAO extends DAO<Component> {
 
@@ -47,7 +48,7 @@ public class ComponentXmlDAO extends DAO<Component> {
 		Components data = new Components();
 		data.components = obj.getAllTree();
 		try {
-			JAXBContext jaxbContext = JAXBContext.newInstance(Components.class);
+			JAXBContext jaxbContext = JAXBContext.newInstance(Components.class, PropertiesPlus.Property.class);
 			Marshaller jaxbMarshaller = jaxbContext.createMarshaller();
 			jaxbMarshaller.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, true);
 			jaxbMarshaller.marshal(data, Paths.get(((XmlSource) daoSrc).getPath_library_model(), obj.getUuid())
@@ -86,7 +87,7 @@ public class ComponentXmlDAO extends DAO<Component> {
 		Component c = null;
 		Path path = Paths.get(((XmlSource) daoSrc).getPath_library_model());
 		try (DirectoryStream<Path> stream = Files.newDirectoryStream(path)) {
-			JAXBContext jaxbContext = JAXBContext.newInstance(Components.class);
+			JAXBContext jaxbContext = JAXBContext.newInstance(Components.class, PropertiesPlus.Property.class);
 			Unmarshaller jaxbUnmarshaller = jaxbContext.createUnmarshaller();
 			Iterator<Path> iterator = stream.iterator();
 			while (iterator.hasNext()) {
@@ -109,7 +110,7 @@ public class ComponentXmlDAO extends DAO<Component> {
 		Path path = Paths.get(((XmlSource) daoSrc).getPath_library_model());
 		List<Component> components = new ArrayList<>();
 		try (DirectoryStream<Path> stream = Files.newDirectoryStream(path)) {
-			JAXBContext jaxbContext = JAXBContext.newInstance(Components.class);
+			JAXBContext jaxbContext = JAXBContext.newInstance(Components.class, PropertiesPlus.Property.class);
 			Unmarshaller jaxbUnmarshaller = jaxbContext.createUnmarshaller();
 			Iterator<Path> iterator = stream.iterator();
 			while (iterator.hasNext()) {

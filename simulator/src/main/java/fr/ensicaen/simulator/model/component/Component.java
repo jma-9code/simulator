@@ -21,10 +21,10 @@ import org.slf4j.LoggerFactory;
 
 import fr.ensicaen.simulator.model.factory.MediatorFactory;
 import fr.ensicaen.simulator.model.mediator.Mediator;
+import fr.ensicaen.simulator.model.properties.PropertiesPlus;
 import fr.ensicaen.simulator.model.strategies.IStrategy;
 import fr.ensicaen.simulator.model.strategies.NullStrategy;
 import fr.ensicaen.simulator.simulator.Context;
-import fr.ensicaen.simulator.tools.CaseInsensitiveMap;
 
 @XmlSeeAlso({ ComponentIO.class, ComponentI.class, ComponentO.class })
 @XmlAccessorType(XmlAccessType.FIELD)
@@ -32,21 +32,37 @@ public abstract class Component implements Serializable {
 
 	private static Logger log = LoggerFactory.getLogger(Component.class);
 
+	/**
+	 * Identifiant unique du composant
+	 */
 	@XmlAttribute
 	@XmlID
 	protected String uuid;
 
+	/**
+	 * Acronyme
+	 */
 	@XmlTransient
 	private String acronym;
 
+	/**
+	 * Nom du composant
+	 */
 	protected String name;
 
-	protected HashMap<String, String> properties = new CaseInsensitiveMap();
+	/**
+	 * Propriétés du composant
+	 */
+	protected PropertiesPlus properties = new PropertiesPlus();
 
-	// delegate
+	/**
+	 * Stratégie utilisée par le composant (pattern delegate)
+	 */
 	protected transient IStrategy strategy = new NullStrategy();
 
-	// sub-component
+	/**
+	 * Liste des composants enfants
+	 */
 	@XmlElement
 	@XmlIDREF
 	protected List<Component> childs = new ArrayList<>();
@@ -91,11 +107,11 @@ public abstract class Component implements Serializable {
 		return this.properties.get(key);
 	}
 
-	public HashMap<String, String> getProperties() {
+	public PropertiesPlus getProperties() {
 		return this.properties;
 	}
 
-	public void setProperties(HashMap<String, String> properties) {
+	public void setProperties(PropertiesPlus properties) {
 		this.properties = properties;
 	}
 
@@ -205,18 +221,18 @@ public abstract class Component implements Serializable {
 	 * 
 	 * @return
 	 */
-	public Memento saveState() {
-		return new Memento(this.properties);
-	}
-
-	/**
-	 * Restitue son état depuis un "Memento"
-	 * 
-	 * @param pMemento
-	 */
-	public void restoreState(Memento pMemento) {
-		this.properties = pMemento.getProperties();
-	}
+	// public Memento saveState() {
+	// return new Memento(this.properties);
+	// }
+	//
+	// /**
+	// * Restitue son état depuis un "Memento"
+	// *
+	// * @param pMemento
+	// */
+	// public void restoreState(Memento pMemento) {
+	// this.properties = pMemento.getProperties();
+	// }
 
 	public abstract boolean isOutput();
 

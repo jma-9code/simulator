@@ -43,14 +43,14 @@ public class SimulatorGUI extends BasicGraphEditor {
 	static {
 		try {
 			mxResources.add("gui/resources/simulator-ep");
-		}
-		catch (Exception e) {
+		} catch (Exception e) {
 			e.printStackTrace();
 		}
 	}
 
 	public SimulatorGUI() {
-		this(mxResources.get("simulator-title"), new CustomGraphComponent(new CustomGraph()));
+		this(mxResources.get("simulator-title"), new CustomGraphComponent(
+				new CustomGraph()));
 	}
 
 	/**
@@ -63,43 +63,18 @@ public class SimulatorGUI extends BasicGraphEditor {
 		mxGraph graph = graphComponent.getGraph();
 
 		// link selection event
-		graph.getSelectionModel().addListener(mxEvent.CHANGE, vRightSplit.getComponentPanel());
+		graph.getSelectionModel().addListener(mxEvent.CHANGE,
+				vRightSplit.getComponentPanel());
 
 		// Creates the components palette for our electronic payment application
-		EditorPalette componentsPalette = insertPalette(mxResources.get("components"));
+		EditorPalette componentsPalette = insertPalette(mxResources
+				.get("components"));
 
 		// getting dao
 		DAO<Component> dao = DAOFactory.getFactory().getComponentDAO();
 
-		// // test à supprimer BEGIN
-		// HashMap<String, String> test = new HashMap<>();
-		// test.put("cou", "oj");
-		// test.put("ceru", "oj");
-		// test.put("ceeu", "oj");
-		//
-		// // getting dao
-		// DAO<Component> dao = DAOFactory.getFactory().getComponentDAO();
-		// Component p = new ComponentIO("Card");
-		// p.setProperties(test);
-		//
-		// Component p1 = new ComponentIO("Test 1");
-		// p1.addChild(new ComponentIO("Test 3"));
-		// p1.addChild(new ComponentIO("Test 4"));
-		// p.addChild(p1);
-		// p.addChild(new ComponentIO("Test 2"));
-		// dao.create(p);
-		// dao.create(new ComponentIO("EPT"));
-		// dao.create(new ComponentO("Output"));
-		// dao.create(new ComponentI("Input"));
-		// dao.create(new ComponentIO("Input/Output"));
-		// dao.create(new ComponentIO("IS"));
-		// dao.create(new ComponentIO("FO"));
-		// dao.create(new ComponentIO("BO"));
-		// DAO<Component> dao = DAOFactory.getFactory().getComponentDAO();
-		// dao.create(new ComponentIO("Network Router"));
-		// // test à supprimer END
-
-		ComponentPaletteBridge bridge = new ComponentPaletteBridge(componentsPalette, dao, graphComponent.getGraph());
+		ComponentPaletteBridge bridge = new ComponentPaletteBridge(
+				componentsPalette, dao, graphComponent.getGraph());
 		bridge.refresh();
 	}
 
@@ -110,8 +85,7 @@ public class SimulatorGUI extends BasicGraphEditor {
 	public static void main(String[] args) {
 		try {
 			UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
-		}
-		catch (Exception e1) {
+		} catch (Exception e1) {
 			e1.printStackTrace();
 		}
 

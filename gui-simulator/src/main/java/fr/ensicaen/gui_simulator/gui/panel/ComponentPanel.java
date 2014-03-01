@@ -35,10 +35,12 @@ import fr.ensicaen.gui_simulator.gui.bridge.ComponentWrapper;
 import fr.ensicaen.gui_simulator.gui.bridge.MapJTableBridge;
 import fr.ensicaen.gui_simulator.gui.bridge.MediatorWrapper;
 import fr.ensicaen.gui_simulator.gui.bridge.StrategyComboBoxBridge;
+import fr.ensicaen.gui_simulator.gui.tools.HelpPanel;
 import fr.ensicaen.simulator.model.component.Component;
 import fr.ensicaen.simulator.model.strategies.IStrategy;
 
-public class ComponentPanel extends JTabbedPane implements mxIEventListener, ListSelectionListener {
+public class ComponentPanel extends JTabbedPane implements mxIEventListener,
+		ListSelectionListener {
 
 	// properties table tab - BEGIN
 	private JTable propertiesTable;
@@ -53,13 +55,18 @@ public class ComponentPanel extends JTabbedPane implements mxIEventListener, Lis
 	private JLabel valIdentifier;
 	private JComboBox<IStrategy> valStrategy;
 	private StrategyComboBoxBridge strategyModelComboBox;
+	private JButton bt_help;
 
 	// detail panel tab - END
+	// Component in cache for the detail panel
+	private Component curComponent;
 
 	public ComponentPanel(BasicGraphEditor frame) {
 		// tab
-		addTab(mxResources.get("detail"), new JScrollPane(initTab_detailPanel()));
-		addTab(mxResources.get("attributes"), new JScrollPane(initTab_propertiesTable()));
+		addTab(mxResources.get("detail"),
+				new JScrollPane(initTab_detailPanel()));
+		addTab(mxResources.get("attributes"), new JScrollPane(
+				initTab_propertiesTable()));
 	}
 
 	private JPanel initTab_detailPanel() {
@@ -68,49 +75,77 @@ public class ComponentPanel extends JTabbedPane implements mxIEventListener, Lis
 		detailPanelTab.setLayout(layout);
 
 		JLabel lblName = new JLabel(mxResources.get("name"));
-		layout.putConstraint(SpringLayout.NORTH, lblName, 10, SpringLayout.NORTH, detailPanelTab);
-		layout.putConstraint(SpringLayout.EAST, lblName, 65, SpringLayout.WEST, detailPanelTab);
+		layout.putConstraint(SpringLayout.NORTH, lblName, 10,
+				SpringLayout.NORTH, detailPanelTab);
+		layout.putConstraint(SpringLayout.EAST, lblName, 65, SpringLayout.WEST,
+				detailPanelTab);
 		detailPanelTab.add(lblName);
 
 		valName = new JLabel("<nothing selected>");
-		layout.putConstraint(SpringLayout.NORTH, valName, 0, SpringLayout.NORTH, lblName);
-		layout.putConstraint(SpringLayout.WEST, valName, 10, SpringLayout.EAST, lblName);
+		layout.putConstraint(SpringLayout.NORTH, valName, 0,
+				SpringLayout.NORTH, lblName);
+		layout.putConstraint(SpringLayout.WEST, valName, 10, SpringLayout.EAST,
+				lblName);
 		detailPanelTab.add(valName);
 
 		JLabel lblAcronym = new JLabel(mxResources.get("acronym"));
-		layout.putConstraint(SpringLayout.NORTH, lblAcronym, 10, SpringLayout.SOUTH, lblName);
-		layout.putConstraint(SpringLayout.EAST, lblAcronym, 0, SpringLayout.EAST, lblName);
+		layout.putConstraint(SpringLayout.NORTH, lblAcronym, 10,
+				SpringLayout.SOUTH, lblName);
+		layout.putConstraint(SpringLayout.EAST, lblAcronym, 0,
+				SpringLayout.EAST, lblName);
 		detailPanelTab.add(lblAcronym);
 
 		valAcronym = new JLabel("<nothing selected>");
-		layout.putConstraint(SpringLayout.NORTH, valAcronym, 0, SpringLayout.NORTH, lblAcronym);
-		layout.putConstraint(SpringLayout.WEST, valAcronym, 10, SpringLayout.EAST, lblAcronym);
+		layout.putConstraint(SpringLayout.NORTH, valAcronym, 0,
+				SpringLayout.NORTH, lblAcronym);
+		layout.putConstraint(SpringLayout.WEST, valAcronym, 10,
+				SpringLayout.EAST, lblAcronym);
 		detailPanelTab.add(valAcronym);
 
 		JLabel lblIdentifier = new JLabel(mxResources.get("identifier"));
-		layout.putConstraint(SpringLayout.NORTH, lblIdentifier, 10, SpringLayout.SOUTH, lblAcronym);
-		layout.putConstraint(SpringLayout.EAST, lblIdentifier, 0, SpringLayout.EAST, lblAcronym);
+		layout.putConstraint(SpringLayout.NORTH, lblIdentifier, 10,
+				SpringLayout.SOUTH, lblAcronym);
+		layout.putConstraint(SpringLayout.EAST, lblIdentifier, 0,
+				SpringLayout.EAST, lblAcronym);
 		detailPanelTab.add(lblIdentifier);
 
 		valIdentifier = new JLabel("<nothing selected>");
 		valIdentifier.setPreferredSize(new Dimension(0, 20));
-		layout.putConstraint(SpringLayout.NORTH, valIdentifier, 0, SpringLayout.NORTH, lblIdentifier);
-		layout.putConstraint(SpringLayout.WEST, valIdentifier, 10, SpringLayout.EAST, lblIdentifier);
-		layout.putConstraint(SpringLayout.EAST, valIdentifier, -10, SpringLayout.EAST, detailPanelTab);
+		layout.putConstraint(SpringLayout.NORTH, valIdentifier, 0,
+				SpringLayout.NORTH, lblIdentifier);
+		layout.putConstraint(SpringLayout.WEST, valIdentifier, 10,
+				SpringLayout.EAST, lblIdentifier);
+		layout.putConstraint(SpringLayout.EAST, valIdentifier, -10,
+				SpringLayout.EAST, detailPanelTab);
 		detailPanelTab.add(valIdentifier);
 
 		JLabel lblStrategy = new JLabel(mxResources.get("strategy"));
-		layout.putConstraint(SpringLayout.NORTH, lblStrategy, 10, SpringLayout.SOUTH, lblIdentifier);
-		layout.putConstraint(SpringLayout.EAST, lblStrategy, 0, SpringLayout.EAST, lblIdentifier);
+		layout.putConstraint(SpringLayout.NORTH, lblStrategy, 10,
+				SpringLayout.SOUTH, lblIdentifier);
+		layout.putConstraint(SpringLayout.EAST, lblStrategy, 0,
+				SpringLayout.EAST, lblIdentifier);
 		detailPanelTab.add(lblStrategy);
 
 		strategyModelComboBox = new StrategyComboBoxBridge();
 		valStrategy = new JComboBox<>(strategyModelComboBox);
 		valStrategy.setPreferredSize(new Dimension(0, 20));
-		layout.putConstraint(SpringLayout.NORTH, valStrategy, 0, SpringLayout.NORTH, lblStrategy);
-		layout.putConstraint(SpringLayout.WEST, valStrategy, 10, SpringLayout.EAST, lblStrategy);
-		layout.putConstraint(SpringLayout.EAST, valStrategy, -10, SpringLayout.EAST, detailPanelTab);
+		layout.putConstraint(SpringLayout.NORTH, valStrategy, 0,
+				SpringLayout.NORTH, lblStrategy);
+		layout.putConstraint(SpringLayout.WEST, valStrategy, 10,
+				SpringLayout.EAST, lblStrategy);
+		layout.putConstraint(SpringLayout.EAST, valStrategy, -10,
+				SpringLayout.EAST, detailPanelTab);
 		detailPanelTab.add(valStrategy);
+
+		bt_help = new JButton("Informations");
+		bt_help.addActionListener(new Bt_helpActionListener());
+		layout.putConstraint(SpringLayout.NORTH, bt_help, 10,
+				SpringLayout.SOUTH, valStrategy);
+		layout.putConstraint(SpringLayout.WEST, bt_help, 10, SpringLayout.WEST,
+				detailPanelTab);
+		layout.putConstraint(SpringLayout.EAST, bt_help, -10,
+				SpringLayout.EAST, detailPanelTab);
+		detailPanelTab.add(bt_help);
 
 		return detailPanelTab;
 	}
@@ -138,8 +173,12 @@ public class ComponentPanel extends JTabbedPane implements mxIEventListener, Lis
 		JPanel buttonsPanel = new JPanel();
 		buttonsPanel.setBackground(Color.WHITE);
 		buttonsPanel.setLayout(new FlowLayout(FlowLayout.RIGHT, 5, 5));
-		buttonsPanel.add(initButton("/com/mxgraph/examples/swing/images/new.gif", new AddEntryAction()));
-		buttonsPanel.add(initButton("/com/mxgraph/examples/swing/images/delete.gif", new DeleteEntryAction()));
+		buttonsPanel.add(initButton(
+				"/com/mxgraph/examples/swing/images/new.gif",
+				new AddEntryAction()));
+		buttonsPanel.add(initButton(
+				"/com/mxgraph/examples/swing/images/delete.gif",
+				new DeleteEntryAction()));
 
 		// add in parent layout
 		propertiesTableTab.add(header, BorderLayout.NORTH);
@@ -153,7 +192,8 @@ public class ComponentPanel extends JTabbedPane implements mxIEventListener, Lis
 	}
 
 	private JButton initButton(String iconPath, ActionListener action) {
-		JButton button = new JButton(new ImageIcon(ComponentPanel.class.getResource(iconPath)));
+		JButton button = new JButton(new ImageIcon(
+				ComponentPanel.class.getResource(iconPath)));
 		button.addActionListener(action);
 		button.setEnabled(false);
 
@@ -174,8 +214,7 @@ public class ComponentPanel extends JTabbedPane implements mxIEventListener, Lis
 			for (JButton btn : buttons) {
 				btn.setEnabled(enable);
 			}
-		}
-		else {
+		} else {
 			buttons.get(index).setEnabled(enable);
 		}
 	}
@@ -191,8 +230,7 @@ public class ComponentPanel extends JTabbedPane implements mxIEventListener, Lis
 
 		if (selectionModel.size() != 1) {
 			propertiesModelTable.reset();
-		}
-		else {
+		} else {
 			Object sel = ((mxICell) selectionModel.getCell()).getValue();
 
 			if (sel instanceof ComponentWrapper) {
@@ -202,12 +240,11 @@ public class ComponentPanel extends JTabbedPane implements mxIEventListener, Lis
 				setButtonsState(0, true);
 				updateDetailPanel(c);
 
-			}
-			else if (sel instanceof MediatorWrapper) {
-				propertiesModelTable.update(((MediatorWrapper) sel).getMediator().getProperties());
+			} else if (sel instanceof MediatorWrapper) {
+				propertiesModelTable.update(((MediatorWrapper) sel)
+						.getMediator().getProperties());
 				setButtonsState(0, true);
-			}
-			else {
+			} else {
 				propertiesModelTable.reset();
 			}
 		}
@@ -215,13 +252,13 @@ public class ComponentPanel extends JTabbedPane implements mxIEventListener, Lis
 
 	private void updateDetailPanel(Component c) {
 		if (c != null) {
+			curComponent = c;
 			this.valName.setText(c.getName());
 			this.valAcronym.setText(c.getAcronym());
 			this.valIdentifier.setText(c.getInstanceName());
 			this.strategyModelComboBox.update(c);
 			this.valStrategy.setEnabled(true);
-		}
-		else {
+		} else {
 			this.valName.setText("");
 			this.valAcronym.setText("");
 			this.valIdentifier.setText("");
@@ -233,8 +270,7 @@ public class ComponentPanel extends JTabbedPane implements mxIEventListener, Lis
 	public void valueChanged(ListSelectionEvent e) {
 		if (propertiesTable.getSelectedRow() != -1) {
 			setButtonsState(1, true);
-		}
-		else {
+		} else {
 			setButtonsState(1, false);
 		}
 
@@ -255,14 +291,22 @@ public class ComponentPanel extends JTabbedPane implements mxIEventListener, Lis
 
 		@Override
 		public void actionPerformed(ActionEvent e) {
-			int rep = JOptionPane.showConfirmDialog(ComponentPanel.this, mxResources.get("delete_confirmation"),
-					mxResources.get("delete_confirmation_title"), JOptionPane.OK_CANCEL_OPTION,
-					JOptionPane.QUESTION_MESSAGE);
+			int rep = JOptionPane.showConfirmDialog(ComponentPanel.this,
+					mxResources.get("delete_confirmation"),
+					mxResources.get("delete_confirmation_title"),
+					JOptionPane.OK_CANCEL_OPTION, JOptionPane.QUESTION_MESSAGE);
 			if (rep == JOptionPane.YES_OPTION) {
-				propertiesModelTable.deleteRow(propertiesTable.getSelectedRow());
+				propertiesModelTable
+						.deleteRow(propertiesTable.getSelectedRow());
 				setButtonsState(0, true);
 			}
 		}
 	}
 
+	private class Bt_helpActionListener implements ActionListener {
+		public void actionPerformed(ActionEvent e) {
+			HelpPanel hp = new HelpPanel(curComponent);
+			hp.setVisible(true);
+		}
+	}
 }

@@ -24,16 +24,19 @@ public class ComponentPaletteBridge {
 
 	private ImageIcon defaultPaletteIcon;
 
-	private static Logger logger = LoggerFactory.getLogger(ComponentPaletteBridge.class);
+	private static Logger logger = LoggerFactory
+			.getLogger(ComponentPaletteBridge.class);
 
-	public ComponentPaletteBridge(EditorPalette palette, DAO<Component> dao, mxGraph graph) {
+	public ComponentPaletteBridge(EditorPalette palette, DAO<Component> dao,
+			mxGraph graph) {
 		this.palette = palette;
 		this.dao = dao;
 		this.graph = graph;
 
 		// init
 		this.defaultPaletteIcon = new ImageIcon(
-				ComponentPaletteBridge.class.getResource("/com/mxgraph/examples/swing/images/rounded.png"));
+				ComponentPaletteBridge.class
+						.getResource("/com/mxgraph/examples/swing/images/rounded.png"));
 	}
 
 	private void injectComponents() {
@@ -61,7 +64,8 @@ public class ComponentPaletteBridge {
 	 * @return
 	 */
 	private ImageIcon getPaletteIcon(String name) {
-		URL iconUrl = ComponentPaletteBridge.class.getResource("/gui/icon/" + name + ".png");
+		URL iconUrl = ComponentPaletteBridge.class.getResource("/gui/icon/"
+				+ name + ".png");
 		return (iconUrl != null) ? new ImageIcon(iconUrl) : defaultPaletteIcon;
 	}
 

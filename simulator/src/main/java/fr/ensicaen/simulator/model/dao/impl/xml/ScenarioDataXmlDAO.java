@@ -125,6 +125,7 @@ public class ScenarioDataXmlDAO extends DAO<ScenarioData> {
 			Collections.addAll(clazz, additionnalJaxbContext);
 		}
 		clazz.add(ScenarioData.class);
+		clazz.add(PropertiesPlus.Property.class);
 
 		JAXBContext jaxbContext = JAXBContext.newInstance(clazz.toArray(new Class[0]));
 		Unmarshaller jaxbUnmarshaller = jaxbContext.createUnmarshaller();
@@ -143,7 +144,8 @@ public class ScenarioDataXmlDAO extends DAO<ScenarioData> {
 		if (additionnalJaxbContext.length > 0) {
 			Collections.addAll(clazz, additionnalJaxbContext);
 		}
-		clazz.add(d.getClass());
+		clazz.add(ScenarioData.class);
+		clazz.add(PropertiesPlus.Property.class);
 
 		JAXBContext jaxbContext = JAXBContext.newInstance(clazz.toArray(new Class[0]));
 		Marshaller jaxbMarshaller = jaxbContext.createMarshaller();

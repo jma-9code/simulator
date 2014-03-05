@@ -1,5 +1,7 @@
 package fr.ensicaen.simulator.model.mediator;
 
+import java.util.concurrent.BrokenBarrierException;
+
 import fr.ensicaen.simulator.model.component.IInput;
 import fr.ensicaen.simulator.model.component.IInputOutput;
 import fr.ensicaen.simulator.model.component.IOutput;
@@ -28,12 +30,25 @@ public class HalfDuplexMediator extends Mediator {
 
 	@Override
 	public IResponse send(IOutput c, String data) {
+		try {
+			barrier.await();
+		}
+		catch (BrokenBarrierException | InterruptedException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+
+		IResponse ret = null;
 		if (c == this.sender) {
-			return this.receiver.notifyMessage(this, data);
+			ret = this.receiver.notifyMessage(this, data);
 		}
 		else {
-			return ((IInput) this.sender).notifyMessage(this, data);
+			ret = ((IInput) this.sender).notifyMessage(this, data);
 		}
+
+		barrier.reset();
+
+		return ret;
 	}
 
 	@Override

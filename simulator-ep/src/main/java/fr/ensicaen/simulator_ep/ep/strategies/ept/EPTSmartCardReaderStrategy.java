@@ -11,6 +11,7 @@ import fr.ensicaen.simulator.model.response.IResponse;
 import fr.ensicaen.simulator.model.strategies.IStrategy;
 import fr.ensicaen.simulator.simulator.Context;
 import fr.ensicaen.simulator.simulator.exception.ContextException;
+import fr.ensicaen.simulator_ep.utils.CommonNames;
 
 public class EPTSmartCardReaderStrategy implements IStrategy<ComponentIO> {
 	private static Logger log = LoggerFactory.getLogger(EPTSmartCardReaderStrategy.class);
@@ -32,7 +33,7 @@ public class EPTSmartCardReaderStrategy implements IStrategy<ComponentIO> {
 	@Override
 	public IResponse processMessage(ComponentIO _this, Mediator mediator, String data) {
 		try {
-			Mediator m = Context.getInstance().getFirstMediator(_this, "Smart Card Reader");
+			Mediator m = Context.getInstance().getFirstMediator(_this, CommonNames.ETP_SMARTCARDREADER);
 			return m.send(_this, data);
 		}
 		catch (ContextException e) {

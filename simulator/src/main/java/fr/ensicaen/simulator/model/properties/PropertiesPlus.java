@@ -57,6 +57,12 @@ public class PropertiesPlus extends HashMap<String, Object> {
 				return false;
 			return true;
 		}
+
+		@Override
+		public String toString() {
+			return value;
+		}
+
 	}
 
 	public PropertiesPlus() {

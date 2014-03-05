@@ -66,7 +66,7 @@ public class CardChipStrategy implements IStrategy<ComponentIO> {
 				case AUTH:
 					if (type == MessageType.AUTHORIZATION_RP_CRYPTO) {
 						chip.getProperties().put("state", State.OFF.name());
-						ret = DataResponse.build(m, new String(manageARPC_RQ(chip, sdata).pack()));
+						ret = DataResponse.build(m, new String(manageARPC(chip, sdata).pack()));
 					}
 					break;
 				default:
@@ -93,7 +93,7 @@ public class CardChipStrategy implements IStrategy<ComponentIO> {
 	 * @param data
 	 * @throws ISOException
 	 */
-	private ISOMsg manageARPC_RQ(ComponentIO chip, ISOMsg data) throws ISOException {
+	private ISOMsg manageARPC(ComponentIO chip, ISOMsg data) throws ISOException {
 		// Construction de la rp
 		ISOMsg rp = ISO7816Tools.create();
 		String posID = data.getString(ISO7816Tools.FIELD_POSID);
@@ -106,7 +106,7 @@ public class CardChipStrategy implements IStrategy<ComponentIO> {
 		// ISO7816Tools.generateSTAN(data.getString(ISO7816Tools.FIELD_STAN));
 		String pan = chip.getProperties().get("pan");
 		String apcode_cb = chip.getProperties().get("approvalcode");
-
+		String datetime = ISO7816Tools.writeDATETIME(Context.getInstance().getTime());
 		rp.setMTI(ISO7816Tools.convertType2CodeMsg(MessageType.TRANSCATION_VAL_NOTIF));
 		rp.set(ISO7816Tools.FIELD_POSID, posID);
 		rp.set(ISO7816Tools.FIELD_OPCODE, opcode);
@@ -117,11 +117,13 @@ public class CardChipStrategy implements IStrategy<ComponentIO> {
 			rp.set(ISO7816Tools.FIELD_PAN, pan);
 			// rp.set(ISO7816Tools.FIELD_STAN, stan);
 			// rp.set(ISO7816Tools.FIELD_RRN, transactID);
-			rp.set(ISO7816Tools.FIELD_DATETIME, ISO7816Tools.writeDATETIME(Context.getInstance().getTime()));
+			rp.set(ISO7816Tools.FIELD_DATETIME, datetime);
 		}
 		else {
 			log.debug("chip can't verify the approval code : " + apcode_tpe);
 		}
+
+		chip.getProperties().put(datetime, rp.toString());
 
 		return rp;
 	}

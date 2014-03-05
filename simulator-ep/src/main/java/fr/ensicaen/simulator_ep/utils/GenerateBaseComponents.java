@@ -1,8 +1,11 @@
 package fr.ensicaen.simulator_ep.utils;
 
+import java.util.HashMap;
+
 import fr.ensicaen.simulator.model.component.Component;
 import fr.ensicaen.simulator.model.component.ComponentIO;
 import fr.ensicaen.simulator.model.dao.DAO;
+import fr.ensicaen.simulator.model.dao.ScenarioData;
 import fr.ensicaen.simulator.model.dao.factory.DAOFactory;
 import fr.ensicaen.simulator.model.factory.MediatorFactory;
 import fr.ensicaen.simulator.model.factory.MediatorFactory.EMediator;
@@ -105,8 +108,8 @@ public class GenerateBaseComponents {
 		Context.getInstance().autoRegistrationMode();
 
 		componentsProperties();
-		// associateMediators();
-		// associateStrategies();
+		associateMediators();
+		associateStrategies();
 
 		// enregistrement des composants dans la lib
 		DAO<Component> comp = DAOFactory.getFactory().getComponentDAO();
@@ -114,6 +117,11 @@ public class GenerateBaseComponents {
 		comp.create(ept);
 		comp.create(frontOffice);
 		comp.create(backOffice);
+
+		ScenarioData sc = new ScenarioData("test", Context.getInstance(), new HashMap<String, Object>());
+		DAO<ScenarioData> sce = DAOFactory.getFactory().getScenarioDataDAO();
+		sce.create(sc);
+
 	}
 
 	public static void associateStrategies() {
@@ -136,28 +144,14 @@ public class GenerateBaseComponents {
 
 	public static void associateMediators() {
 		factory.getMediator(card, ept, EMediator.HALFDUPLEX);
-		factory.getMediator(card, chip, EMediator.HALFDUPLEX);
-		factory.getMediator(card, magstrippe, EMediator.HALFDUPLEX);
 
 		factory.getMediator(ept, frontOffice, EMediator.HALFDUPLEX);
-		factory.getMediator(chipset, frontOffice, EMediator.HALFDUPLEX);
-		factory.getMediator(smartCardReader, chipset, EMediator.HALFDUPLEX);
-		factory.getMediator(smartCardReader, card, EMediator.HALFDUPLEX);
-		factory.getMediator(ept, smartCardReader, EMediator.HALFDUPLEX);
-		factory.getMediator(ept, chipset, EMediator.HALFDUPLEX);
-
-		factory.getMediator(frontOffice, ept, EMediator.HALFDUPLEX);
-		factory.getMediator(frontOffice, issuer, EMediator.HALFDUPLEX);
-		factory.getMediator(frontOffice, acquirer, EMediator.HALFDUPLEX);
-		factory.getMediator(issuer, issuerAuthorization, EMediator.HALFDUPLEX);
-		factory.getMediator(acquirer, acquirerAuthorization, EMediator.HALFDUPLEX);
-		factory.getMediator(acquirerAuthorization, issuerAuthorization, EMediator.HALFDUPLEX);
 
 	}
 
 	public static void componentsProperties() {
 		/* CARD */
-		card = new ComponentIO("cb");
+		card = new ComponentIO(CommonNames.CARD);
 		card.getProperties().put("pan", "4976710025642130");
 		card.getProperties().put("icvv", "000");
 		card.getProperties().put("type", "M");
@@ -176,9 +170,9 @@ public class GenerateBaseComponents {
 		card.addChild(chip);
 
 		/* ETP */
-		ept = new ComponentIO("Electronic Payment Terminal");
+		ept = new ComponentIO(CommonNames.ETP);
 		ept.setStrategy(new EPTStrategy());
-		smartCardReader = new ComponentIO("Smart Card Reader");
+		smartCardReader = new ComponentIO(CommonNames.ETP_SMARTCARDREADER);
 		smartCardReader.setStrategy(new EPTSmartCardReaderStrategy());
 		ept.addChild(smartCardReader);
 		chipset = new ComponentIO("Chipset");
@@ -196,7 +190,7 @@ public class GenerateBaseComponents {
 		ept.addChild(networkInterface);
 
 		/* FO */
-		frontOffice = new ComponentIO("FrontOffice");
+		frontOffice = new ComponentIO(CommonNames.FO);
 		issuer = new ComponentIO("Issuer");
 		acceptor = new ComponentIO("Acceptor");
 		acquirer = new ComponentIO("Acquirer");

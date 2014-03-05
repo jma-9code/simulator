@@ -2,7 +2,10 @@ package fr.ensicaen.simulator.model.component;
 
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collection;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 import java.util.StringTokenizer;
 import java.util.UUID;
@@ -130,6 +133,84 @@ public abstract class Component implements Serializable {
 		else {
 			log.error("Child mediator registration failed.");
 		}
+	}
+
+	/**
+	 * Recursive function to re-organize components list.
+	 * 
+	 * @param components
+	 * @return
+	 */
+	public static List<Component> organizeComponents(Collection<Component> components) {
+		List<Component> ret = new ArrayList<>();
+		ret.addAll(components);
+		for (Component c : components) {
+			List<Component> tmp = organizeComponents(c.getChilds());
+			for (Component c1 : tmp) {
+				if (!components.contains(c1)) {
+					ret.add(c1);
+				}
+			}
+		}
+		return ret;
+	}
+
+	/**
+	 * Retrieve the parent component
+	 * 
+	 * @param c
+	 * @param components
+	 * @return
+	 */
+	public static Component getParent(Component c, List<Component> components) {
+		List<Component> comps = Component.organizeComponents(components);
+		Iterator<Component> icomp = comps.iterator();
+		while (icomp.hasNext()) {
+			Component cur = icomp.next();
+			if (cur.getChilds().contains(c)) {
+				return cur;
+			}
+		}
+		return null;
+	}
+
+	/**
+	 * Retrieve the root component
+	 * 
+	 * @param c
+	 * @param components
+	 * @return
+	 */
+	public static Component getRoot(Component c, List<Component> components) {
+		// find parent
+		Component cur = getParent(c, components);
+		// root find
+		if (cur == null) {
+			return c;
+		}
+
+		Component ret = getRoot(cur, components);
+
+		return ret;
+	}
+
+	/**
+	 * Confirm if the component is a child of the component
+	 * 
+	 * @param c
+	 * @param components
+	 * @return
+	 */
+	public static boolean isChild(Component parent, Component child) {
+		List<Component> comps = Component.organizeComponents(Arrays.asList(parent));
+		Iterator<Component> icomp = comps.iterator();
+		while (icomp.hasNext()) {
+			Component cur = icomp.next();
+			if (cur.equals(child)) {
+				return true;
+			}
+		}
+		return false;
 	}
 
 	public void setChilds(List<Component> components) {

@@ -29,6 +29,7 @@ import fr.ensicaen.gui_simulator.gui.editor.DateTimeCellEditor;
 import fr.ensicaen.gui_simulator.gui.renderer.DateTimeCellRenderer;
 import fr.ensicaen.simulator.simulator.AsyncSimulator;
 import fr.ensicaen.simulator.simulator.Context;
+import fr.ensicaen.simulator.simulator.Simulator;
 import fr.ensicaen.simulator.simulator.SimulatorFactory;
 import fr.ensicaen.simulator.simulator.exception.SimulatorException;
 
@@ -38,6 +39,8 @@ public class SimulatorPanel extends JTabbedPane implements
 	private JTable startPointTable;
 	private StartPointJTableBridge startPointModelTable;
 	private List<JButton> buttons = new ArrayList<>(2);
+	private JButton btnLaunch = new JButton("Launch");
+	private JButton btnOneStep = new JButton("One Step");
 
 	public SimulatorPanel(BasicGraphEditor frame) {
 		// tab
@@ -96,22 +99,34 @@ public class SimulatorPanel extends JTabbedPane implements
 	}
 
 	private JPanel initTab_simulatorPanel() {
-		JPanel simulatorPanel = new JPanel();
-
-		JButton btnLaunch = new JButton("Launch");
+		final JPanel simulatorPanel = new JPanel();
 		btnLaunch.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				AsyncSimulator sim = SimulatorFactory.getAsyncSimulator();
-				try {
-					sim.start();
-				} catch (SimulatorException e1) {
-					e1.printStackTrace();
+				if (btnLaunch.getText().equalsIgnoreCase("launch")) {
+					btnOneStep.setEnabled(true);
+					try {
+						sim.start();
+						Simulator.pausable();
+					} catch (SimulatorException e1) {
+						e1.printStackTrace();
+					}
+					btnLaunch.setText("Skip");
+				} else {
+					Simulator.resume();
+					btnOneStep.setEnabled(false);
+					btnLaunch.setText("Launch");
 				}
+				simulatorPanel.repaint();
 			}
 		});
 
 		simulatorPanel.add(btnLaunch);
+		btnOneStep.addActionListener(new BtnOneStepActionListener());
+
+		btnOneStep.setEnabled(false);
+		simulatorPanel.add(btnOneStep);
 		return simulatorPanel;
 	}
 
@@ -177,6 +192,12 @@ public class SimulatorPanel extends JTabbedPane implements
 						.deleteRow(startPointTable.getSelectedRow());
 				setButtonsState(0, true);
 			}
+		}
+	}
+
+	private class BtnOneStepActionListener implements ActionListener {
+		public void actionPerformed(ActionEvent e) {
+			Simulator.iterateStep();
 		}
 	}
 

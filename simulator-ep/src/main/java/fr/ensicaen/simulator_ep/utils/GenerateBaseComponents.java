@@ -157,14 +157,14 @@ public class GenerateBaseComponents {
 		card.getProperties().put("type", "M");
 		card.getProperties().put("name", "Florent Moisson");
 		card.getProperties().put("date expiration", "09/15");
-		chip = new ComponentIO("chip");
+		chip = new ComponentIO(CommonNames.CARD_CHIP);
 		chip.getProperties().put("protocol", "ISO7816");
 		chip.getProperties().put("pan", "4976710025642130");
 		chip.getProperties().put("bccs", "12421874");
 		chip.getProperties().put("ceil", "400");
 		chip.getProperties().put("approvalcode", "07B56=");
 		chip.getProperties().put("state", "OFF");
-		magstrippe = new ComponentIO("magstrippe");
+		magstrippe = new ComponentIO(CommonNames.CARD_MAGSTRIPPE);
 		magstrippe.getProperties().put("iso2", "59859595985888648468454684");
 		card.addChild(magstrippe);
 		card.addChild(chip);
@@ -175,12 +175,15 @@ public class GenerateBaseComponents {
 		smartCardReader = new ComponentIO(CommonNames.ETP_SMARTCARDREADER);
 		smartCardReader.setStrategy(new EPTSmartCardReaderStrategy());
 		ept.addChild(smartCardReader);
-		chipset = new ComponentIO("Chipset");
+		chipset = new ComponentIO(CommonNames.ETP_CHIPSET);
 		chipset.setStrategy(new EPTChipsetStrategy());
 		chipset.getProperties().put("pos_id", "0000623598");
+		chipset.getProperties().put("acceptor_id", "0000623598");
+		chipset.getProperties().put("posdatacode", "510101511326105");
 		chipset.getProperties().put("stan", "000001");
 		chipset.getProperties().put("protocol_list", "ISO7816 ISO8583 CB2A-T");
 		chipset.getProperties().put("protocol_prefered", "ISO7816");
+		chipset.getProperties().put("pin_enter", "1234");
 		ept.addChild(chipset);
 		printer = new ComponentIO("Printer");
 		ept.addChild(printer);
@@ -191,16 +194,16 @@ public class GenerateBaseComponents {
 
 		/* FO */
 		frontOffice = new ComponentIO(CommonNames.FO);
-		issuer = new ComponentIO("Issuer");
+		issuer = new ComponentIO(CommonNames.FO_ISSUER);
 		acceptor = new ComponentIO("Acceptor");
-		acquirer = new ComponentIO("Acquirer");
+		acquirer = new ComponentIO(CommonNames.FO_ACQUIRER);
 		/* Ajout des trois grandes fonctions du front Office */
 		frontOffice.addChild(issuer);
 		frontOffice.addChild(acceptor);
 		frontOffice.addChild(acquirer);
 
 		/* Ajout des modules émetteur */
-		issuerAuthorization = new ComponentIO("IssuerAuthorization");
+		issuerAuthorization = new ComponentIO(CommonNames.FO_ISSUER_AUTH);
 		gestionDeLaFraude = new ComponentIO("GestionDeLaFraude");
 		issuer.addChild(issuerAuthorization);
 		issuer.addChild(gestionDeLaFraude);
@@ -263,7 +266,7 @@ public class GenerateBaseComponents {
 		gestionnaireTelepaiement.addChild(gestionDonneesFonctionnement);
 
 		/* Ajout des modules acquéreur */
-		acquirerAuthorization = new ComponentIO("AcquirerAuthorization");
+		acquirerAuthorization = new ComponentIO(CommonNames.FO_ACQUIRER_AUTH);
 		GABHandler = new ComponentIO("GABHandler");
 		telecollection = new ComponentIO("telecollection");
 		paymentAcquirer = new ComponentIO("paymentAcquirer");

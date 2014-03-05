@@ -12,6 +12,7 @@ import fr.ensicaen.simulator.model.mediator.Mediator;
 import fr.ensicaen.simulator.model.response.IResponse;
 import fr.ensicaen.simulator.model.strategies.IStrategy;
 import fr.ensicaen.simulator.simulator.Context;
+import fr.ensicaen.simulator_ep.utils.CommonNames;
 import fr.ensicaen.simulator_ep.utils.ISO8583Exception;
 import fr.ensicaen.simulator_ep.utils.ISO8583Tools;
 
@@ -40,7 +41,7 @@ public class FOStrategy implements IStrategy<ComponentIO> {
 			log.info("MTI " + message8583.getMTI());
 			switch (message8583.getMTI()) {
 				case "0100":
-					composantCible = frontOffice.getChild("Acquirer", ComponentIO.class);
+					composantCible = frontOffice.getChild(CommonNames.FO_ACQUIRER, ComponentIO.class);
 					break;
 
 				default:

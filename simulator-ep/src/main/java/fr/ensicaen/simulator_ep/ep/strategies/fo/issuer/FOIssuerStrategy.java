@@ -11,6 +11,7 @@ import fr.ensicaen.simulator.model.response.IResponse;
 import fr.ensicaen.simulator.model.strategies.IStrategy;
 import fr.ensicaen.simulator.simulator.Context;
 import fr.ensicaen.simulator_ep.ep.strategies.fo.FOStrategy;
+import fr.ensicaen.simulator_ep.utils.CommonNames;
 
 public class FOIssuerStrategy implements IStrategy<ComponentIO> {
 
@@ -28,7 +29,7 @@ public class FOIssuerStrategy implements IStrategy<ComponentIO> {
 	public IResponse processMessage(ComponentIO frontOfficeIssuer, Mediator m, String data) {
 
 		// get chipset component reference
-		ComponentIO issuerAuthorization = frontOfficeIssuer.getChild("IssuerAuthorization", ComponentIO.class);
+		ComponentIO issuerAuthorization = frontOfficeIssuer.getChild(CommonNames.FO_ISSUER_AUTH, ComponentIO.class);
 
 		// get mediator between the issuer and the authorization module
 		Mediator m_issuer_authorization = MediatorFactory.getInstance().getForwardMediator(m, issuerAuthorization);

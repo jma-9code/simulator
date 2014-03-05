@@ -1,8 +1,7 @@
 package fr.ensicaen.simulator.simulator;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.List;
+import java.util.concurrent.BrokenBarrierException;
+import java.util.concurrent.CyclicBarrier;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -14,6 +13,9 @@ import fr.ensicaen.simulator.simulator.exception.SimulatorException;
 public class Simulator {
 
 	private static Logger log = LoggerFactory.getLogger(Simulator.class);
+
+	// allow to pause the simulation
+	public static CyclicBarrier barrier = new CyclicBarrier(2);
 
 	/**
 	 * Use SimulatorFactory.getSimulator()
@@ -31,7 +33,7 @@ public class Simulator {
 		}
 
 		// init all output components
-		for (Component c : organizeComponents(ctx.getAllComponents())) {
+		for (Component c : Component.organizeComponents(ctx.getAllComponents())) {
 			if (c.isOutput()) {
 				((IOutput) c).init(ctx);
 			}
@@ -60,23 +62,41 @@ public class Simulator {
 	}
 
 	/**
-	 * Recursive function to re-organize components list.
-	 * 
-	 * @param components
-	 * @return
+	 * Iterate to the next step of the simulation DO use this function, you need
+	 * to call PAUSE
 	 */
-	public static List<Component> organizeComponents(Collection<Component> components) {
-		List<Component> ret = new ArrayList<>();
-		ret.addAll(components);
-		for (Component c : components) {
-			List<Component> tmp = organizeComponents(c.getChilds());
-			for (Component c1 : tmp) {
-				if (!components.contains(c1)) {
-					ret.add(c1);
-				}
-			}
+	public static void iterateStep() {
+		if (barrier.getParties() != 2) {
+			barrier = new CyclicBarrier(2);
 		}
-		return ret;
+
+		try {
+			barrier.await();
+		}
+		catch (InterruptedException | BrokenBarrierException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+	}
+
+	/**
+	 * Possibility to iterate step by step
+	 */
+	public static void pausable() {
+		if (barrier.getParties() != 2) {
+			barrier = new CyclicBarrier(2);
+		}
+	}
+
+	/**
+	 * Skip step by step to do the full simulation
+	 */
+	public static void resume() {
+		if (barrier.getParties() != 1) {
+			barrier.reset();
+			barrier = new CyclicBarrier(1);
+		}
+
 	}
 
 }

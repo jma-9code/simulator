@@ -11,6 +11,7 @@ import fr.ensicaen.simulator.model.response.IResponse;
 import fr.ensicaen.simulator.model.strategies.IStrategy;
 import fr.ensicaen.simulator.simulator.Context;
 import fr.ensicaen.simulator_ep.ep.strategies.fo.FOStrategy;
+import fr.ensicaen.simulator_ep.utils.CommonNames;
 
 public class FOAcquirerStrategy implements IStrategy<ComponentIO> {
 
@@ -29,7 +30,8 @@ public class FOAcquirerStrategy implements IStrategy<ComponentIO> {
 	public IResponse processMessage(ComponentIO frontOfficeAcquirer, Mediator m, String data) {
 
 		// get chipset component reference
-		ComponentIO purchaserAuthorization = frontOfficeAcquirer.getChild("acquirerAuthorization", ComponentIO.class);
+		ComponentIO purchaserAuthorization = frontOfficeAcquirer.getChild(CommonNames.FO_ACQUIRER_AUTH,
+				ComponentIO.class);
 
 		// get mediator between the issuer and the authorization module
 		Mediator m_purchaser_authorization = MediatorFactory.getInstance()

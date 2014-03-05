@@ -7,6 +7,7 @@ import fr.ensicaen.simulator.model.component.IInputOutput;
 import fr.ensicaen.simulator.model.component.IOutput;
 import fr.ensicaen.simulator.model.response.IResponse;
 import fr.ensicaen.simulator.simulator.Context;
+import fr.ensicaen.simulator.simulator.Simulator;
 
 /**
  * Permet d'envoyer un message dans un canal multi-directionnel entre deux
@@ -31,7 +32,7 @@ public class HalfDuplexMediator extends Mediator {
 	@Override
 	public IResponse send(IOutput c, String data) {
 		try {
-			barrier.await();
+			Simulator.barrier.await();
 		}
 		catch (BrokenBarrierException | InterruptedException e) {
 			// TODO Auto-generated catch block
@@ -46,7 +47,7 @@ public class HalfDuplexMediator extends Mediator {
 			ret = ((IInput) this.sender).notifyMessage(this, data);
 		}
 
-		barrier.reset();
+		Simulator.barrier.reset();
 
 		return ret;
 	}

@@ -70,7 +70,7 @@ public class CardChipStrategy implements IStrategy<ComponentIO> {
 					}
 					break;
 				default:
-					break;
+					throw new ISO7816Exception("Card state problem");
 			}
 
 			// chip.getProperties().put("state", State.OFF.name());
@@ -101,29 +101,28 @@ public class CardChipStrategy implements IStrategy<ComponentIO> {
 		String amount = data.getString(ISO7816Tools.FIELD_AMOUNT);
 		String apcode_tpe = data.getString(ISO7816Tools.FIELD_APPROVALCODE);
 		String rpcode = data.getString(ISO7816Tools.FIELD_RESPONSECODE);
-		String transactID = data.getString(ISO7816Tools.FIELD_RRN);
+		// String transactID = data.getString(ISO7816Tools.FIELD_RRN);
 		// String stan =
 		// ISO7816Tools.generateSTAN(data.getString(ISO7816Tools.FIELD_STAN));
 		String pan = chip.getProperties().get("pan");
 		String apcode_cb = chip.getProperties().get("approvalcode");
 		String datetime = ISO7816Tools.writeDATETIME(Context.getInstance().getTime());
+
 		rp.setMTI(ISO7816Tools.convertType2CodeMsg(MessageType.TRANSCATION_VAL_NOTIF));
 		rp.set(ISO7816Tools.FIELD_POSID, posID);
 		rp.set(ISO7816Tools.FIELD_OPCODE, opcode);
 		rp.set(ISO7816Tools.FIELD_AMOUNT, amount);
-		if (apcode_tpe.equalsIgnoreCase(apcode_cb)) {
+		rp.set(ISO7816Tools.FIELD_DATETIME, datetime);
+		rp.set(ISO7816Tools.FIELD_PAN, pan);
+		if (rpcode.equals("00") && apcode_tpe.equalsIgnoreCase(apcode_cb)) {
 			rp.set(ISO7816Tools.FIELD_APPROVALCODE, apcode_cb);
 			rp.set(ISO7816Tools.FIELD_RESPONSECODE, rpcode);
-			rp.set(ISO7816Tools.FIELD_PAN, pan);
-			// rp.set(ISO7816Tools.FIELD_STAN, stan);
-			// rp.set(ISO7816Tools.FIELD_RRN, transactID);
-			rp.set(ISO7816Tools.FIELD_DATETIME, datetime);
+			chip.getProperties().put(datetime, rp.toString());
 		}
 		else {
-			log.debug("chip can't verify the approval code : " + apcode_tpe);
+			log.warn("chip can't verify the approval code or not connection with the FO (approvalcode from ept="
+					+ apcode_tpe + ",rpcode=" + rpcode + ")");
 		}
-
-		chip.getProperties().put(datetime, rp.toString());
 
 		return rp;
 	}
@@ -144,7 +143,7 @@ public class CardChipStrategy implements IStrategy<ComponentIO> {
 		String pinData = data.getString(ISO7816Tools.FIELD_PINDATA);
 		String pan = chip.getProperties().get("pan");
 		String protocol = chip.getProperties().get(ISO7816Tools.FIELD_POSID + "-" + posID);
-		String transactID = data.getString(ISO7816Tools.FIELD_RRN);
+		// String transactID = data.getString(ISO7816Tools.FIELD_RRN);
 		// String stan =
 		// ISO7816Tools.generateSTAN(data.getString(ISO7816Tools.FIELD_STAN));
 		// TODO verif prot != null, sinn erreur

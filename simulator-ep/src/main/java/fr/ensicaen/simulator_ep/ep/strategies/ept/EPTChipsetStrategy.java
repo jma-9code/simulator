@@ -59,13 +59,21 @@ public class EPTChipsetStrategy implements IStrategy<ComponentIO> {
 					sdata = ISO7816Tools.read(res.getData());
 
 					// auth request to bank (TPE -> Bank and bank -> TPE)
-					Mediator mediateurFrontOffice = Context.getInstance().getFirstMediator(_this, CommonNames.FO);
-					msg = generateAuthorizationRequest(_this, sdata);
-					res = (DataResponse) mediateurFrontOffice.send(_this, new String(msg.pack()));
-					sdata = ISO8583Tools.read(res.getData());
+					boolean fo_connection = false;
+					try {
+						Mediator mediateurFrontOffice = Context.getInstance().getFirstMediator(_this, CommonNames.FO);
+						msg = generateAuthorizationRequest(_this, sdata);
+						res = (DataResponse) mediateurFrontOffice.send(_this, new String(msg.pack()));
+						sdata = ISO8583Tools.read(res.getData());
+						fo_connection = true;
+					}
+					catch (ContextException e) {
+						log.warn("Context error, no connection with the FO", e);
+					}
 
 					// ARPC
-					msg = prepareARPC(_this, sdata);
+					// no connection with fo ? use previous msg
+					msg = prepareARPC(_this, sdata, fo_connection);
 					res = (DataResponse) m.send(_this, new String(msg.pack()));
 					sdata = ISO7816Tools.read(res.getData());
 
@@ -129,7 +137,6 @@ public class EPTChipsetStrategy implements IStrategy<ComponentIO> {
 		ret.set(ISO7816Tools.FIELD_POSID, _this.getProperties().get("pos_id"));
 		ret.set(ISO7816Tools.FIELD_OPCODE, "00");
 		ret.set(ISO7816Tools.FIELD_AMOUNT, ISO7816Tools.writeAMOUNT(80));
-		log.debug("valeur du montant :" + ISO7816Tools.writeAMOUNT(80));
 		ret.set(ISO7816Tools.FIELD_PINDATA, _this.getProperties().get("pin_enter"));
 		// ret.set(ISO7816Tools.FIELD_STAN, generateNextSTAN(_this, pan));
 		// ret.set(ISO7816Tools.FIELD_RRN, generateTransactid(_this));
@@ -176,22 +183,37 @@ public class EPTChipsetStrategy implements IStrategy<ComponentIO> {
 	 * @return format 7816
 	 * @throws ISOException
 	 */
-	private ISOMsg prepareARPC(Component _this, ISOMsg data) throws ISOException {
+	private ISOMsg prepareARPC(Component _this, ISOMsg data, boolean fo_connection) throws ISOException {
+
 		String amount = data.getString(4);
 		String apcode = data.getString(38);
 		String rescode = data.getString(39);
 		String pan = data.getString(2);
+
+		if (!fo_connection) {
+			// use 7816 previous msg
+			pan = data.getString(ISO7816Tools.FIELD_PAN);
+			amount = data.getString(ISO7816Tools.FIELD_AMOUNT);
+		}
 
 		ISOMsg ret = ISO7816Tools.create();
 		ret.setMTI(ISO7816Tools.convertType2CodeMsg(MessageType.AUTHORIZATION_RP_CRYPTO));
 		ret.set(ISO7816Tools.FIELD_POSID, _this.getProperties().get("pos_id"));
 		ret.set(ISO7816Tools.FIELD_OPCODE, "00");
 		ret.set(ISO7816Tools.FIELD_AMOUNT, amount);
-		ret.set(ISO7816Tools.FIELD_APPROVALCODE, apcode);
-		ret.set(ISO7816Tools.FIELD_RESPONSECODE, rescode);
 		ret.set(ISO7816Tools.FIELD_PAN, pan);
 		// ret.set(ISO7816Tools.FIELD_STAN, generateNextSTAN(_this, stan));
 		// ret.set(ISO7816Tools.FIELD_RRN, generateTransactid(_this));
+
+		// response
+		if (fo_connection) {
+			ret.set(ISO7816Tools.FIELD_RESPONSECODE, rescode);
+			ret.set(ISO7816Tools.FIELD_APPROVALCODE, apcode);
+		}
+		else {
+			// time out, no connection with the fo
+			ret.set(ISO7816Tools.FIELD_RESPONSECODE, "68");
+		}
 		ret.set(ISO7816Tools.FIELD_DATETIME, ISO7816Tools.writeDATETIME(Context.getInstance().getTime()));
 
 		return ret;

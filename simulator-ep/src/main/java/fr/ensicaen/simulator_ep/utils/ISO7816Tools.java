@@ -58,7 +58,7 @@ public class ISO7816Tools {
 	/**
 	 * Formatteur des montants
 	 */
-	public static NumberFormat formatter_amount = new DecimalFormat("0000000000.00");;
+	public static NumberFormat formatter_amount = new DecimalFormat("00000000.00");;
 
 	/**
 	 * Permet de faire STAN+1

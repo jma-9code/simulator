@@ -14,4 +14,11 @@ public class CommonNames {
 
 	// FO
 	public static final String FO = "FRONT OFFICE";
+	public static final String FO_ACQUIRER = "FRONT OFFICE ACQUIRER";
+	public static final String FO_ACQUIRER_AUTH = "FRONT OFFICE ACQUIRER AUTHORIZATION";
+	public static final String FO_ISSUER = "FRONT OFFICE ISSUER";
+	public static final String FO_ISSUER_AUTH = "FRONT OFFICE ISSUER AUTHORIZATION";
+
+	// network
+
 }

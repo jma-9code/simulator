@@ -1,5 +1,7 @@
 package fr.ensicaen.simulator.simulator;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.concurrent.BrokenBarrierException;
 import java.util.concurrent.CyclicBarrier;
 
@@ -9,6 +11,7 @@ import org.slf4j.LoggerFactory;
 import fr.ensicaen.simulator.model.component.Component;
 import fr.ensicaen.simulator.model.component.IOutput;
 import fr.ensicaen.simulator.simulator.exception.SimulatorException;
+import fr.ensicaen.simulator.simulator.listener.SimulatorListener;
 
 public class Simulator {
 
@@ -17,6 +20,9 @@ public class Simulator {
 	// allow to pause the simulation
 	public static CyclicBarrier barrier = new CyclicBarrier(2);
 
+	// list of all listeners
+	private List<SimulatorListener> listeners = new ArrayList<SimulatorListener>();
+
 	/**
 	 * Use SimulatorFactory.getSimulator()
 	 */
@@ -24,13 +30,16 @@ public class Simulator {
 	}
 
 	public void start() throws SimulatorException {
-
 		Context ctx = Context.getInstance();
 
 		// check if a start point is set
 		if (!ctx.hasNext()) {
 			throw new SimulatorException("No start point configured by user.");
 		}
+
+		// notify all listener
+		for (SimulatorListener sl : listeners)
+			sl.simulationStarted();
 
 		// init all output components
 		for (Component c : Component.organizeComponents(ctx.getAllComponents())) {
@@ -59,6 +68,8 @@ public class Simulator {
 			log.info("Simulation context " + ctx.currentCounter() + " ended");
 		}
 
+		for (SimulatorListener sl : listeners)
+			sl.simulationEnded();
 	}
 
 	/**
@@ -97,6 +108,15 @@ public class Simulator {
 			barrier = new CyclicBarrier(1);
 		}
 
+	}
+
+	/**
+	 * Add new listener in the simulator
+	 * 
+	 * @param toAdd
+	 */
+	public void addListener(SimulatorListener toAdd) {
+		listeners.add(toAdd);
 	}
 
 }

@@ -32,15 +32,17 @@ import fr.ensicaen.simulator.simulator.Context;
 import fr.ensicaen.simulator.simulator.Simulator;
 import fr.ensicaen.simulator.simulator.SimulatorFactory;
 import fr.ensicaen.simulator.simulator.exception.SimulatorException;
+import fr.ensicaen.simulator.simulator.listener.SimulatorListener;
 
 public class SimulatorPanel extends JTabbedPane implements
-		ListSelectionListener {
+		ListSelectionListener, SimulatorListener {
 
 	private JTable startPointTable;
 	private StartPointJTableBridge startPointModelTable;
 	private List<JButton> buttons = new ArrayList<>(2);
 	private JButton btnLaunch = new JButton("Launch");
 	private JButton btnOneStep = new JButton("One Step");
+	private AsyncSimulator sim = SimulatorFactory.getAsyncSimulator();
 
 	public SimulatorPanel(BasicGraphEditor frame) {
 		// tab
@@ -48,6 +50,8 @@ public class SimulatorPanel extends JTabbedPane implements
 				initTab_startPointTable()));
 		addTab(mxResources.get("simulator"), new JScrollPane(
 				initTab_simulatorPanel()));
+		// ajout du listener sur la simulation
+		sim.addListener(this);
 	}
 
 	private JPanel initTab_startPointTable() {
@@ -103,16 +107,12 @@ public class SimulatorPanel extends JTabbedPane implements
 		btnLaunch.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				AsyncSimulator sim = SimulatorFactory.getAsyncSimulator();
 				if (btnLaunch.getText().equalsIgnoreCase("launch")) {
-					btnOneStep.setEnabled(true);
 					try {
 						sim.start();
-						Simulator.pausable();
 					} catch (SimulatorException e1) {
 						e1.printStackTrace();
 					}
-					btnLaunch.setText("Skip");
 				} else {
 					Simulator.resume();
 					btnOneStep.setEnabled(false);
@@ -203,6 +203,19 @@ public class SimulatorPanel extends JTabbedPane implements
 
 	public void refresh() {
 		startPointModelTable.fireTableDataChanged();
+	}
+
+	@Override
+	public void simulationStarted() {
+		Simulator.pausable();
+		btnOneStep.setEnabled(true);
+		btnLaunch.setText("Skip");
+	}
+
+	@Override
+	public void simulationEnded() {
+		btnOneStep.setEnabled(false);
+		btnLaunch.setText("Launch");
 	}
 
 }

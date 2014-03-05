@@ -17,9 +17,11 @@ import com.mxgraph.util.mxResources;
 import com.mxgraph.view.mxGraph;
 
 import fr.ensicaen.gui_simulator.gui.bridge.ComponentPaletteBridge;
+import fr.ensicaen.gui_simulator.gui.bridge.PopupForRequiredPropertyListener;
 import fr.ensicaen.simulator.model.component.Component;
 import fr.ensicaen.simulator.model.dao.DAO;
 import fr.ensicaen.simulator.model.dao.factory.DAOFactory;
+import fr.ensicaen.simulator.simulator.Context;
 
 public class SimulatorGUI extends BasicGraphEditor {
 	/**
@@ -43,14 +45,14 @@ public class SimulatorGUI extends BasicGraphEditor {
 	static {
 		try {
 			mxResources.add("gui/resources/simulator-ep");
-		} catch (Exception e) {
+		}
+		catch (Exception e) {
 			e.printStackTrace();
 		}
 	}
 
 	public SimulatorGUI() {
-		this(mxResources.get("simulator-title"), new CustomGraphComponent(
-				new CustomGraph()));
+		this(mxResources.get("simulator-title"), new CustomGraphComponent(new CustomGraph()));
 	}
 
 	/**
@@ -63,19 +65,21 @@ public class SimulatorGUI extends BasicGraphEditor {
 		mxGraph graph = graphComponent.getGraph();
 
 		// link selection event
-		graph.getSelectionModel().addListener(mxEvent.CHANGE,
-				vRightSplit.getComponentPanel());
+		graph.getSelectionModel().addListener(mxEvent.CHANGE, vRightSplit.getComponentPanel());
 
 		// Creates the components palette for our electronic payment application
-		EditorPalette componentsPalette = insertPalette(mxResources
-				.get("components"));
+		EditorPalette componentsPalette = insertPalette(mxResources.get("components"));
 
 		// getting dao
 		DAO<Component> dao = DAOFactory.getFactory().getComponentDAO();
 
-		ComponentPaletteBridge bridge = new ComponentPaletteBridge(
-				componentsPalette, dao, graphComponent.getGraph());
+		// bridge components
+		ComponentPaletteBridge bridge = new ComponentPaletteBridge(componentsPalette, dao, graphComponent.getGraph());
 		bridge.refresh();
+
+		// property listener for asking popup
+		PopupForRequiredPropertyListener listener = new PopupForRequiredPropertyListener();
+		Context.getInstance().setPropertyListener(listener);
 	}
 
 	/**
@@ -85,7 +89,8 @@ public class SimulatorGUI extends BasicGraphEditor {
 	public static void main(String[] args) {
 		try {
 			UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
-		} catch (Exception e1) {
+		}
+		catch (Exception e1) {
 			e1.printStackTrace();
 		}
 

@@ -44,7 +44,9 @@ public class ComponentIO extends Component implements IInputOutput {
 
 	@Override
 	public void init(Context ctx) {
-		this.strategy.init(this, ctx);
+		if (this.strategy != null) {
+			this.strategy.init(this, ctx);
+		}
 	}
 
 	@Override

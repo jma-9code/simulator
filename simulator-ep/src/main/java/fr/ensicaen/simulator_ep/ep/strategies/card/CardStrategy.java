@@ -10,6 +10,7 @@ import fr.ensicaen.simulator.model.mediator.Mediator;
 import fr.ensicaen.simulator.model.response.IResponse;
 import fr.ensicaen.simulator.model.strategies.IStrategy;
 import fr.ensicaen.simulator.simulator.Context;
+import fr.ensicaen.simulator_ep.utils.CommonNames;
 
 public class CardStrategy implements IStrategy<ComponentIO> {
 
@@ -31,7 +32,7 @@ public class CardStrategy implements IStrategy<ComponentIO> {
 	@Override
 	public IResponse processMessage(ComponentIO card, Mediator m, String data) {
 		// tout les traitements de donnees sont gerees par la puce
-		ComponentIO chip = card.getChild("chip", ComponentIO.class);
+		ComponentIO chip = card.getChild(CommonNames.CARD_CHIP, ComponentIO.class);
 		// ComponentO magstrippe = card.getChild("magstrippe",
 		// ComponentO.class);
 

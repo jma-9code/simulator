@@ -1,5 +1,9 @@
 package fr.ensicaen.simulator.simulator;
 
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.List;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -27,7 +31,7 @@ public class Simulator {
 		}
 
 		// init all output components
-		for (Component c : ctx.getAllComponents()) {
+		for (Component c : organizeComponents(ctx.getAllComponents())) {
 			if (c.isOutput()) {
 				((IOutput) c).init(ctx);
 			}
@@ -53,6 +57,26 @@ public class Simulator {
 			log.info("Simulation context " + ctx.currentCounter() + " ended");
 		}
 
+	}
+
+	/**
+	 * Recursive function to re-organize components list.
+	 * 
+	 * @param components
+	 * @return
+	 */
+	public static List<Component> organizeComponents(Collection<Component> components) {
+		List<Component> ret = new ArrayList<>();
+		ret.addAll(components);
+		for (Component c : components) {
+			List<Component> tmp = organizeComponents(c.getChilds());
+			for (Component c1 : tmp) {
+				if (!components.contains(c1)) {
+					ret.add(c1);
+				}
+			}
+		}
+		return ret;
 	}
 
 }

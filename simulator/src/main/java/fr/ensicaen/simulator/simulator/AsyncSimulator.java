@@ -43,11 +43,13 @@ public class AsyncSimulator extends Simulator {
 			public void run() {
 				try {
 					AsyncSimulator.this.realStart();
-				} catch (SimulatorException e) {
+				}
+				catch (SimulatorException e) {
 
 					if (e.getCause() instanceof InterruptedException) {
 						log.info("Simulation stopped.");
-					} else {
+					}
+					else {
 						AsyncSimulator.this.exception = e;
 						log.error("Error occured during the simulation", e);
 					}

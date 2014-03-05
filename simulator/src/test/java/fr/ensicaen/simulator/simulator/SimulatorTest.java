@@ -198,4 +198,11 @@ public class SimulatorTest {
 
 		Assert.assertEquals(ctx.currentCounter(), contextIndex + 4);
 	}
+
+	@Test
+	public void testStepbyStepSimulator() {
+		ComponentIO card = new ComponentIO("Card");
+		ComponentIO tpe = new ComponentIO("TPE");
+
+	}
 }

@@ -4,6 +4,7 @@ import java.io.Serializable;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
+import java.util.concurrent.CyclicBarrier;
 
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
@@ -34,6 +35,8 @@ public abstract class Mediator implements Serializable {
 	protected IInput receiver;
 
 	private Map<String, String> properties = null;
+
+	protected transient CyclicBarrier barrier = new CyclicBarrier(1);
 
 	public Mediator() {
 	}
@@ -113,5 +116,13 @@ public abstract class Mediator implements Serializable {
 
 	public String getUuid() {
 		return uuid;
+	}
+
+	public CyclicBarrier getBarrier() {
+		return barrier;
+	}
+
+	public void setBarrier(CyclicBarrier barrier) {
+		this.barrier = barrier;
 	}
 }

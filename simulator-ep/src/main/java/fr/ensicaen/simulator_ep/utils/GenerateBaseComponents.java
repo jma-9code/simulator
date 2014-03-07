@@ -9,6 +9,7 @@ import fr.ensicaen.simulator.model.dao.ScenarioData;
 import fr.ensicaen.simulator.model.dao.factory.DAOFactory;
 import fr.ensicaen.simulator.model.factory.MediatorFactory;
 import fr.ensicaen.simulator.model.factory.MediatorFactory.EMediator;
+import fr.ensicaen.simulator.model.mediator.Mediator;
 import fr.ensicaen.simulator.simulator.Context;
 import fr.ensicaen.simulator_ep.ep.strategies.card.CardChipStrategy;
 import fr.ensicaen.simulator_ep.ep.strategies.card.CardStrategy;
@@ -20,6 +21,8 @@ import fr.ensicaen.simulator_ep.ep.strategies.fo.acquirer.FOAcquirerAuthorizatio
 import fr.ensicaen.simulator_ep.ep.strategies.fo.acquirer.FOAcquirerStrategy;
 import fr.ensicaen.simulator_ep.ep.strategies.fo.issuer.FOIssuerAuthorizationStrategy;
 import fr.ensicaen.simulator_ep.ep.strategies.fo.issuer.FOIssuerStrategy;
+import fr.ensicaen.simulator_ep.ep.strategies.network.GenericNetworkStrategy;
+import fr.ensicaen.simulator_ep.ep.strategies.network.GenericRouterStrategy;
 
 public class GenerateBaseComponents {
 
@@ -104,6 +107,12 @@ public class GenerateBaseComponents {
 	/* BO */
 	private static ComponentIO backOffice;
 
+	/* network router */
+	private static ComponentIO router;
+
+	/* networks */
+	private static ComponentIO eRSBNetwork;
+
 	public static void main(String[] args) {
 		Context.getInstance().autoRegistrationMode();
 
@@ -117,6 +126,8 @@ public class GenerateBaseComponents {
 		comp.create(ept);
 		comp.create(frontOffice);
 		comp.create(backOffice);
+		comp.create(router);
+		comp.create(eRSBNetwork);
 
 		ScenarioData sc = new ScenarioData("test", Context.getInstance(), new HashMap<String, Object>());
 		DAO<ScenarioData> sce = DAOFactory.getFactory().getScenarioDataDAO();
@@ -144,9 +155,12 @@ public class GenerateBaseComponents {
 
 	public static void associateMediators() {
 		factory.getMediator(card, ept, EMediator.HALFDUPLEX);
-
 		factory.getMediator(ept, frontOffice, EMediator.HALFDUPLEX);
+		factory.getMediator(frontOffice, router, EMediator.HALFDUPLEX);
+		factory.getMediator(router, eRSBNetwork, EMediator.HALFDUPLEX);
 
+		Mediator m = factory.getMediator(frontOffice, eRSBNetwork, EMediator.HALFDUPLEX);
+		m.getProperties().put(GenericRouterStrategy.MKEY_NETWORK_ID, "e-RSB");
 	}
 
 	public static void componentsProperties() {
@@ -322,6 +336,17 @@ public class GenerateBaseComponents {
 
 		/* BO */
 		backOffice = new ComponentIO("BackOffice");
+
+		/* Network */
+		eRSBNetwork = new ComponentIO("Network");
+		eRSBNetwork.getProperties().put(GenericNetworkStrategy.CKEY_NAME, "e-RSB");
+		eRSBNetwork.getProperties().put(GenericNetworkStrategy.CKEYPREFIX_ISSUER_OF + "49767", "Issuer1");
+
+		/* Router */
+		router = new ComponentIO("Router");
+		router.setStrategy(new GenericRouterStrategy());
+		router.getProperties().put(GenericRouterStrategy.CKEYPREFIX_NETWORK_OF + "4", "e-RSB");
+		router.getProperties().put(GenericRouterStrategy.CKEYPREFIX_NETWORK_OF + "5", "e-RSB");
 
 	}
 }

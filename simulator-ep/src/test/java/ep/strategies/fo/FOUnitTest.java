@@ -19,7 +19,6 @@ import fr.ensicaen.simulator.model.response.DataResponse;
 import fr.ensicaen.simulator.model.response.IResponse;
 import fr.ensicaen.simulator.model.strategies.IStrategy;
 import fr.ensicaen.simulator.simulator.Context;
-import fr.ensicaen.simulator.simulator.Simulator;
 import fr.ensicaen.simulator.simulator.SimulatorFactory;
 import fr.ensicaen.simulator.simulator.exception.SimulatorException;
 import fr.ensicaen.simulator_ep.ep.strategies.fo.FOStrategy;
@@ -345,7 +344,7 @@ public class FOUnitTest {
 
 		// execute simulation.
 		try {
-			Simulator.resume();
+			SimulatorFactory.getSimulator().resume();
 			SimulatorFactory.getSimulator().start();
 		}
 		catch (SimulatorException e) {
@@ -403,7 +402,7 @@ public class FOUnitTest {
 
 		// execute simulation.
 		try {
-			Simulator.resume();
+			SimulatorFactory.getSimulator().resume();
 			SimulatorFactory.getSimulator().start();
 
 		}

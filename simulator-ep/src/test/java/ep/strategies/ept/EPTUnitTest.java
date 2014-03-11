@@ -188,6 +188,7 @@ public class EPTUnitTest {
 		Context.getInstance().addStartPoint(new Date(), "SMART_CARD_INSERTED");
 
 		// execute simulation.
+		SimulatorFactory.getSimulator().resume();
 		SimulatorFactory.getSimulator().start();
 
 		TestPass.assertTest();

@@ -290,12 +290,14 @@ public class Context {
 	public List<Mediator> getMediators(IOutput whoAreYou, int whoWantYou) throws ContextException {
 		List<Mediator> matches = new LinkedList<>();
 		List<Component> comps = new ArrayList<Component>(components.values());
-		Component whoWantYou_c = components.get(whoWantYou);
+		Component whoWantYou_c = null;
 		// analyse des mediators, recherche du whoWantYou
 		Iterator<Mediator> iMediators = mediators.iterator();
 		while (iMediators.hasNext()) {
 			Mediator cur = iMediators.next();
-			if (cur.getReceiver().getType() == (whoWantYou)) {
+			if (cur.getReceiver().getType() == whoWantYou) {
+				whoWantYou_c = (Component) cur.getReceiver();
+
 				// direct
 				if (whoAreYou.equals(cur.getSender())
 						&& (cur instanceof SimplexMediator || cur instanceof HalfDuplexMediator)) {
@@ -304,6 +306,7 @@ public class Context {
 
 				// indirect
 				Component root = Component.getRoot((Component) whoAreYou, comps);
+
 				if (root.equals(cur.getSender())
 						&& (cur instanceof SimplexMediator || cur instanceof HalfDuplexMediator)) {
 					matches.add(MediatorFactory.getInstance().getMediator((Component) whoAreYou, whoWantYou_c,
@@ -311,7 +314,8 @@ public class Context {
 				}
 
 			}
-			else if (cur.getSender().getType() == (whoWantYou)) {
+			else if (cur.getSender().getType() == whoWantYou) {
+				whoWantYou_c = (Component) cur.getSender();
 				// direct
 				if (whoAreYou.equals(cur.getReceiver()) && cur instanceof HalfDuplexMediator) {
 					matches.add(cur);

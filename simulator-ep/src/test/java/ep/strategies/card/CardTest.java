@@ -56,7 +56,7 @@ public class CardTest {
 		card.getProperties().put("name", "Florent Moisson");
 		card.getProperties().put("date expiration", "09/15");
 
-		chip = new ComponentIO("chip");
+		chip = new ComponentIO("chip", ComponentEP.CARD_CHIP.ordinal());
 		chip.getProperties().put("protocol", "ISO7816");
 		chip.getProperties().put("pan", "4976710025642130");
 		chip.getProperties().put("pin", "1234");

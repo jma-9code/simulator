@@ -45,7 +45,7 @@ public class GenerateBaseComponents {
 	private static ComponentIO frontOffice;
 	// Les trois grandes fonctions d'un FO
 	private static ComponentIO issuer;
-	private static ComponentIO acceptor;
+	// private static ComponentIO acceptor;
 	private static ComponentIO acquirer;
 
 	// Différents modules de la fonction émetteur */
@@ -209,11 +209,11 @@ public class GenerateBaseComponents {
 		/* FO */
 		frontOffice = new ComponentIO("Front Office", ComponentEP.FRONT_OFFICE.ordinal());
 		issuer = new ComponentIO("FO Issuer", ComponentEP.FO_ISSUER.ordinal());
-		acceptor = new ComponentIO("FO Acceptor");
+		// acceptor = new ComponentIO("FO Acceptor");
 		acquirer = new ComponentIO("FO Acquirer", ComponentEP.FO_ACQUIRER.ordinal());
 		/* Ajout des trois grandes fonctions du front Office */
 		frontOffice.addChild(issuer);
-		frontOffice.addChild(acceptor);
+		// frontOffice.addChild(acceptor);
 		frontOffice.addChild(acquirer);
 
 		/* Ajout des modules émetteur */
@@ -237,9 +237,9 @@ public class GenerateBaseComponents {
 		systemeEncaissement = new ComponentIO("systemeEncaissement");
 		concentrateurMonetique = new ComponentIO("concentrateurMonetique");
 		telePaiement = new ComponentIO("telePaiement");
-		acceptor.addChild(systemeEncaissement);
-		acceptor.addChild(concentrateurMonetique);
-		acceptor.addChild(telePaiement);
+		// acceptor.addChild(systemeEncaissement);
+		// acceptor.addChild(concentrateurMonetique);
+		// acceptor.addChild(telePaiement);
 
 		/* Ajout des composants du module systemeEncaissement */
 		gestionEncaissementsMultiples = new ComponentIO("gestionEncaissementsMultiples");

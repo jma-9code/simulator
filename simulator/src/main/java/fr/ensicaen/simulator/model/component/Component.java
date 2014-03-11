@@ -137,7 +137,15 @@ public abstract class Component implements Serializable {
 
 	public void addChild(Component child) {
 		this.childs.add(child);
+		buildChildMediator(child);
+	}
 
+	/**
+	 * Method factory des mediateurs implicites (relation parent-enfant)
+	 * 
+	 * @param child
+	 */
+	private void buildChildMediator(Component child) {
 		// auto create and register child mediator
 		Mediator m = MediatorFactory.getInstance().getMediator(this, child);
 		if (m != null) {
@@ -387,11 +395,17 @@ public abstract class Component implements Serializable {
 	 * Instancie le composant
 	 */
 	public void instanciate() {
+		// generate id
 		this.uuid = "c-" + UUID.randomUUID().toString();
 		log.info(getInstanceName() + " instancied");
 
+		// child operation
 		if (childs != null) {
 			for (Component child : childs) {
+				// build implicit mediator (child/parent)
+				buildChildMediator(child);
+
+				// recursive call
 				child.instanciate();
 			}
 		}

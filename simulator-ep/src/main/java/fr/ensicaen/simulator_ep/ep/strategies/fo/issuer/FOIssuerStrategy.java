@@ -17,12 +17,11 @@ import fr.ensicaen.simulator.model.response.IResponse;
 import fr.ensicaen.simulator.model.strategies.IStrategy;
 import fr.ensicaen.simulator.simulator.Context;
 import fr.ensicaen.simulator.tools.LogUtils;
-import fr.ensicaen.simulator_ep.ep.strategies.fo.FOStrategy;
 import fr.ensicaen.simulator_ep.utils.ComponentEP;
 
 public class FOIssuerStrategy implements IStrategy<ComponentIO> {
 
-	private static Logger log = LoggerFactory.getLogger(FOStrategy.class);
+	private static Logger log = LoggerFactory.getLogger(FOIssuerStrategy.class);
 
 	public FOIssuerStrategy() {
 		super();

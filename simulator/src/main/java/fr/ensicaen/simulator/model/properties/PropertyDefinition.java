@@ -1,10 +1,18 @@
 package fr.ensicaen.simulator.model.properties;
 
 public class PropertyDefinition {
-	private boolean required = false;
 	private String key;
 	private String defaultValue;
+	private boolean required = false;
 	private String comment;
+
+	public PropertyDefinition(String key, String defaultValue, boolean required, String comment) {
+		super();
+		this.required = required;
+		this.key = key;
+		this.defaultValue = defaultValue;
+		this.comment = comment;
+	}
 
 	public boolean isRequired() {
 		return required;

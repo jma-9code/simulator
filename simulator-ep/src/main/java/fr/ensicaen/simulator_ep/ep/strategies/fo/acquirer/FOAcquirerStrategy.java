@@ -17,16 +17,14 @@ import fr.ensicaen.simulator.model.response.IResponse;
 import fr.ensicaen.simulator.model.strategies.IStrategy;
 import fr.ensicaen.simulator.simulator.Context;
 import fr.ensicaen.simulator.tools.LogUtils;
-import fr.ensicaen.simulator_ep.ep.strategies.fo.FOStrategy;
 import fr.ensicaen.simulator_ep.utils.ComponentEP;
 
 public class FOAcquirerStrategy implements IStrategy<ComponentIO> {
 
-	private static Logger log = LoggerFactory.getLogger(FOStrategy.class);
+	private static Logger log = LoggerFactory.getLogger(FOAcquirerStrategy.class);
 
 	public FOAcquirerStrategy() {
 		super();
-		// TODO Auto-generated constructor stub
 	}
 
 	@Override

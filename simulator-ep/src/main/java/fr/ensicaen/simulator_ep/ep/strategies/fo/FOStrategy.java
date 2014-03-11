@@ -41,7 +41,7 @@ public class FOStrategy implements IStrategy<ComponentIO> {
 	}
 
 	@Override
-	public IResponse processMessage(ComponentIO frontOffice, Mediator m, String data) {
+	public IResponse processMessage(ComponentIO _this, Mediator m, String data) {
 		ISOMsg message8583 = null;
 		Component composantCible = null;
 		// faire le lien avec le message8583
@@ -52,7 +52,7 @@ public class FOStrategy implements IStrategy<ComponentIO> {
 			log.info("MTI " + message8583.getMTI());
 			switch (message8583.getMTI()) {
 				case "0100":
-					composantCible = Component.getFirstChildType(frontOffice, ComponentEP.FO_ACQUIRER.ordinal());
+					composantCible = Component.getFirstChildType(_this, ComponentEP.FO_ACQUIRER.ordinal());
 					break;
 
 				default:
@@ -67,7 +67,7 @@ public class FOStrategy implements IStrategy<ComponentIO> {
 		Mediator mForward = MediatorFactory.getInstance().getForwardMediator(m, (IInput) composantCible);
 
 		// forward to the chipset
-		return mForward.send((IOutput) composantCible, data);
+		return mForward.send(_this, data);
 	}
 
 	@Override

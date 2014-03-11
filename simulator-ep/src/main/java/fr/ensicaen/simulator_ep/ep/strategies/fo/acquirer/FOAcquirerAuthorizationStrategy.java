@@ -11,6 +11,7 @@ import fr.ensicaen.simulator.model.component.IOutput;
 import fr.ensicaen.simulator.model.mediator.Mediator;
 import fr.ensicaen.simulator.model.properties.PropertyDefinition;
 import fr.ensicaen.simulator.model.response.IResponse;
+import fr.ensicaen.simulator.model.response.VoidResponse;
 import fr.ensicaen.simulator.model.strategies.IStrategy;
 import fr.ensicaen.simulator.simulator.Context;
 import fr.ensicaen.simulator.simulator.exception.ContextException;
@@ -36,20 +37,15 @@ public class FOAcquirerAuthorizationStrategy implements IStrategy<ComponentIO> {
 	}
 
 	@Override
-	public IResponse processMessage(ComponentIO FOAcquirerAuthorization, Mediator m, String data) {
+	public IResponse processMessage(ComponentIO _this, Mediator m, String data) {
 
 		try {
-			Mediator mediateurAUtiliser = Context.getInstance().getFirstMediator(FOAcquirerAuthorization,
-					ComponentEP.ROUTER.ordinal());
-			return mediateurAUtiliser.send(FOAcquirerAuthorization, data);
+			Mediator mRouter = Context.getInstance().getFirstMediator(_this, ComponentEP.ROUTER.ordinal());
+			return mRouter.send(_this, data);
 		}
 		catch (ContextException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			return VoidResponse.build();
 		}
-
-		return null;
-
 	}
 
 	@Override

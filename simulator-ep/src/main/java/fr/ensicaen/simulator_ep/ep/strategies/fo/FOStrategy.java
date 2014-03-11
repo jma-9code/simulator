@@ -18,6 +18,7 @@ import fr.ensicaen.simulator.model.properties.PropertyDefinition;
 import fr.ensicaen.simulator.model.response.IResponse;
 import fr.ensicaen.simulator.model.strategies.IStrategy;
 import fr.ensicaen.simulator.simulator.Context;
+import fr.ensicaen.simulator.tools.LogUtils;
 import fr.ensicaen.simulator_ep.utils.ComponentEP;
 import fr.ensicaen.simulator_ep.utils.ISO8583Exception;
 import fr.ensicaen.simulator_ep.utils.ISO8583Tools;
@@ -52,6 +53,7 @@ public class FOStrategy implements IStrategy<ComponentIO> {
 			log.info("MTI " + message8583.getMTI());
 			switch (message8583.getMTI()) {
 				case "0100":
+					log.debug(LogUtils.MARKER_COMPONENT_INFO, "FO forward the msg to the acquirer module");
 					composantCible = Component.getFirstChildType(_this, ComponentEP.FO_ACQUIRER.ordinal());
 					break;
 

@@ -16,6 +16,7 @@ import fr.ensicaen.simulator.model.properties.PropertyDefinition;
 import fr.ensicaen.simulator.model.response.IResponse;
 import fr.ensicaen.simulator.model.strategies.IStrategy;
 import fr.ensicaen.simulator.simulator.Context;
+import fr.ensicaen.simulator.tools.LogUtils;
 import fr.ensicaen.simulator_ep.utils.ComponentEP;
 
 public class CardStrategy implements IStrategy<ComponentIO> {
@@ -50,6 +51,7 @@ public class CardStrategy implements IStrategy<ComponentIO> {
 		// get mediator between chip and card
 		Mediator m_card_chip = MediatorFactory.getInstance().getForwardMediator(m, (IInput) chip);
 
+		log.debug(LogUtils.MARKER_COMPONENT_INFO, "Card forward the msg to the chip");
 		// forward to the chip
 		return m_card_chip.send(card, data);
 	}

@@ -16,6 +16,7 @@ import fr.ensicaen.simulator.model.properties.PropertyDefinition;
 import fr.ensicaen.simulator.model.response.IResponse;
 import fr.ensicaen.simulator.model.strategies.IStrategy;
 import fr.ensicaen.simulator.simulator.Context;
+import fr.ensicaen.simulator.tools.LogUtils;
 import fr.ensicaen.simulator_ep.utils.ComponentEP;
 
 public class EPTStrategy implements IStrategy<ComponentIO> {
@@ -44,6 +45,7 @@ public class EPTStrategy implements IStrategy<ComponentIO> {
 		Mediator m_ept_chipset = MediatorFactory.getInstance().getForwardMediator(mediator, (IInput) chipset);
 
 		// forward to the chipset
+		log.debug(LogUtils.MARKER_COMPONENT_INFO, "ETP forward the msg to the chipset");
 		return m_ept_chipset.send(_this, data);
 	}
 

@@ -14,6 +14,9 @@ import javax.xml.bind.annotation.XmlID;
 import javax.xml.bind.annotation.XmlSeeAlso;
 import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import fr.ensicaen.simulator.model.component.IInput;
 import fr.ensicaen.simulator.model.component.IOutput;
 import fr.ensicaen.simulator.model.dao.jaxbadapter.InputAdapter;
@@ -25,6 +28,8 @@ import fr.ensicaen.simulator.model.response.IResponse;
 		HalfDuplexMediator.class })
 @XmlAccessorType(XmlAccessType.FIELD)
 public abstract class Mediator implements Serializable {
+
+	protected static Logger log = LoggerFactory.getLogger(Mediator.class);
 
 	@XmlAttribute
 	@XmlID

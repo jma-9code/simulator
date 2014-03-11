@@ -15,6 +15,7 @@ import fr.ensicaen.simulator.model.response.VoidResponse;
 import fr.ensicaen.simulator.model.strategies.IStrategy;
 import fr.ensicaen.simulator.simulator.Context;
 import fr.ensicaen.simulator.simulator.exception.ContextException;
+import fr.ensicaen.simulator.tools.LogUtils;
 import fr.ensicaen.simulator_ep.ep.strategies.fo.FOStrategy;
 import fr.ensicaen.simulator_ep.utils.ComponentEP;
 
@@ -41,6 +42,7 @@ public class FOAcquirerAuthorizationStrategy implements IStrategy<ComponentIO> {
 
 		try {
 			Mediator mRouter = Context.getInstance().getFirstMediator(_this, ComponentEP.ROUTER.ordinal());
+			log.debug(LogUtils.MARKER_COMPONENT_INFO, "FO Acquirer authorization module send the msg to the FO issuer");
 			return mRouter.send(_this, data);
 		}
 		catch (ContextException e) {

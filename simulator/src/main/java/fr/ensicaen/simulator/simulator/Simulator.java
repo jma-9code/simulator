@@ -41,6 +41,11 @@ public class Simulator {
 		for (SimulatorListener sl : listeners)
 			sl.simulationStarted();
 
+		// clear old events subscription and other things...
+		if (ctx.getEvents() != null) {
+			ctx.simulationReset();
+		}
+
 		// init all output components
 		for (Component c : Component.organizeComponents(ctx.getAllComponents())) {
 			if (c.isOutput()) {

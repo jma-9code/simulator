@@ -1249,13 +1249,14 @@
             </properties>
         </mediators>
     </mediators>
-    <startPoints>
-        <startPoints>
-            <time>0311163408</time>
-            <event>SMART_CARD_INSERTED</event>
-        </startPoints>
-    </startPoints>
-    <events/>
+    <startPoints/>
+    <events>
+        <events event="SMART_CARD_INSERTED">
+            <components>
+                <components>c-7c684413-d2c3-435a-aff2-cf2a02e99aa9</components>
+            </components>
+        </events>
+    </events>
     <link_strat_component>
         <entry>
             <key>c-a5b7a06a-199a-4fe8-8440-20282b64f9d2</key>
@@ -1342,6 +1343,10 @@
             <value>fr.ensicaen.simulator.model.strategies.NullStrategy</value>
         </entry>
         <entry>
+            <key>c-e7a34255-be14-4685-b6f2-856d9d4839b0</key>
+            <value>fr.ensicaen.simulator_ep.ep.strategies.fo.issuer.FOIssuerStrategy</value>
+        </entry>
+        <entry>
             <key>c-261f90d6-2e6e-4992-9df0-1567fab80e86</key>
             <value>fr.ensicaen.simulator.model.strategies.NullStrategy</value>
         </entry>
@@ -1396,6 +1401,10 @@
         <entry>
             <key>c-d77ee049-e8cd-4c79-b677-c4bf133de1b2</key>
             <value>fr.ensicaen.simulator_ep.ep.strategies.network.GenericNetworkStrategy</value>
+        </entry>
+        <entry>
+            <key>c-ce3ec1db-7432-43d3-a627-cb3d1fe845b1</key>
+            <value>fr.ensicaen.simulator_ep.ep.strategies.fo.issuer.FOIssuerAuthorizationStrategy</value>
         </entry>
         <entry>
             <key>c-a60fed3a-40b2-4aac-b117-d9b7ef3c13c1</key>
@@ -1463,7 +1472,7 @@
         </entry>
         <entry>
             <key>c-c930481f-1b40-4430-97ea-a15c8ace4c85</key>
-            <value>fr.ensicaen.simulator.model.strategies.NullStrategy</value>
+            <value>fr.ensicaen.simulator_ep.ep.strategies.fo.FOStrategy</value>
         </entry>
         <entry>
             <key>c-55f36b77-5980-4c7a-a2eb-0df392d039c4</key>
@@ -1688,8 +1697,8 @@
         <entry>
             <key>c-03f05fc1-5d90-48ae-bc8e-6f8de0f1f2ae</key>
             <value xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:type="componentWrapper">
-                <x>0.0</x>
-                <y>0.0</y>
+                <x>423.0</x>
+                <y>43.0</y>
                 <width>150.0</width>
                 <height>75.0</height>
                 <collapsed>true</collapsed>
@@ -1712,11 +1721,11 @@
         <entry>
             <key>c-e7a34255-be14-4685-b6f2-856d9d4839b0</key>
             <value xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:type="componentWrapper">
-                <x>0.0</x>
-                <y>0.0</y>
-                <width>150.0</width>
-                <height>75.0</height>
-                <collapsed>true</collapsed>
+                <x>23.0</x>
+                <y>43.0</y>
+                <width>380.0</width>
+                <height>135.0</height>
+                <collapsed>false</collapsed>
             </value>
         </entry>
         <entry>
@@ -1986,8 +1995,8 @@
         <entry>
             <key>c-4650aa64-9f96-46da-a085-044709333bfd</key>
             <value xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:type="componentWrapper">
-                <x>0.0</x>
-                <y>0.0</y>
+                <x>200.0</x>
+                <y>30.0</y>
                 <width>150.0</width>
                 <height>75.0</height>
                 <collapsed>true</collapsed>
@@ -2090,8 +2099,8 @@
         <entry>
             <key>c-9d15128c-1be1-4082-8f2d-d080941595f7</key>
             <value xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:type="componentWrapper">
-                <x>0.0</x>
-                <y>0.0</y>
+                <x>593.0</x>
+                <y>43.0</y>
                 <width>150.0</width>
                 <height>75.0</height>
                 <collapsed>true</collapsed>
@@ -2428,8 +2437,8 @@
         <entry>
             <key>c-ce3ec1db-7432-43d3-a627-cb3d1fe845b1</key>
             <value xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:type="componentWrapper">
-                <x>0.0</x>
-                <y>0.0</y>
+                <x>30.0</x>
+                <y>30.0</y>
                 <width>150.0</width>
                 <height>75.0</height>
                 <collapsed>true</collapsed>

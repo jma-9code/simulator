@@ -488,13 +488,17 @@ public class Context {
 	 * Reset the context entirely.
 	 */
 	public void reset() {
+		simulationReset();
 		startPoints.clear();
-		current = null;
 		currentCounter = 0;
 		components.clear();
 		mediators.clear();
-		events.clear();
 		autoRegistrationMode = false;
+	}
+
+	public void simulationReset() {
+		events.clear();
+		current = null;
 	}
 
 	/**

@@ -20,6 +20,7 @@ import fr.ensicaen.simulator.model.response.VoidResponse;
 import fr.ensicaen.simulator.model.strategies.IStrategy;
 import fr.ensicaen.simulator.simulator.Context;
 import fr.ensicaen.simulator.simulator.exception.ContextException;
+import fr.ensicaen.simulator_ep.utils.CB2AValues;
 import fr.ensicaen.simulator_ep.utils.ComponentEP;
 import fr.ensicaen.simulator_ep.utils.ISO7816Exception;
 import fr.ensicaen.simulator_ep.utils.ISO7816Tools;
@@ -69,12 +70,13 @@ public class EPTChipsetStrategy implements IStrategy<ComponentIO> {
 					// auth request to bank (TPE -> Bank and bank -> TPE)
 					boolean fo_connection = false;
 					try {
-						Mediator mediateurFrontOffice = Context.getInstance().getFirstMediator(_this,
+						Mediator mFrontOffice = Context.getInstance().getFirstMediator(_this,
 								ComponentEP.FRONT_OFFICE.ordinal());
 						msg = generateAuthorizationRequest(_this, sdata);
-						res = (DataResponse) mediateurFrontOffice.send(_this, new String(msg.pack()));
+						res = (DataResponse) mFrontOffice.send(_this, new String(msg.pack()));
 						sdata = ISO8583Tools.read(res.getData());
-						fo_connection = true;
+						fo_connection = !sdata.getValue(39).equals(CB2AValues.Field39.UNREACHABLE_CARD_ISSUER)
+								&& !sdata.getValue(39).equals(CB2AValues.Field39.UNKNOWN_CARD_ISSUER);
 					}
 					catch (ContextException e) {
 						log.warn("Context error, no connection with the FO", e);

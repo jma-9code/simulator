@@ -279,58 +279,84 @@ public class Context {
 
 	/**
 	 * Returns mediators between the caller component and components with the
-	 * name given.
+	 * type given.
 	 * 
 	 * @param whoAreYou
 	 *            Reference of caller component
-	 * @param whoWantYou
+	 * @param typeYouWant
 	 *            type of wanted component
 	 * @return List of mediators with potential multiple components
 	 */
-	public List<Mediator> getMediators(IOutput whoAreYou, int whoWantYou) throws ContextException {
+	public List<Mediator> getMediators(IOutput whoAreYou, int typeYouWant) throws ContextException {
+		// candidats potentiels
 		List<Mediator> matches = new LinkedList<>();
+		// tout les composants du context
 		List<Component> comps = new ArrayList<Component>(components.values());
 		Component whoWantYou_c = null;
-		// analyse des mediators, recherche du whoWantYou
+
+		// mediateurs du context (attention, il est necessaire d'avoir les
+		// mediateurs implicites)
 		Iterator<Mediator> iMediators = mediators.iterator();
 		while (iMediators.hasNext()) {
 			Mediator cur = iMediators.next();
-			if (cur.getReceiver().getType() == whoWantYou) {
+			// le receiver est du type que l'on cherche
+			if (cur.getReceiver().getType() == typeYouWant) {
 				whoWantYou_c = (Component) cur.getReceiver();
 
-				// direct
+				// il y a un mediateur direct entre le receiver et sender
 				if (whoAreYou.equals(cur.getSender())
 						&& (cur instanceof SimplexMediator || cur instanceof HalfDuplexMediator)) {
 					matches.add(cur);
 				}
 
-				// indirect
+				// il y a un mediateur indirect entre le receiver et sender (via
+				// un composant superieur du sender)
 				Component root = Component.getRoot((Component) whoAreYou, comps);
-
 				if (root.equals(cur.getSender())
 						&& (cur instanceof SimplexMediator || cur instanceof HalfDuplexMediator)) {
 					matches.add(MediatorFactory.getInstance().getMediator((Component) whoAreYou, whoWantYou_c,
 							(cur instanceof SimplexMediator) ? EMediator.SIMPLEX : EMediator.HALFDUPLEX));
 				}
 
+				// il y a un mediateur indirect entre le receiver et sender (via
+				// un composant superieur du receiver)
+				Component root1 = Component.getRoot((Component) whoWantYou_c, comps);
+				if (root1.equals(cur.getReceiver()) && root.equals(cur.getSender())
+						&& (cur instanceof SimplexMediator || cur instanceof HalfDuplexMediator)) {
+					matches.add(MediatorFactory.getInstance().getMediator((Component) whoAreYou, whoWantYou_c,
+							(cur instanceof SimplexMediator) ? EMediator.SIMPLEX : EMediator.HALFDUPLEX));
+				}
+
 			}
-			else if (cur.getSender().getType() == whoWantYou) {
+			// le sender est du type que l'on cherche
+			else if (cur.getSender().getType() == typeYouWant) {
 				whoWantYou_c = (Component) cur.getSender();
-				// direct
+				// il y a un mediateur direct entre le receiver et sender
 				if (whoAreYou.equals(cur.getReceiver()) && cur instanceof HalfDuplexMediator) {
 					matches.add(cur);
 				}
 
-				// indirect
+				// il y a un mediateur indirect entre le receiver et sender (via
+				// un composant superieur du receiver)
 				Component root = Component.getRoot((Component) whoAreYou, comps);
 				if (root.equals(cur.getReceiver()) && cur instanceof HalfDuplexMediator) {
 					matches.add(MediatorFactory.getInstance().getMediator((Component) whoAreYou, whoWantYou_c,
 							EMediator.HALFDUPLEX));
 				}
+
+				// il y a un mediateur indirect entre le receiver et sender (via
+				// un composant superieur du sender)
+				Component root1 = Component.getRoot((Component) whoWantYou_c, comps);
+				if (root1.equals(cur.getSender()) && root.equals(cur.getReceiver())
+						&& (cur instanceof SimplexMediator || cur instanceof HalfDuplexMediator)) {
+					matches.add(MediatorFactory.getInstance().getMediator((Component) whoAreYou, whoWantYou_c,
+							(cur instanceof SimplexMediator) ? EMediator.SIMPLEX : EMediator.HALFDUPLEX));
+				}
 			}
+
 		}
 		if (matches.isEmpty()) {
-			throw new ContextException("No mediator between component named " + whoWantYou + " and "
+			throw new ContextException("No mediator between component type " + typeYouWant + " and "
 					+ whoAreYou.getName() + " in the context.");
 		}
 		return matches;

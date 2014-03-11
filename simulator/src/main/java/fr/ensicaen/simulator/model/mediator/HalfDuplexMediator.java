@@ -40,7 +40,7 @@ public class HalfDuplexMediator extends Mediator {
 	public IResponse send(IOutput c, String data) {
 		IResponse ret = null;
 		for (MediatorListener l : listeners) {
-			l.onSendData();
+			l.onSendData(c, data);
 		}
 
 		try {

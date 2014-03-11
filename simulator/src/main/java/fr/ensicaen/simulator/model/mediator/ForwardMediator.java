@@ -61,7 +61,7 @@ public class ForwardMediator extends Mediator {
 	public IResponse send(IOutput s, String data) {
 		IResponse ret = null;
 		for (MediatorListener l : listeners) {
-			l.onSendData();
+			l.onSendData(s, data);
 		}
 
 		try {

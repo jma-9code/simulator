@@ -24,6 +24,7 @@ import com.mxgraph.examples.swing.editor.EditorActions.ColorAction;
 import com.mxgraph.examples.swing.editor.EditorActions.ExitAction;
 import com.mxgraph.examples.swing.editor.EditorActions.KeyValueAction;
 import com.mxgraph.examples.swing.editor.EditorActions.NewAction;
+import com.mxgraph.examples.swing.editor.EditorActions.NewComponentAction;
 import com.mxgraph.examples.swing.editor.EditorActions.OpenAction;
 import com.mxgraph.examples.swing.editor.EditorActions.PrintAction;
 import com.mxgraph.examples.swing.editor.EditorActions.PromptValueAction;
@@ -131,6 +132,12 @@ public class EditorMenuBar extends JMenuBar {
 		// menu.add(editor.bind(mxResources.get("edit"),
 		// mxGraphActions.getEditAction()));
 
+		// Creates the file menu
+		menu = add(new JMenu(mxResources.get("studio")));
+
+		menu.add(editor.bind(mxResources.get("new_component"), new NewComponentAction(), "/com/mxgraph/examples/swing/images/new.gif"));
+
+		
 		// Creates the view menu
 		menu = add(new JMenu(mxResources.get("view")));
 

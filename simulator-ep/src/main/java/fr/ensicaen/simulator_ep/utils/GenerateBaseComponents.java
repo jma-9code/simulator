@@ -341,7 +341,7 @@ public class GenerateBaseComponents {
 		/* Network */
 		eRSBNetwork = new ComponentIO("Network", ComponentEP.NETWORK.ordinal());
 		eRSBNetwork.getProperties().put(GenericNetworkStrategy.CKEY_NAME, "e-RSB");
-		eRSBNetwork.getProperties().put(GenericNetworkStrategy.CKEYPREFIX_ISSUER_OF + "49767", "Issuer1");
+		eRSBNetwork.getProperties().put(GenericNetworkStrategy.CKEYPREFIX_ISSUER_OF + "497671", "Issuer1");
 
 		/* Router */
 		router = new ComponentIO("Router", ComponentEP.ROUTER.ordinal());

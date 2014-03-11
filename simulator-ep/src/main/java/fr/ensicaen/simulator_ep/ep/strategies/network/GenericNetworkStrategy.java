@@ -94,6 +94,8 @@ public class GenericNetworkStrategy implements IStrategy<ComponentIO> {
 								return mediatorToIssuer.send(_this, data);
 							}
 							else {
+								log.warn("No mediator found for issuer id : " + issuerId);
+
 								// answer that card issuer is unreachable
 								input.setResponseMTI();
 								input.set(39, CB2AValues.Field39.UNREACHABLE_CARD_ISSUER);

@@ -44,6 +44,8 @@ public class CardChipStrategy implements IStrategy<ComponentIO> {
 
 	@Override
 	public void init(IOutput _this, Context ctx) {
+		ComponentIO c = (ComponentIO) _this;
+		c.getProperties().put("state", State.OFF.toString());
 	}
 
 	@Override

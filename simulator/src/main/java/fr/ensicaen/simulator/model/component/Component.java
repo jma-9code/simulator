@@ -389,6 +389,12 @@ public abstract class Component implements Serializable {
 	public void instanciate() {
 		this.uuid = "c-" + UUID.randomUUID().toString();
 		log.info(getInstanceName() + " instancied");
+
+		if (childs != null) {
+			for (Component child : childs) {
+				child.instanciate();
+			}
+		}
 	}
 
 	/**

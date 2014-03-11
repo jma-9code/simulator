@@ -14,10 +14,9 @@ public class MapJTableBridge extends AbstractTableModel {
 
 	private static final String NEW_TAG = mxResources.get("new_entry");
 
-	private static Logger logger = LoggerFactory
-			.getLogger(MapJTableBridge.class);
+	private static Logger logger = LoggerFactory.getLogger(MapJTableBridge.class);
 
-	private Map<String, String> map;
+	private Map<String, Object> map;
 
 	// optimization
 	private String[] keyIndex;
@@ -25,7 +24,7 @@ public class MapJTableBridge extends AbstractTableModel {
 
 	private boolean addRowEnabled = false;
 
-	public MapJTableBridge(Map<String, String> map) {
+	public MapJTableBridge(Map<String, Object> map) {
 		this.map = map;
 		indexesKeys();
 	}
@@ -37,7 +36,8 @@ public class MapJTableBridge extends AbstractTableModel {
 	public int getRowCount() {
 		if (addRowEnabled) {
 			return map != null ? map.size() + 1 : 0;
-		} else {
+		}
+		else {
 			return map != null ? map.size() : 0;
 		}
 	}
@@ -50,69 +50,66 @@ public class MapJTableBridge extends AbstractTableModel {
 	@Override
 	public String getColumnName(int columnIndex) {
 		switch (columnIndex) {
-		case 0:
-			return mxResources.get("key");
-		case 1:
-			return mxResources.get("value");
-		default:
-			return "";
+			case 0:
+				return mxResources.get("key");
+			case 1:
+				return mxResources.get("value");
+			default:
+				return "";
 		}
 	}
 
 	@Override
 	public Class<?> getColumnClass(int columnIndex) {
 		switch (columnIndex) {
-		default:
-			return String.class;
+			default:
+				return String.class;
 		}
 	}
 
 	@Override
 	public boolean isCellEditable(int rowIndex, int columnIndex) {
 		switch (columnIndex) {
-		case 0:
-			return (addRowEnabled && rowIndex == getRowCount() - 1);
-		case 1:
-			return (!addRowEnabled || rowIndex != getRowCount() - 1);
-		default:
-			return false;
+			case 0:
+				return (addRowEnabled && rowIndex == getRowCount() - 1);
+			case 1:
+				return (!addRowEnabled || rowIndex != getRowCount() - 1);
+			default:
+				return false;
 		}
 	}
 
 	@Override
 	public Object getValueAt(int rowIndex, int columnIndex) {
 		switch (columnIndex) {
-		case 0:
-			return (addRowEnabled && rowIndex == getRowCount() - 1) ? NEW_TAG
-					: getKey(rowIndex);
-		case 1:
-			return (addRowEnabled && rowIndex == getRowCount() - 1) ? NEW_TAG
-					: map.get(getKey(rowIndex));
-		default:
-			return "";
+			case 0:
+				return (addRowEnabled && rowIndex == getRowCount() - 1) ? NEW_TAG : getKey(rowIndex);
+			case 1:
+				return (addRowEnabled && rowIndex == getRowCount() - 1) ? NEW_TAG : map.get(getKey(rowIndex));
+			default:
+				return "";
 		}
 	}
 
 	@Override
 	public void setValueAt(Object aValue, int rowIndex, int columnIndex) {
-		logger.debug("setValueAt(" + aValue + ", " + rowIndex + ", "
-				+ columnIndex + ")");
+		logger.debug("setValueAt(" + aValue + ", " + rowIndex + ", " + columnIndex + ")");
 		switch (columnIndex) {
-		case 0:
-			String key = String.valueOf(aValue).trim();
-			if (!key.equals(NEW_TAG) && !key.isEmpty()) {
-				map.put(key, String.valueOf(getValueAt(rowIndex, 1)));
-				addRowEnabled = false;
-				fireTableDataChanged();
-			}
-			break;
-		case 1:
-			if (!addRowEnabled || rowIndex != getRowCount() - 1) {
-				map.put(getKey(rowIndex), String.valueOf(aValue));
-			}
-			break;
-		default:
-			return;
+			case 0:
+				String key = String.valueOf(aValue).trim();
+				if (!key.equals(NEW_TAG) && !key.isEmpty()) {
+					map.put(key, String.valueOf(getValueAt(rowIndex, 1)));
+					addRowEnabled = false;
+					fireTableDataChanged();
+				}
+				break;
+			case 1:
+				if (!addRowEnabled || rowIndex != getRowCount() - 1) {
+					map.put(getKey(rowIndex), String.valueOf(aValue));
+				}
+				break;
+			default:
+				return;
 		}
 	}
 
@@ -144,10 +141,11 @@ public class MapJTableBridge extends AbstractTableModel {
 	 * 
 	 * @param map
 	 */
-	public void update(Map<String, String> map) {
+	public void update(Map map) {
 		if (map == null) {
 			logger.debug("update with no entry");
-		} else {
+		}
+		else {
 			logger.debug("update with " + map.size() + " entries");
 		}
 

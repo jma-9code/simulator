@@ -29,15 +29,20 @@ import fr.ensicaen.gui_simulator.gui.editor.DateTimeCellEditor;
 import fr.ensicaen.gui_simulator.gui.renderer.DateTimeCellRenderer;
 import fr.ensicaen.simulator.simulator.AsyncSimulator;
 import fr.ensicaen.simulator.simulator.Context;
+import fr.ensicaen.simulator.simulator.Simulator;
 import fr.ensicaen.simulator.simulator.SimulatorFactory;
 import fr.ensicaen.simulator.simulator.exception.SimulatorException;
+import fr.ensicaen.simulator.simulator.listener.SimulatorListener;
 
 public class SimulatorPanel extends JTabbedPane implements
-		ListSelectionListener {
+		ListSelectionListener, SimulatorListener {
 
 	private JTable startPointTable;
 	private StartPointJTableBridge startPointModelTable;
 	private List<JButton> buttons = new ArrayList<>(2);
+	private JButton btnLaunch = new JButton("Launch");
+	private JButton btnOneStep = new JButton("One Step");
+	private AsyncSimulator sim = SimulatorFactory.getAsyncSimulator();
 
 	public SimulatorPanel(BasicGraphEditor frame) {
 		// tab
@@ -45,6 +50,8 @@ public class SimulatorPanel extends JTabbedPane implements
 				initTab_startPointTable()));
 		addTab(mxResources.get("simulator"), new JScrollPane(
 				initTab_simulatorPanel()));
+		// ajout du listener sur la simulation
+		sim.addListener(this);
 	}
 
 	private JPanel initTab_startPointTable() {
@@ -96,22 +103,30 @@ public class SimulatorPanel extends JTabbedPane implements
 	}
 
 	private JPanel initTab_simulatorPanel() {
-		JPanel simulatorPanel = new JPanel();
-
-		JButton btnLaunch = new JButton("Launch");
+		final JPanel simulatorPanel = new JPanel();
 		btnLaunch.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				AsyncSimulator sim = SimulatorFactory.getAsyncSimulator();
-				try {
-					sim.start();
-				} catch (SimulatorException e1) {
-					e1.printStackTrace();
+				if (btnLaunch.getText().equalsIgnoreCase("launch")) {
+					try {
+						sim.start();
+					} catch (SimulatorException e1) {
+						e1.printStackTrace();
+					}
+				} else {
+					Simulator.resume();
+					btnOneStep.setEnabled(false);
+					btnLaunch.setText("Launch");
 				}
+				simulatorPanel.repaint();
 			}
 		});
 
 		simulatorPanel.add(btnLaunch);
+		btnOneStep.addActionListener(new BtnOneStepActionListener());
+
+		btnOneStep.setEnabled(false);
+		simulatorPanel.add(btnOneStep);
 		return simulatorPanel;
 	}
 
@@ -180,8 +195,27 @@ public class SimulatorPanel extends JTabbedPane implements
 		}
 	}
 
+	private class BtnOneStepActionListener implements ActionListener {
+		public void actionPerformed(ActionEvent e) {
+			Simulator.iterateStep();
+		}
+	}
+
 	public void refresh() {
 		startPointModelTable.fireTableDataChanged();
+	}
+
+	@Override
+	public void simulationStarted() {
+		Simulator.pausable();
+		btnOneStep.setEnabled(true);
+		btnLaunch.setText("Skip");
+	}
+
+	@Override
+	public void simulationEnded() {
+		btnOneStep.setEnabled(false);
+		btnLaunch.setText("Launch");
 	}
 
 }

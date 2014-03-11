@@ -1,7 +1,9 @@
 package ep.strategies.fo;
 
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.List;
 
 import org.jpos.iso.ISOException;
 import org.jpos.iso.ISOMsg;
@@ -15,6 +17,7 @@ import fr.ensicaen.simulator.model.component.IOutput;
 import fr.ensicaen.simulator.model.factory.MediatorFactory;
 import fr.ensicaen.simulator.model.factory.MediatorFactory.EMediator;
 import fr.ensicaen.simulator.model.mediator.Mediator;
+import fr.ensicaen.simulator.model.properties.PropertyDefinition;
 import fr.ensicaen.simulator.model.response.DataResponse;
 import fr.ensicaen.simulator.model.response.IResponse;
 import fr.ensicaen.simulator.model.strategies.IStrategy;
@@ -30,6 +33,7 @@ import fr.ensicaen.simulator_ep.utils.ISO7816Tools;
 import fr.ensicaen.simulator_ep.utils.ISO8583Tools;
 
 public class FOUnitTest {
+	private static ISOMsg authorizationRequest;
 
 	private static ComponentIO ept;
 	private static Mediator m_ept_fo;
@@ -262,22 +266,8 @@ public class FOUnitTest {
 		ept = new ComponentIO("Electronic Payment Terminal");
 
 		m_ept_fo = MediatorFactory.getInstance().getMediator(frontOffice, ept, EMediator.HALFDUPLEX);
-		// m_fo_foIssuer =
-		// MediatorFactory.getInstance().getMediator(frontOffice, issuer,
-		// EMediator.HALFDUPLEX);
-		// m_fo_foAcquirer =
-		// MediatorFactory.getInstance().getMediator(frontOffice, acquirer,
-		// EMediator.HALFDUPLEX);
-		// m_foIssuer_FoIssuerAuthorization =
-		// MediatorFactory.getInstance().getMediator(issuer,
-		// issuerAuthorization,
-		// EMediator.HALFDUPLEX);
-		// m_foAcquirer_FoAcquirerAuthorization =
-		// MediatorFactory.getInstance().getMediator(acquirer,
-		// acquirerAuthorization, EMediator.HALFDUPLEX);
-		// m_foAcquirerAuthorization_foIssuerAuthorization =
-		// MediatorFactory.getInstance().getMediator(
-		// acquirerAuthorization, issuerAuthorization, EMediator.HALFDUPLEX);
+
+		generateMsg();
 
 	}
 
@@ -286,8 +276,33 @@ public class FOUnitTest {
 		Context.getInstance().reset();
 	}
 
+	/**
+	 * generation des messages du EPT
+	 * 
+	 * @throws ISOException
+	 */
+	public static void generateMsg() throws ISOException {
+		authorizationRequest = ISO8583Tools.create();
+		authorizationRequest.setMTI("0100");
+		authorizationRequest.set(2, "0123456789123456"); // PAN
+		authorizationRequest.set(3, "000101"); // Type of Auth +
+												// accounts
+		authorizationRequest.set(4, "100"); // 100€
+		authorizationRequest.set(7, ISO7816Tools.writeDATETIME(Calendar.getInstance().getTime())); // date
+																									// :
+																									// MMDDhhmmss
+		authorizationRequest.set(38, "123456"); // Approval Code
+		authorizationRequest.set(42, "623598"); // Acceptor's ID
+		authorizationRequest.set(123, "21151168"); // POS Data Code
+	}
+
+	/**
+	 * Le FO repond positevement a la requete => acceptence 00
+	 */
 	@Test
-	public void testAppelAutorisation() {
+	public void testCallAuth_OK() {
+		// propriete d'acceptance
+		issuerAuthorization.getProperties().put("acceptance", "00");
 		// fake issuer authorization module as router
 		issuerAuthorization.setName("Router");
 		MediatorFactory.getInstance().getMediator(issuerAuthorization, acquirerAuthorization);
@@ -304,34 +319,13 @@ public class FOUnitTest {
 
 			@Override
 			public void processEvent(ComponentIO _this, String event) {
-				ISOMsg authorizationRequest = new ISOMsg();
-				try {
-					authorizationRequest.setPackager(ISO8583Tools.getPackager());
-					authorizationRequest.setMTI("0100");
-					authorizationRequest.set(2, "0123456789123456"); // PAN
-					authorizationRequest.set(3, "000101"); // Type of Auth +
-															// accounts
-					authorizationRequest.set(4, "100"); // 100€
-					authorizationRequest.set(7, ISO7816Tools.writeDATETIME(Calendar.getInstance().getTime())); // date
-																												// :
-																												// MMDDhhmmss
-					authorizationRequest.set(11, "000001"); // System Trace
-															// Audit Number
-					authorizationRequest.set(38, "123456"); // Approval Code
-					authorizationRequest.set(42, "623598"); // Acceptor's ID
-					authorizationRequest.set(123, "21151168"); // POS Data Code
-				}
-				catch (ISOException e) {
-					e.printStackTrace();
-				}
 
-				ISOMsg authorizationAnswer = null;
+				ISOMsg authorizationAnswer = ISO8583Tools.create();
 				try {
-					authorizationAnswer = new ISOMsg();
-					authorizationAnswer.setPackager(ISO8583Tools.getPackager());
 					authorizationAnswer.unpack(((DataResponse) m_ept_fo.send(_this,
 							new String(authorizationRequest.pack()))).getData().getBytes());
 					Assert.assertTrue(authorizationAnswer.getValue(39).equals("00"));
+					Assert.assertTrue(authorizationAnswer.getValue(38) != null);
 				}
 				catch (ISOException e) {
 					e.printStackTrace();
@@ -343,6 +337,11 @@ public class FOUnitTest {
 			@Override
 			public void init(IOutput _this, Context ctx) {
 				ctx.subscribeEvent(_this, "AUTHORIZATION_CALL");
+			}
+
+			@Override
+			public List<PropertyDefinition> getPropertyDefinitions() {
+				return new ArrayList<PropertyDefinition>();
 			}
 		});
 
@@ -360,4 +359,65 @@ public class FOUnitTest {
 
 	}
 
+	/**
+	 * Le FO repond negativement a la requete => acceptance 01
+	 */
+	@Test
+	public void testCallAuth_NOK() {
+		// propriete d'acceptance
+		issuerAuthorization.getProperties().put("acceptance", "01");
+		// fake issuer authorization module as router
+		issuerAuthorization.setName("Router");
+		MediatorFactory.getInstance().getMediator(issuerAuthorization, acquirerAuthorization);
+
+		ept.setStrategy(new IStrategy<ComponentIO>() {
+
+			private static final long serialVersionUID = 2626955719622250036L;
+
+			@Override
+			public IResponse processMessage(ComponentIO _this, Mediator mediator, String data) {
+				// TODO Auto-generated method stub
+				return null;
+			}
+
+			@Override
+			public void processEvent(ComponentIO _this, String event) {
+
+				ISOMsg authorizationAnswer = ISO8583Tools.create();
+				try {
+					authorizationAnswer.unpack(((DataResponse) m_ept_fo.send(_this,
+							new String(authorizationRequest.pack()))).getData().getBytes());
+					Assert.assertTrue(authorizationAnswer.getValue(39).equals("01"));
+				}
+				catch (ISOException e) {
+					e.printStackTrace();
+					Assert.assertTrue(false);
+				}
+
+			}
+
+			@Override
+			public void init(IOutput _this, Context ctx) {
+				ctx.subscribeEvent(_this, "AUTHORIZATION_CALL");
+			}
+
+			@Override
+			public List<PropertyDefinition> getPropertyDefinitions() {
+				return new ArrayList<PropertyDefinition>();
+			}
+		});
+
+		// on insert la carte dans le tpe, le tpe envoie des donnees a la carte
+		Context.getInstance().addStartPoint(new Date(), "AUTHORIZATION_CALL");
+
+		// execute simulation.
+		try {
+			SimulatorFactory.getSimulator().start();
+		}
+		catch (SimulatorException e) {
+			e.printStackTrace();
+			Assert.assertFalse(true);
+		}
+
+	}
 }

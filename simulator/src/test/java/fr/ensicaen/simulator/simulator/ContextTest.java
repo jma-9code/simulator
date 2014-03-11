@@ -1,5 +1,6 @@
 package fr.ensicaen.simulator.simulator;
 
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
@@ -17,6 +18,7 @@ import fr.ensicaen.simulator.model.factory.MediatorFactory;
 import fr.ensicaen.simulator.model.factory.MediatorFactory.EMediator;
 import fr.ensicaen.simulator.model.mediator.Mediator;
 import fr.ensicaen.simulator.model.mediator.PipedMediator;
+import fr.ensicaen.simulator.model.properties.PropertyDefinition;
 import fr.ensicaen.simulator.model.response.IResponse;
 import fr.ensicaen.simulator.model.strategies.IStrategy;
 import fr.ensicaen.simulator.simulator.exception.ContextException;
@@ -98,6 +100,11 @@ public class ContextTest {
 				// TODO Auto-generated method stub
 				return null;
 			}
+
+			@Override
+			public List<PropertyDefinition> getPropertyDefinitions() {
+				return new ArrayList<PropertyDefinition>();
+			}
 		});
 
 		Context.getInstance().addStartPoint(new Date(), "TEST");
@@ -134,6 +141,11 @@ public class ContextTest {
 			public IResponse processMessage(ComponentIO _this, Mediator mediator, String data) {
 				// TODO Auto-generated method stub
 				return null;
+			}
+
+			@Override
+			public List<PropertyDefinition> getPropertyDefinitions() {
+				return new ArrayList<PropertyDefinition>();
 			}
 		});
 
@@ -176,6 +188,11 @@ public class ContextTest {
 				// TODO Auto-generated method stub
 				return null;
 			}
+
+			@Override
+			public List<PropertyDefinition> getPropertyDefinitions() {
+				return new ArrayList<PropertyDefinition>();
+			}
 		});
 
 		Context.getInstance().addStartPoint(new Date(), "TEST");
@@ -215,6 +232,11 @@ public class ContextTest {
 			public IResponse processMessage(ComponentIO _this, Mediator mediator, String data) {
 				// TODO Auto-generated method stub
 				return null;
+			}
+
+			@Override
+			public List<PropertyDefinition> getPropertyDefinitions() {
+				return new ArrayList<PropertyDefinition>();
 			}
 		});
 
@@ -258,6 +280,11 @@ public class ContextTest {
 			public IResponse processMessage(ComponentO _this, Mediator mediator, String data) {
 				return null;
 			}
+
+			@Override
+			public List<PropertyDefinition> getPropertyDefinitions() {
+				return new ArrayList<PropertyDefinition>();
+			}
 		});
 
 		Context.getInstance().addStartPoint(new Date(), "TEST");
@@ -299,6 +326,11 @@ public class ContextTest {
 			public IResponse processMessage(ComponentIO _this, Mediator mediator, String data) {
 				// TODO Auto-generated method stub
 				return null;
+			}
+
+			@Override
+			public List<PropertyDefinition> getPropertyDefinitions() {
+				return new ArrayList<PropertyDefinition>();
 			}
 		});
 

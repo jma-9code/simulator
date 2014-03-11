@@ -1,5 +1,8 @@
 package fr.ensicaen.simulator_ep.ep.strategies.card;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -7,9 +10,11 @@ import fr.ensicaen.simulator.model.component.ComponentIO;
 import fr.ensicaen.simulator.model.component.IOutput;
 import fr.ensicaen.simulator.model.factory.MediatorFactory;
 import fr.ensicaen.simulator.model.mediator.Mediator;
+import fr.ensicaen.simulator.model.properties.PropertyDefinition;
 import fr.ensicaen.simulator.model.response.IResponse;
 import fr.ensicaen.simulator.model.strategies.IStrategy;
 import fr.ensicaen.simulator.simulator.Context;
+import fr.ensicaen.simulator_ep.utils.CommonNames;
 
 public class CardStrategy implements IStrategy<ComponentIO> {
 
@@ -25,13 +30,18 @@ public class CardStrategy implements IStrategy<ComponentIO> {
 	}
 
 	@Override
+	public List<PropertyDefinition> getPropertyDefinitions() {
+		return new ArrayList<PropertyDefinition>();
+	}
+
+	@Override
 	public void init(IOutput _this, Context ctx) {
 	}
 
 	@Override
 	public IResponse processMessage(ComponentIO card, Mediator m, String data) {
 		// tout les traitements de donnees sont gerees par la puce
-		ComponentIO chip = card.getChild("chip", ComponentIO.class);
+		ComponentIO chip = card.getChild(CommonNames.CARD_CHIP, ComponentIO.class);
 		// ComponentO magstrippe = card.getChild("magstrippe",
 		// ComponentO.class);
 

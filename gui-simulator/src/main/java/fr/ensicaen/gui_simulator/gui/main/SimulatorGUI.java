@@ -17,9 +17,11 @@ import com.mxgraph.util.mxResources;
 import com.mxgraph.view.mxGraph;
 
 import fr.ensicaen.gui_simulator.gui.bridge.ComponentPaletteBridge;
+import fr.ensicaen.gui_simulator.gui.bridge.PopupForRequiredPropertyListener;
 import fr.ensicaen.simulator.model.component.Component;
 import fr.ensicaen.simulator.model.dao.DAO;
 import fr.ensicaen.simulator.model.dao.factory.DAOFactory;
+import fr.ensicaen.simulator.simulator.Context;
 
 public class SimulatorGUI extends BasicGraphEditor {
 	/**
@@ -71,36 +73,13 @@ public class SimulatorGUI extends BasicGraphEditor {
 		// getting dao
 		DAO<Component> dao = DAOFactory.getFactory().getComponentDAO();
 
-		// // test à supprimer BEGIN
-		// HashMap<String, String> test = new HashMap<>();
-		// test.put("cou", "oj");
-		// test.put("ceru", "oj");
-		// test.put("ceeu", "oj");
-		//
-		// // getting dao
-		// DAO<Component> dao = DAOFactory.getFactory().getComponentDAO();
-		// Component p = new ComponentIO("Card");
-		// p.setProperties(test);
-		//
-		// Component p1 = new ComponentIO("Test 1");
-		// p1.addChild(new ComponentIO("Test 3"));
-		// p1.addChild(new ComponentIO("Test 4"));
-		// p.addChild(p1);
-		// p.addChild(new ComponentIO("Test 2"));
-		// dao.create(p);
-		// dao.create(new ComponentIO("EPT"));
-		// dao.create(new ComponentO("Output"));
-		// dao.create(new ComponentI("Input"));
-		// dao.create(new ComponentIO("Input/Output"));
-		// dao.create(new ComponentIO("IS"));
-		// dao.create(new ComponentIO("FO"));
-		// dao.create(new ComponentIO("BO"));
-		// DAO<Component> dao = DAOFactory.getFactory().getComponentDAO();
-		// dao.create(new ComponentIO("Network Router"));
-		// // test à supprimer END
-
+		// bridge components
 		ComponentPaletteBridge bridge = new ComponentPaletteBridge(componentsPalette, dao, graphComponent.getGraph());
 		bridge.refresh();
+
+		// property listener for asking popup
+		PopupForRequiredPropertyListener listener = new PopupForRequiredPropertyListener();
+		Context.getInstance().setPropertyListener(listener);
 	}
 
 	/**

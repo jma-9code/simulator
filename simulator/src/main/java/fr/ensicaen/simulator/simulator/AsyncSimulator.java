@@ -33,7 +33,7 @@ public class AsyncSimulator extends Simulator {
 		}
 
 		// thread coherence check
-		if (this.transaction != null && !this.transaction.isDone() && !this.transaction.isCancelled()) {
+		if (this.transaction != null && !this.transaction.isDone()) {
 			throw new SimulatorException("A simulation is already running.");
 		}
 
@@ -43,11 +43,16 @@ public class AsyncSimulator extends Simulator {
 			public void run() {
 				try {
 					AsyncSimulator.this.realStart();
-				} catch (SimulatorException e) {
+				}
+				catch (SimulatorException e) {
+
+					// reinit
+					transaction = null;
 
 					if (e.getCause() instanceof InterruptedException) {
 						log.info("Simulation stopped.");
-					} else {
+					}
+					else {
 						AsyncSimulator.this.exception = e;
 						log.error("Error occured during the simulation", e);
 					}

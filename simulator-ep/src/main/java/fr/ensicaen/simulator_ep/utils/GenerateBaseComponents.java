@@ -1,11 +1,15 @@
 package fr.ensicaen.simulator_ep.utils;
 
+import java.util.HashMap;
+
 import fr.ensicaen.simulator.model.component.Component;
 import fr.ensicaen.simulator.model.component.ComponentIO;
 import fr.ensicaen.simulator.model.dao.DAO;
+import fr.ensicaen.simulator.model.dao.ScenarioData;
 import fr.ensicaen.simulator.model.dao.factory.DAOFactory;
 import fr.ensicaen.simulator.model.factory.MediatorFactory;
 import fr.ensicaen.simulator.model.factory.MediatorFactory.EMediator;
+import fr.ensicaen.simulator.model.mediator.Mediator;
 import fr.ensicaen.simulator.simulator.Context;
 import fr.ensicaen.simulator_ep.ep.strategies.card.CardChipStrategy;
 import fr.ensicaen.simulator_ep.ep.strategies.card.CardStrategy;
@@ -17,6 +21,8 @@ import fr.ensicaen.simulator_ep.ep.strategies.fo.acquirer.FOAcquirerAuthorizatio
 import fr.ensicaen.simulator_ep.ep.strategies.fo.acquirer.FOAcquirerStrategy;
 import fr.ensicaen.simulator_ep.ep.strategies.fo.issuer.FOIssuerAuthorizationStrategy;
 import fr.ensicaen.simulator_ep.ep.strategies.fo.issuer.FOIssuerStrategy;
+import fr.ensicaen.simulator_ep.ep.strategies.network.GenericNetworkStrategy;
+import fr.ensicaen.simulator_ep.ep.strategies.network.GenericRouterStrategy;
 
 public class GenerateBaseComponents {
 
@@ -101,12 +107,18 @@ public class GenerateBaseComponents {
 	/* BO */
 	private static ComponentIO backOffice;
 
+	/* network router */
+	private static ComponentIO router;
+
+	/* networks */
+	private static ComponentIO eRSBNetwork;
+
 	public static void main(String[] args) {
 		Context.getInstance().autoRegistrationMode();
 
 		componentsProperties();
-		// associateMediators();
-		// associateStrategies();
+		associateMediators();
+		associateStrategies();
 
 		// enregistrement des composants dans la lib
 		DAO<Component> comp = DAOFactory.getFactory().getComponentDAO();
@@ -114,6 +126,13 @@ public class GenerateBaseComponents {
 		comp.create(ept);
 		comp.create(frontOffice);
 		comp.create(backOffice);
+		comp.create(router);
+		comp.create(eRSBNetwork);
+
+		ScenarioData sc = new ScenarioData("test", Context.getInstance(), new HashMap<String, Object>());
+		DAO<ScenarioData> sce = DAOFactory.getFactory().getScenarioDataDAO();
+		sce.create(sc);
+
 	}
 
 	public static void associateStrategies() {
@@ -136,57 +155,49 @@ public class GenerateBaseComponents {
 
 	public static void associateMediators() {
 		factory.getMediator(card, ept, EMediator.HALFDUPLEX);
-		factory.getMediator(card, chip, EMediator.HALFDUPLEX);
-		factory.getMediator(card, magstrippe, EMediator.HALFDUPLEX);
-
 		factory.getMediator(ept, frontOffice, EMediator.HALFDUPLEX);
-		factory.getMediator(chipset, frontOffice, EMediator.HALFDUPLEX);
-		factory.getMediator(smartCardReader, chipset, EMediator.HALFDUPLEX);
-		factory.getMediator(smartCardReader, card, EMediator.HALFDUPLEX);
-		factory.getMediator(ept, smartCardReader, EMediator.HALFDUPLEX);
-		factory.getMediator(ept, chipset, EMediator.HALFDUPLEX);
+		factory.getMediator(frontOffice, router, EMediator.HALFDUPLEX);
+		factory.getMediator(router, eRSBNetwork, EMediator.HALFDUPLEX);
 
-		factory.getMediator(frontOffice, ept, EMediator.HALFDUPLEX);
-		factory.getMediator(frontOffice, issuer, EMediator.HALFDUPLEX);
-		factory.getMediator(frontOffice, acquirer, EMediator.HALFDUPLEX);
-		factory.getMediator(issuer, issuerAuthorization, EMediator.HALFDUPLEX);
-		factory.getMediator(acquirer, acquirerAuthorization, EMediator.HALFDUPLEX);
-		factory.getMediator(acquirerAuthorization, issuerAuthorization, EMediator.HALFDUPLEX);
-
+		Mediator m = factory.getMediator(frontOffice, eRSBNetwork, EMediator.HALFDUPLEX);
+		m.getProperties().put(GenericRouterStrategy.MKEY_NETWORK_ID, "e-RSB");
 	}
 
 	public static void componentsProperties() {
 		/* CARD */
-		card = new ComponentIO("cb");
+		card = new ComponentIO(CommonNames.CARD);
 		card.getProperties().put("pan", "4976710025642130");
 		card.getProperties().put("icvv", "000");
 		card.getProperties().put("type", "M");
 		card.getProperties().put("name", "Florent Moisson");
 		card.getProperties().put("date expiration", "09/15");
-		chip = new ComponentIO("chip");
+		chip = new ComponentIO(CommonNames.CARD_CHIP);
 		chip.getProperties().put("protocol", "ISO7816");
 		chip.getProperties().put("pan", "4976710025642130");
 		chip.getProperties().put("bccs", "12421874");
 		chip.getProperties().put("ceil", "400");
 		chip.getProperties().put("approvalcode", "07B56=");
 		chip.getProperties().put("state", "OFF");
-		magstrippe = new ComponentIO("magstrippe");
+		magstrippe = new ComponentIO(CommonNames.CARD_MAGSTRIPPE);
 		magstrippe.getProperties().put("iso2", "59859595985888648468454684");
 		card.addChild(magstrippe);
 		card.addChild(chip);
 
 		/* ETP */
-		ept = new ComponentIO("Electronic Payment Terminal");
+		ept = new ComponentIO(CommonNames.ETP);
 		ept.setStrategy(new EPTStrategy());
-		smartCardReader = new ComponentIO("Smart Card Reader");
+		smartCardReader = new ComponentIO(CommonNames.ETP_SMARTCARDREADER);
 		smartCardReader.setStrategy(new EPTSmartCardReaderStrategy());
 		ept.addChild(smartCardReader);
-		chipset = new ComponentIO("Chipset");
+		chipset = new ComponentIO(CommonNames.ETP_CHIPSET);
 		chipset.setStrategy(new EPTChipsetStrategy());
 		chipset.getProperties().put("pos_id", "0000623598");
+		chipset.getProperties().put("acceptor_id", "0000623598");
+		chipset.getProperties().put("posdatacode", "510101511326105");
 		chipset.getProperties().put("stan", "000001");
 		chipset.getProperties().put("protocol_list", "ISO7816 ISO8583 CB2A-T");
 		chipset.getProperties().put("protocol_prefered", "ISO7816");
+		chipset.getProperties().put("pin_enter", "1234");
 		ept.addChild(chipset);
 		printer = new ComponentIO("Printer");
 		ept.addChild(printer);
@@ -196,17 +207,17 @@ public class GenerateBaseComponents {
 		ept.addChild(networkInterface);
 
 		/* FO */
-		frontOffice = new ComponentIO("FrontOffice");
-		issuer = new ComponentIO("Issuer");
+		frontOffice = new ComponentIO(CommonNames.FO);
+		issuer = new ComponentIO(CommonNames.FO_ISSUER);
 		acceptor = new ComponentIO("Acceptor");
-		acquirer = new ComponentIO("Acquirer");
+		acquirer = new ComponentIO(CommonNames.FO_ACQUIRER);
 		/* Ajout des trois grandes fonctions du front Office */
 		frontOffice.addChild(issuer);
 		frontOffice.addChild(acceptor);
 		frontOffice.addChild(acquirer);
 
 		/* Ajout des modules émetteur */
-		issuerAuthorization = new ComponentIO("IssuerAuthorization");
+		issuerAuthorization = new ComponentIO(CommonNames.FO_ISSUER_AUTH);
 		gestionDeLaFraude = new ComponentIO("GestionDeLaFraude");
 		issuer.addChild(issuerAuthorization);
 		issuer.addChild(gestionDeLaFraude);
@@ -269,7 +280,7 @@ public class GenerateBaseComponents {
 		gestionnaireTelepaiement.addChild(gestionDonneesFonctionnement);
 
 		/* Ajout des modules acquéreur */
-		acquirerAuthorization = new ComponentIO("AcquirerAuthorization");
+		acquirerAuthorization = new ComponentIO(CommonNames.FO_ACQUIRER_AUTH);
 		GABHandler = new ComponentIO("GABHandler");
 		telecollection = new ComponentIO("telecollection");
 		paymentAcquirer = new ComponentIO("paymentAcquirer");
@@ -325,6 +336,17 @@ public class GenerateBaseComponents {
 
 		/* BO */
 		backOffice = new ComponentIO("BackOffice");
+
+		/* Network */
+		eRSBNetwork = new ComponentIO("Network");
+		eRSBNetwork.getProperties().put(GenericNetworkStrategy.CKEY_NAME, "e-RSB");
+		eRSBNetwork.getProperties().put(GenericNetworkStrategy.CKEYPREFIX_ISSUER_OF + "49767", "Issuer1");
+
+		/* Router */
+		router = new ComponentIO("Router");
+		router.setStrategy(new GenericRouterStrategy());
+		router.getProperties().put(GenericRouterStrategy.CKEYPREFIX_NETWORK_OF + "4", "e-RSB");
+		router.getProperties().put(GenericRouterStrategy.CKEYPREFIX_NETWORK_OF + "5", "e-RSB");
 
 	}
 }

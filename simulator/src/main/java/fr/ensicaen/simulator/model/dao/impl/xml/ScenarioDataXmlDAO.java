@@ -22,6 +22,7 @@ import fr.ensicaen.simulator.model.dao.DAO;
 import fr.ensicaen.simulator.model.dao.ScenarioData;
 import fr.ensicaen.simulator.model.dao.source.DaoSource;
 import fr.ensicaen.simulator.model.dao.source.XmlSource;
+import fr.ensicaen.simulator.model.properties.PropertiesPlus;
 
 public class ScenarioDataXmlDAO extends DAO<ScenarioData> {
 
@@ -34,7 +35,7 @@ public class ScenarioDataXmlDAO extends DAO<ScenarioData> {
 	@Override
 	public boolean create(ScenarioData obj) {
 		try {
-			JAXBContext jaxbContext = JAXBContext.newInstance(obj.getClass());
+			JAXBContext jaxbContext = JAXBContext.newInstance(ScenarioData.class, PropertiesPlus.Property.class);
 			Marshaller jaxbMarshaller = jaxbContext.createMarshaller();
 			jaxbMarshaller.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, true);
 			// jaxbMarshaller.setAdapter(Component.class, new
@@ -75,7 +76,7 @@ public class ScenarioDataXmlDAO extends DAO<ScenarioData> {
 		ScenarioData c = null;
 		Path path = Paths.get(((XmlSource) daoSrc).getPath_library_scenario());
 		try (DirectoryStream<Path> stream = Files.newDirectoryStream(path)) {
-			JAXBContext jaxbContext = JAXBContext.newInstance(ScenarioData.class);
+			JAXBContext jaxbContext = JAXBContext.newInstance(ScenarioData.class, PropertiesPlus.Property.class);
 			Unmarshaller jaxbUnmarshaller = jaxbContext.createUnmarshaller();
 			Iterator<Path> iterator = stream.iterator();
 			while (iterator.hasNext()) {
@@ -97,7 +98,7 @@ public class ScenarioDataXmlDAO extends DAO<ScenarioData> {
 		Path path = Paths.get(((XmlSource) daoSrc).getPath_library_scenario());
 		List<ScenarioData> scenarios = new ArrayList<>();
 		try (DirectoryStream<Path> stream = Files.newDirectoryStream(path)) {
-			JAXBContext jaxbContext = JAXBContext.newInstance(ScenarioData.class);
+			JAXBContext jaxbContext = JAXBContext.newInstance(ScenarioData.class, PropertiesPlus.Property.class);
 			Unmarshaller jaxbUnmarshaller = jaxbContext.createUnmarshaller();
 			Iterator<Path> iterator = stream.iterator();
 			while (iterator.hasNext()) {
@@ -124,6 +125,7 @@ public class ScenarioDataXmlDAO extends DAO<ScenarioData> {
 			Collections.addAll(clazz, additionnalJaxbContext);
 		}
 		clazz.add(ScenarioData.class);
+		clazz.add(PropertiesPlus.Property.class);
 
 		JAXBContext jaxbContext = JAXBContext.newInstance(clazz.toArray(new Class[0]));
 		Unmarshaller jaxbUnmarshaller = jaxbContext.createUnmarshaller();
@@ -142,7 +144,8 @@ public class ScenarioDataXmlDAO extends DAO<ScenarioData> {
 		if (additionnalJaxbContext.length > 0) {
 			Collections.addAll(clazz, additionnalJaxbContext);
 		}
-		clazz.add(d.getClass());
+		clazz.add(ScenarioData.class);
+		clazz.add(PropertiesPlus.Property.class);
 
 		JAXBContext jaxbContext = JAXBContext.newInstance(clazz.toArray(new Class[0]));
 		Marshaller jaxbMarshaller = jaxbContext.createMarshaller();

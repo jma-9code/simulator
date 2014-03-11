@@ -2,7 +2,10 @@ package fr.ensicaen.simulator.model.component;
 
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collection;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 import java.util.StringTokenizer;
 import java.util.UUID;
@@ -21,10 +24,11 @@ import org.slf4j.LoggerFactory;
 
 import fr.ensicaen.simulator.model.factory.MediatorFactory;
 import fr.ensicaen.simulator.model.mediator.Mediator;
+import fr.ensicaen.simulator.model.properties.PropertiesPlus;
+import fr.ensicaen.simulator.model.properties.PropertyDefinition;
 import fr.ensicaen.simulator.model.strategies.IStrategy;
 import fr.ensicaen.simulator.model.strategies.NullStrategy;
 import fr.ensicaen.simulator.simulator.Context;
-import fr.ensicaen.simulator.tools.CaseInsensitiveMap;
 
 @XmlSeeAlso({ ComponentIO.class, ComponentI.class, ComponentO.class })
 @XmlAccessorType(XmlAccessType.FIELD)
@@ -32,21 +36,37 @@ public abstract class Component implements Serializable {
 
 	private static Logger log = LoggerFactory.getLogger(Component.class);
 
+	/**
+	 * Identifiant unique du composant
+	 */
 	@XmlAttribute
 	@XmlID
 	protected String uuid;
 
+	/**
+	 * Acronyme
+	 */
 	@XmlTransient
 	private String acronym;
 
+	/**
+	 * Nom du composant
+	 */
 	protected String name;
 
-	protected HashMap<String, String> properties = new CaseInsensitiveMap();
+	/**
+	 * Propriétés du composant
+	 */
+	protected PropertiesPlus properties = new PropertiesPlus();
 
-	// delegate
+	/**
+	 * Stratégie utilisée par le composant (pattern delegate)
+	 */
 	protected transient IStrategy strategy = new NullStrategy();
 
-	// sub-component
+	/**
+	 * Liste des composants enfants
+	 */
 	@XmlElement
 	@XmlIDREF
 	protected List<Component> childs = new ArrayList<>();
@@ -91,11 +111,11 @@ public abstract class Component implements Serializable {
 		return this.properties.get(key);
 	}
 
-	public HashMap<String, String> getProperties() {
+	public PropertiesPlus getProperties() {
 		return this.properties;
 	}
 
-	public void setProperties(HashMap<String, String> properties) {
+	public void setProperties(PropertiesPlus properties) {
 		this.properties = properties;
 	}
 
@@ -114,6 +134,84 @@ public abstract class Component implements Serializable {
 		else {
 			log.error("Child mediator registration failed.");
 		}
+	}
+
+	/**
+	 * Recursive function to re-organize components list.
+	 * 
+	 * @param components
+	 * @return
+	 */
+	public static List<Component> organizeComponents(Collection<Component> components) {
+		List<Component> ret = new ArrayList<>();
+		ret.addAll(components);
+		for (Component c : components) {
+			List<Component> tmp = organizeComponents(c.getChilds());
+			for (Component c1 : tmp) {
+				if (!components.contains(c1)) {
+					ret.add(c1);
+				}
+			}
+		}
+		return ret;
+	}
+
+	/**
+	 * Retrieve the parent component
+	 * 
+	 * @param c
+	 * @param components
+	 * @return
+	 */
+	public static Component getParent(Component c, List<Component> components) {
+		List<Component> comps = Component.organizeComponents(components);
+		Iterator<Component> icomp = comps.iterator();
+		while (icomp.hasNext()) {
+			Component cur = icomp.next();
+			if (cur.getChilds().contains(c)) {
+				return cur;
+			}
+		}
+		return null;
+	}
+
+	/**
+	 * Retrieve the root component
+	 * 
+	 * @param c
+	 * @param components
+	 * @return
+	 */
+	public static Component getRoot(Component c, List<Component> components) {
+		// find parent
+		Component cur = getParent(c, components);
+		// root find
+		if (cur == null) {
+			return c;
+		}
+
+		Component ret = getRoot(cur, components);
+
+		return ret;
+	}
+
+	/**
+	 * Confirm if the component is a child of the component
+	 * 
+	 * @param c
+	 * @param components
+	 * @return
+	 */
+	public static boolean isChild(Component parent, Component child) {
+		List<Component> comps = Component.organizeComponents(Arrays.asList(parent));
+		Iterator<Component> icomp = comps.iterator();
+		while (icomp.hasNext()) {
+			Component cur = icomp.next();
+			if (cur.equals(child)) {
+				return true;
+			}
+		}
+		return false;
 	}
 
 	public void setChilds(List<Component> components) {
@@ -148,6 +246,20 @@ public abstract class Component implements Serializable {
 
 	public void setStrategy(IStrategy<? extends Component> strategy) {
 		this.strategy = strategy;
+
+		// récupération des définitions de propriété
+		List<PropertyDefinition> propertyDefs = strategy.getPropertyDefinitions();
+
+		if (propertyDefs != null) {
+			// init
+			for (PropertyDefinition def : propertyDefs) {
+
+				// on écrase pas ...
+				if (!properties.containsKey(def)) {
+					properties.put(def.getKey(), def.getDefaultValue(), def.isRequired());
+				}
+			}
+		}
 	}
 
 	public String getInstanceName() {
@@ -205,18 +317,18 @@ public abstract class Component implements Serializable {
 	 * 
 	 * @return
 	 */
-	public Memento saveState() {
-		return new Memento(this.properties);
-	}
-
-	/**
-	 * Restitue son état depuis un "Memento"
-	 * 
-	 * @param pMemento
-	 */
-	public void restoreState(Memento pMemento) {
-		this.properties = pMemento.getProperties();
-	}
+	// public Memento saveState() {
+	// return new Memento(this.properties);
+	// }
+	//
+	// /**
+	// * Restitue son état depuis un "Memento"
+	// *
+	// * @param pMemento
+	// */
+	// public void restoreState(Memento pMemento) {
+	// this.properties = pMemento.getProperties();
+	// }
 
 	public abstract boolean isOutput();
 

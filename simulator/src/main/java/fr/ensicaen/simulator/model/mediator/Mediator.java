@@ -114,4 +114,5 @@ public abstract class Mediator implements Serializable {
 	public String getUuid() {
 		return uuid;
 	}
+
 }

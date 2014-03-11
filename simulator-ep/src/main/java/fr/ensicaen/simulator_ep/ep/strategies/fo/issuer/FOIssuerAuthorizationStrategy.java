@@ -1,5 +1,10 @@
 package fr.ensicaen.simulator_ep.ep.strategies.fo.issuer;
 
+import java.math.BigInteger;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Random;
+
 import org.jpos.iso.ISOException;
 import org.jpos.iso.ISOMsg;
 import org.slf4j.Logger;
@@ -8,6 +13,7 @@ import org.slf4j.LoggerFactory;
 import fr.ensicaen.simulator.model.component.ComponentIO;
 import fr.ensicaen.simulator.model.component.IOutput;
 import fr.ensicaen.simulator.model.mediator.Mediator;
+import fr.ensicaen.simulator.model.properties.PropertyDefinition;
 import fr.ensicaen.simulator.model.response.DataResponse;
 import fr.ensicaen.simulator.model.response.IResponse;
 import fr.ensicaen.simulator.model.response.VoidResponse;
@@ -28,17 +34,50 @@ public class FOIssuerAuthorizationStrategy implements IStrategy<ComponentIO> {
 	}
 
 	@Override
+	public List<PropertyDefinition> getPropertyDefinitions() {
+		return new ArrayList<PropertyDefinition>();
+	}
+
+	@Override
 	public void init(IOutput _this, Context ctx) {
 	}
 
 	@Override
 	public IResponse processMessage(ComponentIO frontOfficeIssuer, Mediator m, String data) {
 		ISOMsg authorizationAnswer = null;
+		Random r = new Random();
 		try {
 			authorizationAnswer = ISO8583Tools.read(data);
+
 			authorizationAnswer.setMTI("0110");
 			authorizationAnswer.set(7, ISO7816Tools.writeDATETIME(Context.getInstance().getTime()));
-			authorizationAnswer.set(39, "00");
+			// FO utilisation du champs acceptance afin de definir la strategie
+			// d'approbation ou non de l'auth
+			int auth_approval = Integer.parseInt(frontOfficeIssuer.getProperties().get("acceptance"));
+			String approval_code = new BigInteger(20, r).toString();
+			switch (auth_approval) {
+				case 0:
+					authorizationAnswer.set(39, "00");// Response Code
+					authorizationAnswer.set(38, approval_code); // Approval Code
+					break;
+				case 1:
+					authorizationAnswer.set(39, "01");// Response Code
+					break;
+				case 2:
+					if (r.nextBoolean()) {
+						authorizationAnswer.set(39, "00");// Response Code
+						authorizationAnswer.set(38, approval_code); // Approval
+																	// Code
+					}
+					else {
+						authorizationAnswer.set(39, "01");// Response Code
+					}
+					break;
+				default:
+					authorizationAnswer.set(39, "01");// Response Code
+					break;
+			}
+
 		}
 		catch (ISOException | ISO8583Exception e) {
 			e.printStackTrace();

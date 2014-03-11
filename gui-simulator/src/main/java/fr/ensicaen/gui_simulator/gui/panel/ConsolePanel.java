@@ -1,8 +1,5 @@
 package fr.ensicaen.gui_simulator.gui.panel;
 
-import fr.ensicaen.gui_simulator.gui.core.JTextAreaAppender;
-import fr.ensicaen.gui_simulator.gui.core.LimitLinesDocumentListener;
-
 import javax.swing.JComponent;
 import javax.swing.JScrollPane;
 import javax.swing.JTabbedPane;
@@ -18,6 +15,9 @@ import ch.qos.logback.core.spi.FilterReply;
 
 import com.mxgraph.examples.swing.editor.BasicGraphEditor;
 import com.mxgraph.util.mxResources;
+
+import fr.ensicaen.gui_simulator.gui.core.JTextAreaAppender;
+import fr.ensicaen.gui_simulator.gui.core.LimitLinesDocumentListener;
 
 public class ConsolePanel extends JTabbedPane {
 
@@ -51,7 +51,8 @@ public class ConsolePanel extends JTabbedPane {
 	private class SimulatorLogFilter extends Filter<ILoggingEvent> {
 
 		public FilterReply decide(ILoggingEvent event) {
-			if (event.getLoggerName().startsWith("ep.") || event.getLoggerName().startsWith("simulator.")) {
+			if (event.getLoggerName().startsWith("fr.ensicaen.simulator_ep")
+					|| event.getLoggerName().startsWith("fr.ensicaen.simulator")) {
 				return FilterReply.ACCEPT;
 			}
 

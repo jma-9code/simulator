@@ -1,5 +1,8 @@
 package fr.ensicaen.simulator.model.mediator;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import org.junit.Assert;
 import org.junit.Test;
 
@@ -9,8 +12,7 @@ import fr.ensicaen.simulator.model.component.IInput;
 import fr.ensicaen.simulator.model.component.IOutput;
 import fr.ensicaen.simulator.model.factory.MediatorFactory;
 import fr.ensicaen.simulator.model.factory.MediatorFactory.EMediator;
-import fr.ensicaen.simulator.model.mediator.ForwardMediator;
-import fr.ensicaen.simulator.model.mediator.Mediator;
+import fr.ensicaen.simulator.model.properties.PropertyDefinition;
 import fr.ensicaen.simulator.model.response.IResponse;
 import fr.ensicaen.simulator.model.response.VoidResponse;
 import fr.ensicaen.simulator.model.strategies.IStrategy;
@@ -99,6 +101,11 @@ public class ForwardMediatorTest {
 				// TODO Auto-generated method stub
 
 			}
+
+			@Override
+			public List<PropertyDefinition> getPropertyDefinitions() {
+				return new ArrayList<PropertyDefinition>();
+			}
 		});
 
 		c2.setStrategy(new IStrategy() {
@@ -121,6 +128,11 @@ public class ForwardMediatorTest {
 			public void processEvent(Component _this, String event) {
 				// TODO Auto-generated method stub
 
+			}
+
+			@Override
+			public List<PropertyDefinition> getPropertyDefinitions() {
+				return new ArrayList<PropertyDefinition>();
 			}
 		});
 
@@ -145,6 +157,11 @@ public class ForwardMediatorTest {
 				// TODO Auto-generated method stub
 
 			}
+
+			@Override
+			public List<PropertyDefinition> getPropertyDefinitions() {
+				return new ArrayList<PropertyDefinition>();
+			}
 		});
 
 		c4.setStrategy(new IStrategy() {
@@ -167,6 +184,11 @@ public class ForwardMediatorTest {
 
 			@Override
 			public void processEvent(Component _this, String event) {
+			}
+
+			@Override
+			public List<PropertyDefinition> getPropertyDefinitions() {
+				return new ArrayList<PropertyDefinition>();
 			}
 		});
 

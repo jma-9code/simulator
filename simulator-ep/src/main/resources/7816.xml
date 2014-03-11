@@ -7,14 +7,14 @@
 	<isofield id="3" length="19" name="PAN - PRIMARY ACCOUNT NUMBER" class="org.jpos.iso.IFA_LLNUM" />
 	<isofield id="4" length="999" name="PROTOCOL LIST" class="org.jpos.iso.IFA_LLLCHAR" />
 	<isofield id="5" length="99" name="PROTOCOL" class="org.jpos.iso.IFA_LLCHAR" />
-	<isofield id="6" length="12" name="AMOUNT" class="org.jpos.iso.IFA_NUMERIC" />
-	<isofield id="7" length="12" name="CARD AGREEMENT" class="org.jpos.iso.IFA_NUMERIC" />
+	<isofield id="6" length="10" name="AMOUNT" class="org.jpos.iso.IFA_NUMERIC" />
+	<isofield id="7" length="1" name="CARD AGREEMENT" class="org.jpos.iso.IFA_NUMERIC" />
 	<isofield id="8" length="6" name="APPROVAL CODE" class="org.jpos.iso.IF_CHAR" />
 	<isofield id="9" length="999" name="PREFERRED PROTOCOL" class="org.jpos.iso.IFA_LLLCHAR" />
 	<isofield id="10" length="2" name="OP CODE" class="org.jpos.iso.IFA_NUMERIC" />
-	<isofield id="11" length="8" name="PIN DATA" class="org.jpos.iso.IFA_NUMERIC" />
+	<isofield id="11" length="4" name="PIN DATA" class="org.jpos.iso.IFA_NUMERIC" />
 	<isofield id="12" length="6" name="SYSTEM TRACE AUDIT NUMBER" class="org.jpos.iso.IFA_NUMERIC" />
-	<isofield id="13" length="8" name="PIN VERIFICATION" class="org.jpos.iso.IFA_NUMERIC" />
+	<isofield id="13" length="1" name="PIN VERIFICATION" class="org.jpos.iso.IFA_NUMERIC" />
 	<isofield id="14" length="10" name="DATE" class="org.jpos.iso.IFA_NUMERIC" />
 	<isofield id="15" length="12" name="RETRIEVAL REFERENCE NUMBER" class="org.jpos.iso.IFA_NUMERIC" />
 	<isofield id="16" length="2" name="RESPONSE CODE" class="org.jpos.iso.IFA_NUMERIC" />

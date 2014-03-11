@@ -1,6 +1,9 @@
 package fr.ensicaen.simulator_ep.utils;
 
 import java.net.URISyntaxException;
+import java.text.DecimalFormat;
+import java.text.DecimalFormatSymbols;
+import java.text.NumberFormat;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
@@ -53,6 +56,11 @@ public class ISO7816Tools {
 	public static final int FIELD_RESPONSECODE = 16;
 
 	/**
+	 * Formatteur des montants
+	 */
+	public static NumberFormat formatter_amount = new DecimalFormat("00000000.00");;
+
+	/**
 	 * Permet de faire STAN+1
 	 * 
 	 * @param stan
@@ -68,27 +76,6 @@ public class ISO7816Tools {
 			ret = String.format("%06d", ++val_stan);
 		}
 		return ret;
-	}
-
-	/**
-	 * Ajoute le padding à gauche de 0 (max 16 caracteres). ex : POS IS ->
-	 * 0000000000POS ID
-	 * 
-	 * @param tag
-	 * @return
-	 */
-	public static String writeTAG(String tag) {
-		return ("0000000000000000" + tag).substring(tag.length());
-	}
-
-	/**
-	 * Ajoute le padding à gauche de 0 (max 3 caracteres). ex : 2 -> 002
-	 * 
-	 * @param tag
-	 * @return
-	 */
-	public static String writeLEN(int len) {
-		return String.format("%03d", len);
 	}
 
 	/**
@@ -121,18 +108,10 @@ public class ISO7816Tools {
 	 * @return
 	 */
 	public static String writeAMOUNT(double d) {
-		String r = String.format("%.2f", d);
-		r = r.replace(",", "");
-		return ("0000000000" + r).substring(r.length());
-	}
+		String r = formatter_amount.format(d);
 
-	public static String createformatTLV(String tag, String value) {
-		StringBuffer sb = new StringBuffer();
-		sb.append(writeTAG(tag));
-		sb.append(writeLEN(value.length()));
-		sb.append(value);
-
-		return sb.toString();
+		// delete decimal separator
+		return r.replace(DecimalFormatSymbols.getInstance().getDecimalSeparator() + "", "");
 	}
 
 	/**
@@ -230,53 +209,4 @@ public class ISO7816Tools {
 		rp.setPackager(getPackager());
 		return rp;
 	}
-
-	// HashMap<String, String> ret = new CaseInsensitiveMap();
-	// // head
-	// String head = data.substring(0, 4);
-	// ret.put("type", convertCodeMsg2Type(head).name());
-	// int nbFields = 0;
-	// try {
-	// nbFields = Integer.parseInt(data.substring(4, 7));
-	// ret.put("nbfields", "" + nbFields);
-	// }
-	// catch (Exception e) {
-	// throw new ISO7816Exception("Interpretation data problem", e);
-	// }
-	//
-	// // tag : 16 octets
-	// // len : 3 octets
-	// String tag = null;
-	// int len = 0;
-	// String value = null;
-	// int c_index = 7;
-	// while (c_index < data.length()) {
-	// tag = data.substring(c_index, c_index + 16);
-	// // remove 0 left padding
-	// tag = tag.replaceFirst("^0+(?!$)", "");
-	//
-	// c_index += 16;
-	//
-	// try {
-	// len = Integer.parseInt(data.substring(c_index, c_index + 3));
-	// c_index += 3;
-	// }
-	// catch (Exception e) {
-	// throw new ISO7816Exception("Interpretation data problem", e);
-	// }
-	//
-	// value = data.substring(c_index, c_index + len);
-	// c_index += len;
-	//
-	// ret.put(tag, value);
-	// }
-	//
-	// // petite verif nbFields=hashmap.size-2
-	// if (nbFields != ret.size() - 2) {
-	// throw new
-	// ISO7816Exception("Interpretation data problem, nbfields != fields parse");
-	// }
-	//
-	// return ret;
-	// }
 }

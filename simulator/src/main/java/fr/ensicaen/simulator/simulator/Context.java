@@ -512,7 +512,7 @@ public class Context {
 		events.putAll(sd.getEvents());
 
 		// associate strategy and component
-		for (Component c : components.values()) {
+		for (Component c : Component.organizeComponents(components.values())) {
 			Class strat = sd.getLink_strat_component().get(c.getUuid());
 			if (strat != null) {
 				c.setStrategy((IStrategy<? extends Component>) strat.newInstance());

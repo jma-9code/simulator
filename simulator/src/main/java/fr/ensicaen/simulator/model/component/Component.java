@@ -5,8 +5,10 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Set;
 import java.util.StringTokenizer;
 import java.util.UUID;
 
@@ -220,6 +222,22 @@ public abstract class Component implements Serializable {
 		Component ret = getRoot(cur, components);
 
 		return ret;
+	}
+
+	/**
+	 * Permet de recuperer tout les composants racines de la liste
+	 * 
+	 * @param components
+	 * @return
+	 */
+	public static Set<Component> retrieveAllRootComponents(List<Component> components) {
+		Set<Component> root_comps = new HashSet<>();
+		Component root_comp = null;
+		for (Component c : components) {
+			root_comp = getRoot(c, components);
+			root_comps.add(root_comp);
+		}
+		return root_comps;
 	}
 
 	/**

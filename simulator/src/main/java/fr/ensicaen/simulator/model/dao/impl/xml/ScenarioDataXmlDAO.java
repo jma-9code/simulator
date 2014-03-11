@@ -129,7 +129,8 @@ public class ScenarioDataXmlDAO extends DAO<ScenarioData> {
 
 		JAXBContext jaxbContext = JAXBContext.newInstance(clazz.toArray(new Class[0]));
 		Unmarshaller jaxbUnmarshaller = jaxbContext.createUnmarshaller();
-		return (ScenarioData) jaxbUnmarshaller.unmarshal(Paths.get(path).toFile());
+		ScenarioData sc = (ScenarioData) jaxbUnmarshaller.unmarshal(Paths.get(path).toFile());
+		return sc;
 	}
 
 	/**

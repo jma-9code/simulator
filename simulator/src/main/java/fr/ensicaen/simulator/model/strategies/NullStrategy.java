@@ -1,20 +1,21 @@
 package fr.ensicaen.simulator.model.strategies;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import fr.ensicaen.simulator.model.component.Component;
 import fr.ensicaen.simulator.model.component.IOutput;
 import fr.ensicaen.simulator.model.mediator.Mediator;
+import fr.ensicaen.simulator.model.properties.PropertyDefinition;
 import fr.ensicaen.simulator.model.response.IResponse;
 import fr.ensicaen.simulator.model.response.VoidResponse;
 import fr.ensicaen.simulator.simulator.Context;
 
 public class NullStrategy implements IStrategy<Component> {
 
-	/**
-	 * 
-	 */
 	private static final long serialVersionUID = -8566363354337168824L;
 
 	public NullStrategy() {
@@ -69,4 +70,10 @@ public class NullStrategy implements IStrategy<Component> {
 	public String toString() {
 		return "Null strategy";
 	}
+
+	@Override
+	public List<PropertyDefinition> getPropertyDefinitions() {
+		return new ArrayList<PropertyDefinition>();
+	}
+
 }

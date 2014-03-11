@@ -1,6 +1,8 @@
 package fr.ensicaen.simulator_ep.ep.strategies.fo.issuer;
 
 import java.math.BigInteger;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Random;
 
 import org.jpos.iso.ISOException;
@@ -11,6 +13,7 @@ import org.slf4j.LoggerFactory;
 import fr.ensicaen.simulator.model.component.ComponentIO;
 import fr.ensicaen.simulator.model.component.IOutput;
 import fr.ensicaen.simulator.model.mediator.Mediator;
+import fr.ensicaen.simulator.model.properties.PropertyDefinition;
 import fr.ensicaen.simulator.model.response.DataResponse;
 import fr.ensicaen.simulator.model.response.IResponse;
 import fr.ensicaen.simulator.model.response.VoidResponse;
@@ -28,6 +31,11 @@ public class FOIssuerAuthorizationStrategy implements IStrategy<ComponentIO> {
 	public FOIssuerAuthorizationStrategy() {
 		super();
 		// TODO Auto-generated constructor stub
+	}
+
+	@Override
+	public List<PropertyDefinition> getPropertyDefinitions() {
+		return new ArrayList<PropertyDefinition>();
 	}
 
 	@Override

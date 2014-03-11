@@ -1,6 +1,8 @@
 package ep.strategies.ept;
 
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 
 import org.jpos.iso.ISOException;
 import org.jpos.iso.ISOMsg;
@@ -16,6 +18,7 @@ import fr.ensicaen.simulator.model.component.IOutput;
 import fr.ensicaen.simulator.model.factory.MediatorFactory;
 import fr.ensicaen.simulator.model.factory.MediatorFactory.EMediator;
 import fr.ensicaen.simulator.model.mediator.Mediator;
+import fr.ensicaen.simulator.model.properties.PropertyDefinition;
 import fr.ensicaen.simulator.model.response.DataResponse;
 import fr.ensicaen.simulator.model.response.IResponse;
 import fr.ensicaen.simulator.model.response.VoidResponse;
@@ -182,6 +185,11 @@ public class EPTUnitTest {
 				return DataResponse.build(mediator, "TEST ANSWER CARD");
 			}
 
+			@Override
+			public List<PropertyDefinition> getPropertyDefinitions() {
+				return new ArrayList<PropertyDefinition>();
+			}
+
 		});
 
 		// add start point for the simulator
@@ -266,6 +274,10 @@ public class EPTUnitTest {
 				ctx.subscribeEvent(_this, "SMART_CARD_INSERTED");
 			}
 
+			@Override
+			public List<PropertyDefinition> getPropertyDefinitions() {
+				return new ArrayList<PropertyDefinition>();
+			}
 		});
 
 		frontOffice.setStrategy(new IStrategy<ComponentIO>() {
@@ -301,6 +313,11 @@ public class EPTUnitTest {
 
 				}
 				return null;
+			}
+
+			@Override
+			public List<PropertyDefinition> getPropertyDefinitions() {
+				return new ArrayList<PropertyDefinition>();
 			}
 		});
 

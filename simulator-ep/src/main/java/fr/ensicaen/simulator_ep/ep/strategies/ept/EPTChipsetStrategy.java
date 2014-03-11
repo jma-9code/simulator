@@ -1,6 +1,8 @@
 package fr.ensicaen.simulator_ep.ep.strategies.ept;
 
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.List;
 
 import org.jpos.iso.ISOException;
 import org.jpos.iso.ISOMsg;
@@ -11,6 +13,7 @@ import fr.ensicaen.simulator.model.component.Component;
 import fr.ensicaen.simulator.model.component.ComponentIO;
 import fr.ensicaen.simulator.model.component.IOutput;
 import fr.ensicaen.simulator.model.mediator.Mediator;
+import fr.ensicaen.simulator.model.properties.PropertyDefinition;
 import fr.ensicaen.simulator.model.response.DataResponse;
 import fr.ensicaen.simulator.model.response.IResponse;
 import fr.ensicaen.simulator.model.response.VoidResponse;
@@ -31,6 +34,11 @@ public class EPTChipsetStrategy implements IStrategy<ComponentIO> {
 	public EPTChipsetStrategy() {
 		super();
 		// TODO Auto-generated constructor stub
+	}
+
+	@Override
+	public List<PropertyDefinition> getPropertyDefinitions() {
+		return new ArrayList<PropertyDefinition>();
 	}
 
 	@Override

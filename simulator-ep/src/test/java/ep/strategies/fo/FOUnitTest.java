@@ -1,7 +1,9 @@
 package ep.strategies.fo;
 
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.List;
 
 import org.jpos.iso.ISOException;
 import org.jpos.iso.ISOMsg;
@@ -15,6 +17,7 @@ import fr.ensicaen.simulator.model.component.IOutput;
 import fr.ensicaen.simulator.model.factory.MediatorFactory;
 import fr.ensicaen.simulator.model.factory.MediatorFactory.EMediator;
 import fr.ensicaen.simulator.model.mediator.Mediator;
+import fr.ensicaen.simulator.model.properties.PropertyDefinition;
 import fr.ensicaen.simulator.model.response.DataResponse;
 import fr.ensicaen.simulator.model.response.IResponse;
 import fr.ensicaen.simulator.model.strategies.IStrategy;
@@ -337,6 +340,11 @@ public class FOUnitTest {
 			public void init(IOutput _this, Context ctx) {
 				ctx.subscribeEvent(_this, "AUTHORIZATION_CALL");
 			}
+
+			@Override
+			public List<PropertyDefinition> getPropertyDefinitions() {
+				return new ArrayList<PropertyDefinition>();
+			}
 		});
 
 		// on insert la carte dans le tpe, le tpe envoie des donnees a la carte
@@ -394,6 +402,11 @@ public class FOUnitTest {
 			@Override
 			public void init(IOutput _this, Context ctx) {
 				ctx.subscribeEvent(_this, "AUTHORIZATION_CALL");
+			}
+
+			@Override
+			public List<PropertyDefinition> getPropertyDefinitions() {
+				return new ArrayList<PropertyDefinition>();
 			}
 		});
 

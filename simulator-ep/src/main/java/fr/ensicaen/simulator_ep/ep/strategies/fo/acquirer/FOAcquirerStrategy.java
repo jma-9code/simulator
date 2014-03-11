@@ -1,5 +1,8 @@
 package fr.ensicaen.simulator_ep.ep.strategies.fo.acquirer;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -9,6 +12,7 @@ import fr.ensicaen.simulator.model.component.IInput;
 import fr.ensicaen.simulator.model.component.IOutput;
 import fr.ensicaen.simulator.model.factory.MediatorFactory;
 import fr.ensicaen.simulator.model.mediator.Mediator;
+import fr.ensicaen.simulator.model.properties.PropertyDefinition;
 import fr.ensicaen.simulator.model.response.IResponse;
 import fr.ensicaen.simulator.model.strategies.IStrategy;
 import fr.ensicaen.simulator.simulator.Context;
@@ -22,6 +26,11 @@ public class FOAcquirerStrategy implements IStrategy<ComponentIO> {
 	public FOAcquirerStrategy() {
 		super();
 		// TODO Auto-generated constructor stub
+	}
+
+	@Override
+	public List<PropertyDefinition> getPropertyDefinitions() {
+		return new ArrayList<PropertyDefinition>();
 	}
 
 	@Override

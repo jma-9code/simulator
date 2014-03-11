@@ -1,5 +1,8 @@
 package fr.ensicaen.simulator.model.mediator;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import org.junit.Assert;
 import org.junit.Test;
 
@@ -9,6 +12,7 @@ import fr.ensicaen.simulator.model.component.IInput;
 import fr.ensicaen.simulator.model.component.IOutput;
 import fr.ensicaen.simulator.model.factory.MediatorFactory;
 import fr.ensicaen.simulator.model.factory.MediatorFactory.EMediator;
+import fr.ensicaen.simulator.model.properties.PropertyDefinition;
 import fr.ensicaen.simulator.model.response.IResponse;
 import fr.ensicaen.simulator.model.response.VoidResponse;
 import fr.ensicaen.simulator.model.strategies.IStrategy;
@@ -77,7 +81,7 @@ public class ForwardMediatorTest {
 
 			@Override
 			public IResponse processMessage(Component _this, Mediator mediator, String data) {
-				System.out.println("PROCESS " + _this.getType());
+				System.out.println("PROCESS " + _this.getName());
 				System.out.println("data = " + data);
 				if (mediator == null) {
 					Mediator m = MediatorFactory.getInstance().getMediator(_this, c2, EMediator.HALFDUPLEX);
@@ -98,6 +102,11 @@ public class ForwardMediatorTest {
 				// TODO Auto-generated method stub
 
 			}
+
+			@Override
+			public List<PropertyDefinition> getPropertyDefinitions() {
+				return new ArrayList<PropertyDefinition>();
+			}
 		});
 
 		c2.setStrategy(new IStrategy() {
@@ -107,7 +116,7 @@ public class ForwardMediatorTest {
 
 			@Override
 			public IResponse processMessage(Component _this, Mediator mediator, String data) {
-				System.out.println("PROCESS " + _this.getType());
+				System.out.println("PROCESS " + _this.getName());
 				System.out.println("data = " + data);
 				Mediator m = new ForwardMediator(mediator, (IInput) c3);
 				m.send((IOutput) _this, data); // c2 to c3
@@ -121,6 +130,11 @@ public class ForwardMediatorTest {
 				// TODO Auto-generated method stub
 
 			}
+
+			@Override
+			public List<PropertyDefinition> getPropertyDefinitions() {
+				return new ArrayList<PropertyDefinition>();
+			}
 		});
 
 		c3.setStrategy(new IStrategy() {
@@ -130,7 +144,7 @@ public class ForwardMediatorTest {
 
 			@Override
 			public IResponse processMessage(Component _this, Mediator mediator, String data) {
-				System.out.println("PROCESS " + _this.getType());
+				System.out.println("PROCESS " + _this.getName());
 				System.out.println("data = " + data);
 				Mediator m = new ForwardMediator(mediator, (IInput) c4);
 				m.send((IOutput) _this, data); // c3 to c4
@@ -144,6 +158,11 @@ public class ForwardMediatorTest {
 				// TODO Auto-generated method stub
 
 			}
+
+			@Override
+			public List<PropertyDefinition> getPropertyDefinitions() {
+				return new ArrayList<PropertyDefinition>();
+			}
 		});
 
 		c4.setStrategy(new IStrategy() {
@@ -153,7 +172,7 @@ public class ForwardMediatorTest {
 
 			@Override
 			public IResponse processMessage(Component _this, Mediator mediator, String data) {
-				System.out.println("PROCESS " + _this.getType());
+				System.out.println("PROCESS " + _this.getName());
 				System.out.println("data = " + data);
 
 				if (!"ALLER2".equals(data)) {
@@ -166,6 +185,11 @@ public class ForwardMediatorTest {
 
 			@Override
 			public void processEvent(Component _this, String event) {
+			}
+
+			@Override
+			public List<PropertyDefinition> getPropertyDefinitions() {
+				return new ArrayList<PropertyDefinition>();
 			}
 		});
 

@@ -1,5 +1,8 @@
 package fr.ensicaen.simulator_ep.ep.strategies.network;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import org.jpos.iso.ISOException;
 import org.jpos.iso.ISOMsg;
 import org.slf4j.Logger;
@@ -8,6 +11,7 @@ import org.slf4j.LoggerFactory;
 import fr.ensicaen.simulator.model.component.ComponentIO;
 import fr.ensicaen.simulator.model.component.IOutput;
 import fr.ensicaen.simulator.model.mediator.Mediator;
+import fr.ensicaen.simulator.model.properties.PropertyDefinition;
 import fr.ensicaen.simulator.model.response.IResponse;
 import fr.ensicaen.simulator.model.response.VoidResponse;
 import fr.ensicaen.simulator.model.strategies.IStrategy;
@@ -29,6 +33,11 @@ public class GenericRouterStrategy implements IStrategy<ComponentIO> {
 
 	public final static String CKEYPREFIX_NETWORK_OF = "network_of_";
 	public final static String MKEY_NETWORK_ID = "network_id";
+
+	@Override
+	public List<PropertyDefinition> getPropertyDefinitions() {
+		return new ArrayList<PropertyDefinition>();
+	}
 
 	@Override
 	public void init(IOutput _this, Context ctx) {

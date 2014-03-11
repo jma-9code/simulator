@@ -25,6 +25,7 @@ import org.slf4j.LoggerFactory;
 import fr.ensicaen.simulator.model.factory.MediatorFactory;
 import fr.ensicaen.simulator.model.mediator.Mediator;
 import fr.ensicaen.simulator.model.properties.PropertiesPlus;
+import fr.ensicaen.simulator.model.properties.PropertyDefinition;
 import fr.ensicaen.simulator.model.strategies.IStrategy;
 import fr.ensicaen.simulator.model.strategies.NullStrategy;
 import fr.ensicaen.simulator.simulator.Context;
@@ -272,6 +273,20 @@ public abstract class Component implements Serializable {
 
 	public void setStrategy(IStrategy<? extends Component> strategy) {
 		this.strategy = strategy;
+
+		// récupération des définitions de propriété
+		List<PropertyDefinition> propertyDefs = strategy.getPropertyDefinitions();
+
+		if (propertyDefs != null) {
+			// init
+			for (PropertyDefinition def : propertyDefs) {
+
+				// on écrase pas ...
+				if (!properties.containsKey(def)) {
+					properties.put(def.getKey(), def.getDefaultValue(), def.isRequired());
+				}
+			}
+		}
 	}
 
 	public String getInstanceName() {

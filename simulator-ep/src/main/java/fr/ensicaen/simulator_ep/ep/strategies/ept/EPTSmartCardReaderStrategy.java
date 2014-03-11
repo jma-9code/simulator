@@ -1,11 +1,15 @@
 package fr.ensicaen.simulator_ep.ep.strategies.ept;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import fr.ensicaen.simulator.model.component.ComponentIO;
 import fr.ensicaen.simulator.model.component.IOutput;
 import fr.ensicaen.simulator.model.mediator.Mediator;
+import fr.ensicaen.simulator.model.properties.PropertyDefinition;
 import fr.ensicaen.simulator.model.response.DataResponse;
 import fr.ensicaen.simulator.model.response.IResponse;
 import fr.ensicaen.simulator.model.strategies.IStrategy;
@@ -19,6 +23,11 @@ public class EPTSmartCardReaderStrategy implements IStrategy<ComponentIO> {
 	public EPTSmartCardReaderStrategy() {
 		super();
 		// TODO Auto-generated constructor stub
+	}
+
+	@Override
+	public List<PropertyDefinition> getPropertyDefinitions() {
+		return new ArrayList<PropertyDefinition>();
 	}
 
 	@Override

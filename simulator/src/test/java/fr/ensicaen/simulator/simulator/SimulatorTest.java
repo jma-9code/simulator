@@ -1,6 +1,8 @@
 package fr.ensicaen.simulator.simulator;
 
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 
 import org.junit.Assert;
 import org.junit.Before;
@@ -12,6 +14,7 @@ import fr.ensicaen.simulator.model.component.IOutput;
 import fr.ensicaen.simulator.model.mediator.HalfDuplexMediator;
 import fr.ensicaen.simulator.model.mediator.Mediator;
 import fr.ensicaen.simulator.model.mediator.SimplexMediator;
+import fr.ensicaen.simulator.model.properties.PropertyDefinition;
 import fr.ensicaen.simulator.model.response.IResponse;
 import fr.ensicaen.simulator.model.response.VoidResponse;
 import fr.ensicaen.simulator.model.strategies.IStrategy;
@@ -167,6 +170,11 @@ public class SimulatorTest {
 					ctx.addStartPoint(new Date(System.currentTimeMillis() - 3600 * 4 * 1000), "TEST EVENT 3");
 					ctx.addStartPoint(new Date(System.currentTimeMillis() + 3600 * 4 * 1000), "TEST EVENT 4");
 				}
+			}
+
+			@Override
+			public List<PropertyDefinition> getPropertyDefinitions() {
+				return new ArrayList<PropertyDefinition>();
 			}
 		});
 

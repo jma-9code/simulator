@@ -1,7 +1,9 @@
 package ep.strategies.network;
 
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.List;
 
 import org.jpos.iso.ISOException;
 import org.jpos.iso.ISOMsg;
@@ -18,6 +20,7 @@ import fr.ensicaen.simulator.model.component.IOutput;
 import fr.ensicaen.simulator.model.factory.MediatorFactory;
 import fr.ensicaen.simulator.model.factory.MediatorFactory.EMediator;
 import fr.ensicaen.simulator.model.mediator.Mediator;
+import fr.ensicaen.simulator.model.properties.PropertyDefinition;
 import fr.ensicaen.simulator.model.response.DataResponse;
 import fr.ensicaen.simulator.model.response.IResponse;
 import fr.ensicaen.simulator.model.response.VoidResponse;
@@ -135,6 +138,10 @@ public class GenericNetworkUnitTest {
 				ctx.subscribeEvent(_this, "TEST_NETWORK");
 			}
 
+			@Override
+			public List<PropertyDefinition> getPropertyDefinitions() {
+				return new ArrayList<PropertyDefinition>();
+			}
 		});
 
 		Context.getInstance().addStartPoint(new Date(), "TEST_NETWORK");
@@ -205,6 +212,11 @@ public class GenericNetworkUnitTest {
 				ctx.subscribeEvent(_this, "TEST_NETWORK");
 			}
 
+			@Override
+			public List<PropertyDefinition> getPropertyDefinitions() {
+				return new ArrayList<PropertyDefinition>();
+			}
+
 		});
 
 		Context.getInstance().addStartPoint(new Date(), "TEST_NETWORK");
@@ -267,6 +279,11 @@ public class GenericNetworkUnitTest {
 				}
 			}
 
+			@Override
+			public List<PropertyDefinition> getPropertyDefinitions() {
+				return new ArrayList<PropertyDefinition>();
+			}
+
 		});
 
 		iam2.setStrategy(new IStrategy<ComponentIO>() {
@@ -285,6 +302,10 @@ public class GenericNetworkUnitTest {
 				return DataResponse.build(mediator, data);
 			}
 
+			@Override
+			public List<PropertyDefinition> getPropertyDefinitions() {
+				return new ArrayList<PropertyDefinition>();
+			}
 		});
 
 		iam3.setStrategy(new IStrategy<ComponentIO>() {
@@ -301,6 +322,11 @@ public class GenericNetworkUnitTest {
 			public IResponse processMessage(ComponentIO _this, Mediator mediator, String data) {
 				Assert.assertTrue(false);
 				return DataResponse.build(mediator, data);
+			}
+
+			@Override
+			public List<PropertyDefinition> getPropertyDefinitions() {
+				return new ArrayList<PropertyDefinition>();
 			}
 
 		});
@@ -353,6 +379,11 @@ public class GenericNetworkUnitTest {
 			@Override
 			public void init(IOutput _this, Context ctx) {
 				ctx.subscribeEvent(_this, "TEST_NETWORK");
+			}
+
+			@Override
+			public List<PropertyDefinition> getPropertyDefinitions() {
+				return new ArrayList<PropertyDefinition>();
 			}
 
 		});

@@ -1,14 +1,22 @@
 package fr.ensicaen.simulator.model.strategies;
 
 import java.io.Serializable;
+import java.util.List;
 
 import fr.ensicaen.simulator.model.component.Component;
 import fr.ensicaen.simulator.model.component.IOutput;
 import fr.ensicaen.simulator.model.mediator.Mediator;
+import fr.ensicaen.simulator.model.properties.PropertyDefinition;
 import fr.ensicaen.simulator.model.response.IResponse;
 import fr.ensicaen.simulator.simulator.Context;
 
 public interface IStrategy<T extends Component> extends Serializable {
+
+	/**
+	 * Liste des définitions des propriétés utilisés par la stratégie permettant
+	 * l'initialisation des propriétés du composants.
+	 */
+	public List<PropertyDefinition> getPropertyDefinitions();
 
 	/**
 	 * Phase d'initialisation d'une stratégie dans laquelle le composant devra
@@ -16,23 +24,28 @@ public interface IStrategy<T extends Component> extends Serializable {
 	 * notifié.
 	 * 
 	 * @param _this
-	 *            TODO
 	 * @param ctx
 	 */
 	public void init(IOutput _this, Context ctx);
 
-	// need thinking.
-	// on pourrait imaginer traiter des évènements globaux et spécifiques
-	// (par composant avec relation d'héritage pr les composites)
-	// et cela serait enregistré dans le contexte (class Context)
-	//
-	// On modifierai ensuite le simulateur afin que les points de démarrage soit
-	// des évènements
-	// et non une données dans un input. Ex : J'insère ma carte sur le composant
-	// TPE.
-
+	/**
+	 * Implémentable par ComponentIO et ComponentO
+	 * 
+	 * Délégation du traitement des évènements
+	 * 
+	 * @param _this
+	 * @param event
+	 */
 	public void processEvent(T _this, String event);
 
+	/**
+	 * Implémentable par ComponentIO et ComponentI
+	 * 
+	 * Délégation du traitement des messages entrants
+	 * 
+	 * @param _this
+	 * @param event
+	 */
 	public IResponse processMessage(T _this, Mediator mediator, String data);
 
 }

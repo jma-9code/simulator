@@ -1,5 +1,6 @@
 package fr.ensicaen.simulator_ep.ep.strategies.card;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
@@ -11,6 +12,7 @@ import org.slf4j.LoggerFactory;
 import fr.ensicaen.simulator.model.component.ComponentIO;
 import fr.ensicaen.simulator.model.component.IOutput;
 import fr.ensicaen.simulator.model.mediator.Mediator;
+import fr.ensicaen.simulator.model.properties.PropertyDefinition;
 import fr.ensicaen.simulator.model.response.DataResponse;
 import fr.ensicaen.simulator.model.response.IResponse;
 import fr.ensicaen.simulator.model.strategies.IStrategy;
@@ -33,6 +35,11 @@ public class CardChipStrategy implements IStrategy<ComponentIO> {
 
 	public CardChipStrategy() {
 
+	}
+
+	@Override
+	public List<PropertyDefinition> getPropertyDefinitions() {
+		return new ArrayList<PropertyDefinition>();
 	}
 
 	@Override

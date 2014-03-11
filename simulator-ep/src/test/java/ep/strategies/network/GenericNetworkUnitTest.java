@@ -23,11 +23,13 @@ import fr.ensicaen.simulator.model.response.IResponse;
 import fr.ensicaen.simulator.model.response.VoidResponse;
 import fr.ensicaen.simulator.model.strategies.IStrategy;
 import fr.ensicaen.simulator.simulator.Context;
+import fr.ensicaen.simulator.simulator.Simulator;
 import fr.ensicaen.simulator.simulator.SimulatorFactory;
 import fr.ensicaen.simulator.simulator.exception.SimulatorException;
 import fr.ensicaen.simulator.tools.TestPass;
 import fr.ensicaen.simulator_ep.ep.strategies.network.GenericNetworkStrategy;
 import fr.ensicaen.simulator_ep.utils.CB2AValues;
+import fr.ensicaen.simulator_ep.utils.ComponentEP;
 import fr.ensicaen.simulator_ep.utils.ISO7816Tools;
 
 public class GenericNetworkUnitTest {
@@ -60,17 +62,17 @@ public class GenericNetworkUnitTest {
 		// mock strategy to launch the test
 		testLauncher = new ComponentIO("Test Launcher");
 
-		eRSBNetwork = new ComponentIO("Network");
+		eRSBNetwork = new ComponentIO("Network", ComponentEP.NETWORK.ordinal());
 		eRSBNetwork.setStrategy(new GenericNetworkStrategy());
 		eRSBNetwork.getProperties().put(GenericNetworkStrategy.CKEY_NAME, "e-RSB");
 
-		iam1 = new ComponentIO("Issuer Authorization Module");
+		iam1 = new ComponentIO("Issuer Authorization Module", ComponentEP.FO_ISSUER_AUTHORIZATION.ordinal());
 		// no strategy
 
-		iam2 = new ComponentIO("Issuer Authorization Module");
+		iam2 = new ComponentIO("Issuer Authorization Module", ComponentEP.FO_ISSUER_AUTHORIZATION.ordinal());
 		// no strategy
 
-		iam3 = new ComponentIO("Issuer Authorization Module");
+		iam3 = new ComponentIO("Issuer Authorization Module", ComponentEP.FO_ISSUER_AUTHORIZATION.ordinal());
 		// no strategy
 
 		m_test_ersb = MediatorFactory.getInstance().getMediator(testLauncher, eRSBNetwork, EMediator.HALFDUPLEX);
@@ -112,7 +114,7 @@ public class GenericNetworkUnitTest {
 
 				// send to network
 				try {
-					Mediator m = Context.getInstance().getFirstMediator(_this, "Network");
+					Mediator m = Context.getInstance().getFirstMediator(_this, ComponentEP.NETWORK.ordinal());
 					DataResponse res = (DataResponse) m.send(_this, new String(authorizationRequest.pack()));
 
 					// update bean
@@ -142,6 +144,7 @@ public class GenericNetworkUnitTest {
 		// execute simulation.
 		try {
 			SimulatorFactory.getSimulator().start();
+			Simulator.resume();
 		}
 		catch (SimulatorException e) {
 			e.printStackTrace();
@@ -182,7 +185,7 @@ public class GenericNetworkUnitTest {
 
 				// send to network
 				try {
-					Mediator m = Context.getInstance().getFirstMediator(_this, "Network");
+					Mediator m = Context.getInstance().getFirstMediator(_this, ComponentEP.NETWORK.ordinal());
 					DataResponse res = (DataResponse) m.send(_this, new String(authorizationRequest.pack()));
 
 					// update bean
@@ -211,6 +214,7 @@ public class GenericNetworkUnitTest {
 
 		// execute simulation.
 		try {
+			Simulator.resume();
 			SimulatorFactory.getSimulator().start();
 		}
 		catch (SimulatorException e) {
@@ -333,7 +337,7 @@ public class GenericNetworkUnitTest {
 
 				// send to network
 				try {
-					Mediator m = Context.getInstance().getFirstMediator(_this, "Network");
+					Mediator m = Context.getInstance().getFirstMediator(_this, ComponentEP.NETWORK.ordinal());
 					DataResponse res = (DataResponse) m.send(_this, new String(authorizationRequest.pack()));
 
 					// update bean
@@ -361,7 +365,9 @@ public class GenericNetworkUnitTest {
 
 		// execute simulation.
 		try {
+			Simulator.resume();
 			SimulatorFactory.getSimulator().start();
+
 		}
 		catch (SimulatorException e) {
 			e.printStackTrace();

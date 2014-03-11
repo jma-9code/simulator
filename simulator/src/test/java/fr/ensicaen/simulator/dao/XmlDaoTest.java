@@ -72,7 +72,7 @@ public class XmlDaoTest {
 		DAO<Component> dao = DAOFactory.getFactory().getComponentDAO();
 		dao.create(card);
 		Component c = dao.find(card.getUuid());
-		Assert.assertEquals(card.getName(), c.getName());
+		Assert.assertEquals(card.getType(), c.getType());
 
 		String path = Config.getProps().getProperty("config.xml.path.library.model");
 		// a commenter, si on veut voir le xml obtenu (library/model/name_uid)

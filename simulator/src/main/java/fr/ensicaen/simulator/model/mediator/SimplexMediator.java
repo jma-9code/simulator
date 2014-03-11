@@ -1,13 +1,17 @@
 package fr.ensicaen.simulator.model.mediator;
 
+import java.util.concurrent.BrokenBarrierException;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import fr.ensicaen.simulator.model.component.IInput;
 import fr.ensicaen.simulator.model.component.IOutput;
+import fr.ensicaen.simulator.model.mediator.listener.MediatorListener;
 import fr.ensicaen.simulator.model.response.IResponse;
 import fr.ensicaen.simulator.model.response.VoidResponse;
 import fr.ensicaen.simulator.simulator.Context;
+import fr.ensicaen.simulator.simulator.Simulator;
 
 /**
  * Permet d'envoyer un message dans un seul sens (unidirectionnel) Rq :
@@ -22,7 +26,7 @@ public class SimplexMediator extends Mediator {
 	private static Logger log = LoggerFactory.getLogger(SimplexMediator.class);
 
 	public SimplexMediator() {
-
+		super(null, null);
 	}
 
 	public SimplexMediator(IOutput _sender, IInput _receiver) {
@@ -39,11 +43,24 @@ public class SimplexMediator extends Mediator {
 	 */
 	@Override
 	public VoidResponse send(IOutput c, String data) {
+		for (MediatorListener l : listeners) {
+			l.onSendData();
+		}
+
+		try {
+			Simulator.barrier.await();
+		}
+		catch (BrokenBarrierException | InterruptedException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+
 		IResponse response = this.receiver.notifyMessage(this, data);
 		if (response == null || !(response instanceof VoidResponse)) {
 			log.error("Invalid simplex response : must return VoidResponse !");
 		}
 
+		Simulator.barrier.reset();
 		return (VoidResponse) response;
 	}
 

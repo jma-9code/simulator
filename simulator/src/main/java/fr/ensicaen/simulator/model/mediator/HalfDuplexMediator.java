@@ -5,6 +5,7 @@ import java.util.concurrent.BrokenBarrierException;
 import fr.ensicaen.simulator.model.component.IInput;
 import fr.ensicaen.simulator.model.component.IInputOutput;
 import fr.ensicaen.simulator.model.component.IOutput;
+import fr.ensicaen.simulator.model.mediator.listener.MediatorListener;
 import fr.ensicaen.simulator.model.response.IResponse;
 import fr.ensicaen.simulator.simulator.Context;
 import fr.ensicaen.simulator.simulator.Simulator;
@@ -19,7 +20,7 @@ import fr.ensicaen.simulator.simulator.Simulator;
 public class HalfDuplexMediator extends Mediator {
 
 	public HalfDuplexMediator() {
-
+		super(null, null);
 	}
 
 	public HalfDuplexMediator(IInputOutput a, IInputOutput b) {
@@ -31,6 +32,11 @@ public class HalfDuplexMediator extends Mediator {
 
 	@Override
 	public IResponse send(IOutput c, String data) {
+		IResponse ret = null;
+		for (MediatorListener l : listeners) {
+			l.onSendData();
+		}
+
 		try {
 			Simulator.barrier.await();
 		}
@@ -39,7 +45,6 @@ public class HalfDuplexMediator extends Mediator {
 			e.printStackTrace();
 		}
 
-		IResponse ret = null;
 		if (c == this.sender) {
 			ret = this.receiver.notifyMessage(this, data);
 		}

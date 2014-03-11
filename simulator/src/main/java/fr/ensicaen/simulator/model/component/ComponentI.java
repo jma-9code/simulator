@@ -21,6 +21,10 @@ public class ComponentI extends Component implements IInput {
 		super(_name);
 	}
 
+	public ComponentI(String _name, int type) {
+		super(_name, type);
+	}
+
 	@Override
 	public VoidResponse notifyMessage(Mediator m, String data) {
 		// Guardian.getInstance().addMemento(this, saveState());

@@ -195,6 +195,7 @@ public class SimulatorTest {
 		// running simulation
 		Simulator simulator = SimulatorFactory.getSimulator();
 		simulator.start();
+		Simulator.resume();
 
 		Assert.assertEquals(ctx.currentCounter(), contextIndex + 4);
 	}

@@ -3,10 +3,14 @@
  */
 package fr.ensicaen.simulator.model.mediator;
 
+import java.util.concurrent.BrokenBarrierException;
+
 import fr.ensicaen.simulator.model.component.IInput;
 import fr.ensicaen.simulator.model.component.IOutput;
 import fr.ensicaen.simulator.model.factory.MediatorFactory.EMediator;
+import fr.ensicaen.simulator.model.mediator.listener.MediatorListener;
 import fr.ensicaen.simulator.model.response.IResponse;
+import fr.ensicaen.simulator.simulator.Simulator;
 
 /**
  * Médiateur de transfert.
@@ -34,7 +38,7 @@ public class ForwardMediator extends Mediator {
 	private Mediator origin;
 
 	public ForwardMediator() {
-
+		super(null, null);
 	}
 
 	public ForwardMediator(Mediator origin, IInput forward) {
@@ -50,14 +54,28 @@ public class ForwardMediator extends Mediator {
 	 */
 	@Override
 	public IResponse send(IOutput s, String data) {
-		if (s == this.sender || s == getRouter(this.origin)) {
-			return this.receiver.notifyMessage(this, data);
-		}
-		else if (getOriginType() == EMediator.HALFDUPLEX) {
-			return ((IInput) this.sender).notifyMessage(this, data);
+		IResponse ret = null;
+		for (MediatorListener l : listeners) {
+			l.onSendData();
 		}
 
-		return null;
+		try {
+			Simulator.barrier.await();
+		}
+		catch (BrokenBarrierException | InterruptedException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+
+		if (s == this.sender || s == getRouter(this.origin)) {
+			ret = this.receiver.notifyMessage(this, data);
+		}
+		else if (getOriginType() == EMediator.HALFDUPLEX) {
+			ret = ((IInput) this.sender).notifyMessage(this, data);
+		}
+
+		Simulator.barrier.reset();
+		return ret;
 	}
 
 	/**

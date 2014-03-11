@@ -1,7 +1,9 @@
 package fr.ensicaen.simulator.model.mediator;
 
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 
@@ -16,6 +18,7 @@ import fr.ensicaen.simulator.model.component.IInput;
 import fr.ensicaen.simulator.model.component.IOutput;
 import fr.ensicaen.simulator.model.dao.jaxbadapter.InputAdapter;
 import fr.ensicaen.simulator.model.dao.jaxbadapter.OutputAdapter;
+import fr.ensicaen.simulator.model.mediator.listener.MediatorListener;
 import fr.ensicaen.simulator.model.response.IResponse;
 
 @XmlSeeAlso({ SimplexMediator.class, ReverseHalfDuplexMediator.class, ForwardMediator.class, PipedMediator.class,
@@ -35,14 +38,22 @@ public abstract class Mediator implements Serializable {
 
 	private Map<String, String> properties = null;
 
-	public Mediator() {
-	}
+	protected transient List<MediatorListener> listeners = new ArrayList<>();
 
 	public Mediator(IOutput _sender, IInput _receiver) {
 		this.properties = new HashMap<>();
 		this.sender = _sender;
 		this.receiver = _receiver;
 		this.uuid = "m-" + UUID.randomUUID().toString();
+	}
+
+	/**
+	 * Ajouter un listener au mediator
+	 * 
+	 * @param list
+	 */
+	public void addListener(MediatorListener list) {
+		listeners.add(list);
 	}
 
 	/**

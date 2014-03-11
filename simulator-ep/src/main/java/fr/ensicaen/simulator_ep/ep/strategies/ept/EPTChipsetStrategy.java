@@ -17,7 +17,7 @@ import fr.ensicaen.simulator.model.response.VoidResponse;
 import fr.ensicaen.simulator.model.strategies.IStrategy;
 import fr.ensicaen.simulator.simulator.Context;
 import fr.ensicaen.simulator.simulator.exception.ContextException;
-import fr.ensicaen.simulator_ep.utils.CommonNames;
+import fr.ensicaen.simulator_ep.utils.ComponentEP;
 import fr.ensicaen.simulator_ep.utils.ISO7816Exception;
 import fr.ensicaen.simulator_ep.utils.ISO7816Tools;
 import fr.ensicaen.simulator_ep.utils.ISO7816Tools.MessageType;
@@ -49,7 +49,7 @@ public class EPTChipsetStrategy implements IStrategy<ComponentIO> {
 				// get the card linked
 				try {
 					msg = prepareSecureChannelRQ(_this);
-					Mediator m = Context.getInstance().getFirstMediator(_this, CommonNames.CARD);
+					Mediator m = Context.getInstance().getFirstMediator(_this, ComponentEP.CARD.ordinal());
 					DataResponse res = (DataResponse) m.send(_this, new String(msg.pack()));
 					ISOMsg sdata = ISO7816Tools.read(res.getData());
 
@@ -61,7 +61,8 @@ public class EPTChipsetStrategy implements IStrategy<ComponentIO> {
 					// auth request to bank (TPE -> Bank and bank -> TPE)
 					boolean fo_connection = false;
 					try {
-						Mediator mediateurFrontOffice = Context.getInstance().getFirstMediator(_this, CommonNames.FO);
+						Mediator mediateurFrontOffice = Context.getInstance().getFirstMediator(_this,
+								ComponentEP.FRONT_OFFICE.ordinal());
 						msg = generateAuthorizationRequest(_this, sdata);
 						res = (DataResponse) mediateurFrontOffice.send(_this, new String(msg.pack()));
 						sdata = ISO8583Tools.read(res.getData());

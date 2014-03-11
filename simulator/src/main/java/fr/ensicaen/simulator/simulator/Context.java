@@ -157,6 +157,22 @@ public class Context {
 	}
 
 	/**
+	 * Retourne la liste des composants du context ayant le type specifie
+	 * 
+	 * @param type
+	 * @return
+	 */
+	public List<Component> getComponentsType(int type) {
+		List<Component> comps = new ArrayList<>();
+		for (Component c : components.values()) {
+			if (c.getType() == type) {
+				comps.add(c);
+			}
+		}
+		return comps;
+	}
+
+	/**
 	 * Called by mediator factory to register all mediators in the context.
 	 * 
 	 * @param mediator
@@ -218,10 +234,10 @@ public class Context {
 	 * @param whoAreYou
 	 *            Reference of caller component
 	 * @param whoWantYou
-	 *            Name of wanted component
+	 *            Type of wanted component
 	 * @return Reference of mediator to use.
 	 */
-	public Mediator getFirstMediator(IOutput whoAreYou, String whoWantYou) throws ContextException {
+	public Mediator getFirstMediator(IOutput whoAreYou, int whoWantYou) throws ContextException {
 		List<Mediator> matches = getMediators(whoAreYou, whoWantYou);
 		return matches != null && !matches.isEmpty() ? matches.get(0) : null;
 	}
@@ -233,7 +249,7 @@ public class Context {
 	 * @param whoAreYou
 	 *            Reference of caller component
 	 * @param whoWantYou
-	 *            Name of wanted component
+	 *            type of wanted component
 	 * @param key
 	 *            Key of property to check
 	 * @param value
@@ -241,7 +257,7 @@ public class Context {
 	 * @return Reference of mediator to use.
 	 * @throws ContextException
 	 */
-	public Mediator getFirstMediator(IOutput whoAreYou, String whoWantYou, String key, String value)
+	public Mediator getFirstMediator(IOutput whoAreYou, int whoWantYou, String key, String value)
 			throws ContextException {
 		List<Mediator> mediators = getMediators(whoAreYou, whoWantYou);
 
@@ -268,10 +284,10 @@ public class Context {
 	 * @param whoAreYou
 	 *            Reference of caller component
 	 * @param whoWantYou
-	 *            Name of wanted component
+	 *            type of wanted component
 	 * @return List of mediators with potential multiple components
 	 */
-	public List<Mediator> getMediators(IOutput whoAreYou, String whoWantYou) throws ContextException {
+	public List<Mediator> getMediators(IOutput whoAreYou, int whoWantYou) throws ContextException {
 		List<Mediator> matches = new LinkedList<>();
 		List<Component> comps = new ArrayList<Component>(components.values());
 		Component whoWantYou_c = components.get(whoWantYou);
@@ -279,7 +295,7 @@ public class Context {
 		Iterator<Mediator> iMediators = mediators.iterator();
 		while (iMediators.hasNext()) {
 			Mediator cur = iMediators.next();
-			if (cur.getReceiver().getName().equalsIgnoreCase(whoWantYou)) {
+			if (cur.getReceiver().getType() == (whoWantYou)) {
 				// direct
 				if (whoAreYou.equals(cur.getSender())
 						&& (cur instanceof SimplexMediator || cur instanceof HalfDuplexMediator)) {
@@ -295,7 +311,7 @@ public class Context {
 				}
 
 			}
-			else if (cur.getSender().getName().equalsIgnoreCase(whoWantYou)) {
+			else if (cur.getSender().getType() == (whoWantYou)) {
 				// direct
 				if (whoAreYou.equals(cur.getReceiver()) && cur instanceof HalfDuplexMediator) {
 					matches.add(cur);

@@ -54,6 +54,11 @@ public abstract class Component implements Serializable {
 	protected String name;
 
 	/**
+	 * Type du composant
+	 */
+	protected int type;
+
+	/**
 	 * Propriétés du composant
 	 */
 	protected PropertiesPlus properties = new PropertiesPlus();
@@ -82,6 +87,11 @@ public abstract class Component implements Serializable {
 		Context.getInstance().registerComponent(this, true);
 	}
 
+	public Component(String _name, int _type) {
+		this(_name);
+		type = _type;
+	}
+
 	/**
 	 * Renvoi le composant enfant correspondant au nom donné.
 	 * 
@@ -94,7 +104,7 @@ public abstract class Component implements Serializable {
 
 		if (name != null) {
 			for (Component child : this.childs) {
-				log.debug("Search child " + name + ", current " + child.getName());
+				log.debug("Search child " + name + ", current " + child.getType());
 				if ((name.equalsIgnoreCase(child.getName()) || name.equalsIgnoreCase(child.getAcronym()))
 						&& child.getClass() == type) {
 					return (T) child;
@@ -153,6 +163,23 @@ public abstract class Component implements Serializable {
 			}
 		}
 		return ret;
+	}
+
+	/**
+	 * Recupere le "fils" du composant "pere" ayant un type preci.
+	 * 
+	 * @param parent
+	 * @param type
+	 * @return null si pas trouve
+	 */
+	public static Component getFirstChildType(Component parent, int type) {
+		List<Component> comps = Component.organizeComponents(Arrays.asList(parent));
+		for (Component c : comps) {
+			if (type == c.getType()) {
+				return c;
+			}
+		}
+		return null;
 	}
 
 	/**
@@ -218,7 +245,7 @@ public abstract class Component implements Serializable {
 	}
 
 	public String getName() {
-		return this.name;
+		return name;
 	}
 
 	public void setName(String name) {
@@ -256,7 +283,7 @@ public abstract class Component implements Serializable {
 		StringBuilder sb = new StringBuilder();
 		sb.append("\t\n" + this.name + " - " + this.properties);
 		for (Component c : this.childs) {
-			sb.append("\t\n" + c.getName() + " - ");
+			sb.append("\t\n" + c.getType() + " - ");
 			sb.append(c.getProperties());
 		}
 		return sb.toString();
@@ -392,5 +419,13 @@ public abstract class Component implements Serializable {
 		else if (!uuid.equals(other.uuid))
 			return false;
 		return true;
+	}
+
+	public int getType() {
+		return type;
+	}
+
+	public void setType(int type) {
+		this.type = type;
 	}
 }

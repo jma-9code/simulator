@@ -21,10 +21,12 @@ import fr.ensicaen.simulator.model.response.IResponse;
 import fr.ensicaen.simulator.model.response.VoidResponse;
 import fr.ensicaen.simulator.model.strategies.IStrategy;
 import fr.ensicaen.simulator.simulator.Context;
+import fr.ensicaen.simulator.simulator.Simulator;
 import fr.ensicaen.simulator.simulator.SimulatorFactory;
 import fr.ensicaen.simulator.simulator.exception.SimulatorException;
 import fr.ensicaen.simulator_ep.ep.strategies.card.CardChipStrategy;
 import fr.ensicaen.simulator_ep.ep.strategies.card.CardStrategy;
+import fr.ensicaen.simulator_ep.utils.ComponentEP;
 import fr.ensicaen.simulator_ep.utils.ISO7816Tools;
 import fr.ensicaen.simulator_ep.utils.ISO7816Tools.MessageType;
 
@@ -47,7 +49,7 @@ public class CardTest {
 	@Before
 	public void init() throws Exception {
 		Context.getInstance().autoRegistrationMode();
-		card = new ComponentIO("cb");
+		card = new ComponentIO("cb", ComponentEP.CARD.ordinal());
 		card.getProperties().put("pan", "4976710025642130");
 		card.getProperties().put("icvv", "000");
 		card.getProperties().put("type", "M");
@@ -68,7 +70,7 @@ public class CardTest {
 		card.addChild(magstrippe);
 		card.addChild(chip);
 
-		ept = new ComponentIO("ept");
+		ept = new ComponentIO("ept", ComponentEP.ELETRONIC_TERMINAL_PAYMENT.ordinal());
 
 		card.setStrategy(new CardStrategy());
 		chip.setStrategy(new CardChipStrategy());
@@ -189,6 +191,7 @@ public class CardTest {
 
 		// execute simulation.
 		try {
+			Simulator.resume();
 			SimulatorFactory.getSimulator().start();
 		}
 		catch (SimulatorException e) {

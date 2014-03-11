@@ -23,11 +23,13 @@ import fr.ensicaen.simulator.model.response.IResponse;
 import fr.ensicaen.simulator.model.response.VoidResponse;
 import fr.ensicaen.simulator.model.strategies.IStrategy;
 import fr.ensicaen.simulator.simulator.Context;
+import fr.ensicaen.simulator.simulator.Simulator;
 import fr.ensicaen.simulator.simulator.SimulatorFactory;
 import fr.ensicaen.simulator.simulator.exception.SimulatorException;
 import fr.ensicaen.simulator.tools.TestPass;
 import fr.ensicaen.simulator_ep.ep.strategies.network.GenericNetworkStrategy;
 import fr.ensicaen.simulator_ep.ep.strategies.network.GenericRouterStrategy;
+import fr.ensicaen.simulator_ep.utils.ComponentEP;
 import fr.ensicaen.simulator_ep.utils.ISO7816Tools;
 
 public class GenericRouterUnitTest {
@@ -61,16 +63,16 @@ public class GenericRouterUnitTest {
 
 		testLauncher = new ComponentIO("Test Launcher");
 
-		router = new ComponentIO("Router");
+		router = new ComponentIO("Router", ComponentEP.ROUTER.ordinal());
 		router.setStrategy(new GenericRouterStrategy());
 
-		eRSBNetwork = new ComponentIO("Network");
+		eRSBNetwork = new ComponentIO("Network", ComponentEP.NETWORK.ordinal());
 		eRSBNetwork.getProperties().put(GenericNetworkStrategy.CKEY_NAME, "e-RSB");
 
-		visaNetNetwork = new ComponentIO("Network");
+		visaNetNetwork = new ComponentIO("Network", ComponentEP.NETWORK.ordinal());
 		visaNetNetwork.getProperties().put(GenericNetworkStrategy.CKEY_NAME, "VisaNet");
 
-		bankNetNetwork = new ComponentIO("Network");
+		bankNetNetwork = new ComponentIO("Network", ComponentEP.NETWORK.ordinal());
 		bankNetNetwork.getProperties().put(GenericNetworkStrategy.CKEY_NAME, "BankNet");
 
 		m_test_router = MediatorFactory.getInstance().getMediator(testLauncher, router, EMediator.HALFDUPLEX);
@@ -145,7 +147,7 @@ public class GenericRouterUnitTest {
 
 				// send to network
 				try {
-					Mediator m = Context.getInstance().getFirstMediator(_this, "Router");
+					Mediator m = Context.getInstance().getFirstMediator(_this, ComponentEP.ROUTER.ordinal());
 					m.send(_this, new String(authorizationRequest.pack()));
 				}
 				catch (Exception e) {
@@ -164,6 +166,7 @@ public class GenericRouterUnitTest {
 
 		// execute simulation.
 		try {
+			Simulator.resume();
 			SimulatorFactory.getSimulator().start();
 		}
 		catch (SimulatorException e) {
@@ -234,7 +237,7 @@ public class GenericRouterUnitTest {
 
 				// send to network
 				try {
-					Mediator m = Context.getInstance().getFirstMediator(_this, "Router");
+					Mediator m = Context.getInstance().getFirstMediator(_this, ComponentEP.ROUTER.ordinal());
 					DataResponse res = (DataResponse) m.send(_this, new String(authorizationRequest.pack()));
 				}
 				catch (Exception e) {
@@ -253,6 +256,7 @@ public class GenericRouterUnitTest {
 
 		// execute simulation.
 		try {
+			Simulator.resume();
 			SimulatorFactory.getSimulator().start();
 		}
 		catch (SimulatorException e) {
@@ -324,7 +328,7 @@ public class GenericRouterUnitTest {
 
 				// send to network
 				try {
-					Mediator m = Context.getInstance().getFirstMediator(_this, "Router");
+					Mediator m = Context.getInstance().getFirstMediator(_this, ComponentEP.ROUTER.ordinal());
 					DataResponse res = (DataResponse) m.send(_this, new String(authorizationRequest.pack()));
 				}
 				catch (Exception e) {
@@ -344,6 +348,7 @@ public class GenericRouterUnitTest {
 		// execute simulation.
 		try {
 			SimulatorFactory.getSimulator().start();
+			Simulator.resume();
 		}
 		catch (SimulatorException e) {
 			e.printStackTrace();

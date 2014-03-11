@@ -11,6 +11,7 @@ import fr.ensicaen.simulator.model.strategies.IStrategy;
 import fr.ensicaen.simulator.simulator.Context;
 import fr.ensicaen.simulator.simulator.exception.ContextException;
 import fr.ensicaen.simulator_ep.ep.strategies.fo.FOStrategy;
+import fr.ensicaen.simulator_ep.utils.ComponentEP;
 
 public class FOAcquirerAuthorizationStrategy implements IStrategy<ComponentIO> {
 
@@ -29,7 +30,8 @@ public class FOAcquirerAuthorizationStrategy implements IStrategy<ComponentIO> {
 	public IResponse processMessage(ComponentIO FOAcquirerAuthorization, Mediator m, String data) {
 
 		try {
-			Mediator mediateurAUtiliser = Context.getInstance().getFirstMediator(FOAcquirerAuthorization, "Router");
+			Mediator mediateurAUtiliser = Context.getInstance().getFirstMediator(FOAcquirerAuthorization,
+					ComponentEP.ROUTER.ordinal());
 			return mediateurAUtiliser.send(FOAcquirerAuthorization, data);
 		}
 		catch (ContextException e) {

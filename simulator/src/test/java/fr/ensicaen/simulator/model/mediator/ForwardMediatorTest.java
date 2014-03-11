@@ -9,12 +9,11 @@ import fr.ensicaen.simulator.model.component.IInput;
 import fr.ensicaen.simulator.model.component.IOutput;
 import fr.ensicaen.simulator.model.factory.MediatorFactory;
 import fr.ensicaen.simulator.model.factory.MediatorFactory.EMediator;
-import fr.ensicaen.simulator.model.mediator.ForwardMediator;
-import fr.ensicaen.simulator.model.mediator.Mediator;
 import fr.ensicaen.simulator.model.response.IResponse;
 import fr.ensicaen.simulator.model.response.VoidResponse;
 import fr.ensicaen.simulator.model.strategies.IStrategy;
 import fr.ensicaen.simulator.simulator.Context;
+import fr.ensicaen.simulator.simulator.Simulator;
 
 public class ForwardMediatorTest {
 
@@ -78,7 +77,7 @@ public class ForwardMediatorTest {
 
 			@Override
 			public IResponse processMessage(Component _this, Mediator mediator, String data) {
-				System.out.println("PROCESS " + _this.getName());
+				System.out.println("PROCESS " + _this.getType());
 				System.out.println("data = " + data);
 				if (mediator == null) {
 					Mediator m = MediatorFactory.getInstance().getMediator(_this, c2, EMediator.HALFDUPLEX);
@@ -108,7 +107,7 @@ public class ForwardMediatorTest {
 
 			@Override
 			public IResponse processMessage(Component _this, Mediator mediator, String data) {
-				System.out.println("PROCESS " + _this.getName());
+				System.out.println("PROCESS " + _this.getType());
 				System.out.println("data = " + data);
 				Mediator m = new ForwardMediator(mediator, (IInput) c3);
 				m.send((IOutput) _this, data); // c2 to c3
@@ -131,7 +130,7 @@ public class ForwardMediatorTest {
 
 			@Override
 			public IResponse processMessage(Component _this, Mediator mediator, String data) {
-				System.out.println("PROCESS " + _this.getName());
+				System.out.println("PROCESS " + _this.getType());
 				System.out.println("data = " + data);
 				Mediator m = new ForwardMediator(mediator, (IInput) c4);
 				m.send((IOutput) _this, data); // c3 to c4
@@ -154,7 +153,7 @@ public class ForwardMediatorTest {
 
 			@Override
 			public IResponse processMessage(Component _this, Mediator mediator, String data) {
-				System.out.println("PROCESS " + _this.getName());
+				System.out.println("PROCESS " + _this.getType());
 				System.out.println("data = " + data);
 
 				if (!"ALLER2".equals(data)) {
@@ -170,6 +169,7 @@ public class ForwardMediatorTest {
 			}
 		});
 
+		Simulator.resume();
 		c1.notifyMessage(null, "ALLER1");
 		Assert.assertEquals(cpt.toString(), "5");
 	}

@@ -20,6 +20,10 @@ public class ComponentO extends Component implements IOutput {
 		super(_name);
 	}
 
+	public ComponentO(String _name, int type) {
+		super(_name, type);
+	}
+
 	@Override
 	public void notifyEvent(String event) {
 		this.strategy.processEvent(this, event);

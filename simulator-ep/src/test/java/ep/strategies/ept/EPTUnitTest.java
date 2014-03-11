@@ -21,12 +21,14 @@ import fr.ensicaen.simulator.model.response.IResponse;
 import fr.ensicaen.simulator.model.response.VoidResponse;
 import fr.ensicaen.simulator.model.strategies.IStrategy;
 import fr.ensicaen.simulator.simulator.Context;
+import fr.ensicaen.simulator.simulator.Simulator;
 import fr.ensicaen.simulator.simulator.SimulatorFactory;
 import fr.ensicaen.simulator.simulator.exception.SimulatorException;
 import fr.ensicaen.simulator.tools.TestPass;
 import fr.ensicaen.simulator_ep.ep.strategies.ept.EPTChipsetStrategy;
 import fr.ensicaen.simulator_ep.ep.strategies.ept.EPTSmartCardReaderStrategy;
 import fr.ensicaen.simulator_ep.ep.strategies.ept.EPTStrategy;
+import fr.ensicaen.simulator_ep.utils.ComponentEP;
 import fr.ensicaen.simulator_ep.utils.ISO7816Tools;
 import fr.ensicaen.simulator_ep.utils.ISO7816Tools.MessageType;
 import fr.ensicaen.simulator_ep.utils.ISO8583Exception;
@@ -72,21 +74,21 @@ public class EPTUnitTest {
 
 		Context.getInstance().autoRegistrationMode();
 
-		frontOffice = new ComponentIO("Front Office");
+		frontOffice = new ComponentIO("Front Office", ComponentEP.FRONT_OFFICE.ordinal());
 
-		fakeSmartCard = new ComponentIO("Card");
+		fakeSmartCard = new ComponentIO("Card", ComponentEP.CARD.ordinal());
 
 		/* ******** Définition du TPE ******** BEGIN */
-		ept = new ComponentIO("Electronic Payment Terminal");
+		ept = new ComponentIO("Electronic Payment Terminal", ComponentEP.ELETRONIC_TERMINAL_PAYMENT.ordinal());
 		ept.setStrategy(new EPTStrategy());
 
 		/* Enfant : lecteur de carte */
-		smartCardReader = new ComponentIO("Smart Card Reader");
+		smartCardReader = new ComponentIO("Smart Card Reader", ComponentEP.ETP_SMART_CARD_READER.ordinal());
 		smartCardReader.setStrategy(new EPTSmartCardReaderStrategy());
 		ept.addChild(smartCardReader);
 
 		/* Enfant : chipset */
-		chipset = new ComponentIO("Chipset");
+		chipset = new ComponentIO("Chipset", ComponentEP.ETP_CHIPSET.ordinal());
 		chipset.setStrategy(new EPTChipsetStrategy());
 		chipset.getProperties().put("pos_id", "0000623598");
 		chipset.getProperties().put("acceptor_id", "0000623598");
@@ -306,6 +308,7 @@ public class EPTUnitTest {
 
 		// execute simulation.
 		try {
+			Simulator.resume();
 			SimulatorFactory.getSimulator().start();
 		}
 		catch (SimulatorException e) {

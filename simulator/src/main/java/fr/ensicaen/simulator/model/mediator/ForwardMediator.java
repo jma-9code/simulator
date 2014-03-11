@@ -5,12 +5,16 @@ package fr.ensicaen.simulator.model.mediator;
 
 import java.util.concurrent.BrokenBarrierException;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import fr.ensicaen.simulator.model.component.IInput;
 import fr.ensicaen.simulator.model.component.IOutput;
 import fr.ensicaen.simulator.model.factory.MediatorFactory.EMediator;
 import fr.ensicaen.simulator.model.mediator.listener.MediatorListener;
 import fr.ensicaen.simulator.model.response.IResponse;
 import fr.ensicaen.simulator.simulator.Simulator;
+import fr.ensicaen.simulator.tools.LogUtils;
 
 /**
  * Médiateur de transfert.
@@ -32,6 +36,7 @@ import fr.ensicaen.simulator.simulator.Simulator;
  */
 public class ForwardMediator extends Mediator {
 
+	private static Logger log = LoggerFactory.getLogger(ForwardMediator.class);
 	/**
 	 * Médiateur d'origine re-routé.
 	 */
@@ -66,6 +71,9 @@ public class ForwardMediator extends Mediator {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
+
+		log.info(LogUtils.MARKER_MEDIATOR_MSG,
+				s.getName() + " send " + data + " to " + ((s.equals(sender)) ? receiver.getName() : sender.getName()));
 
 		if (s == this.sender || s == getRouter(this.origin)) {
 			ret = this.receiver.notifyMessage(this, data);

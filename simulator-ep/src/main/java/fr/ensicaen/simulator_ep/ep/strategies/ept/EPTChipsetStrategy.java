@@ -21,6 +21,7 @@ import fr.ensicaen.simulator.model.strategies.IStrategy;
 import fr.ensicaen.simulator.simulator.Context;
 import fr.ensicaen.simulator.simulator.exception.ContextException;
 import fr.ensicaen.simulator_ep.utils.CB2AValues;
+import fr.ensicaen.simulator.tools.LogUtils;
 import fr.ensicaen.simulator_ep.utils.ComponentEP;
 import fr.ensicaen.simulator_ep.utils.ISO7816Exception;
 import fr.ensicaen.simulator_ep.utils.ISO7816Tools;
@@ -54,38 +55,47 @@ public class EPTChipsetStrategy implements IStrategy<ComponentIO> {
 				// setting secure channel with the card
 				// prepare initialization message
 				ISOMsg msg = null;
-
 				// get the card linked
 				try {
+					log.info(LogUtils.MARKER_COMPONENT_INFO, "A card has been inserted in the EPT");
 					msg = prepareSecureChannelRQ(_this);
 					Mediator m = Context.getInstance().getFirstMediator(_this, ComponentEP.CARD.ordinal());
+
+					log.info(LogUtils.MARKER_COMPONENT_INFO, "ETP sends a request for secured channel");
 					DataResponse res = (DataResponse) m.send(_this, new String(msg.pack()));
+					log.info(LogUtils.MARKER_COMPONENT_INFO, "ETP receive the response for secure channel");
 					ISOMsg sdata = ISO7816Tools.read(res.getData());
 
 					// card holder authentication (amount + PIN)
 					msg = prepareCardHolderAuthRQ(_this, sdata);
+					log.info(LogUtils.MARKER_COMPONENT_INFO, "ETP sends a authentification holder request");
 					res = (DataResponse) m.send(_this, new String(msg.pack()));
+					log.info(LogUtils.MARKER_COMPONENT_INFO, "ETP receive the response for authentification holder");
 					sdata = ISO7816Tools.read(res.getData());
 
 					// auth request to bank (TPE -> Bank and bank -> TPE)
 					boolean fo_connection = false;
 					try {
+						log.info(LogUtils.MARKER_COMPONENT_INFO, "ETP try to join the FO, and send an authorization...");
 						Mediator mFrontOffice = Context.getInstance().getFirstMediator(_this,
 								ComponentEP.FRONT_OFFICE.ordinal());
 						msg = generateAuthorizationRequest(_this, sdata);
 						res = (DataResponse) mFrontOffice.send(_this, new String(msg.pack()));
+						log.info(LogUtils.MARKER_COMPONENT_INFO, "ETP receive authorization from the FO");
 						sdata = ISO8583Tools.read(res.getData());
 						fo_connection = !sdata.getValue(39).equals(CB2AValues.Field39.UNREACHABLE_CARD_ISSUER)
 								&& !sdata.getValue(39).equals(CB2AValues.Field39.UNKNOWN_CARD_ISSUER);
 					}
 					catch (ContextException e) {
-						log.warn("Context error, no connection with the FO", e);
+						log.warn(LogUtils.MARKER_COMPONENT_INFO, "ETP has not succeeded to reach the FO", e);
 					}
 
 					// ARPC
 					// no connection with fo ? use previous msg
 					msg = prepareARPC(_this, sdata, fo_connection);
+					log.info(LogUtils.MARKER_COMPONENT_INFO, "ETP send ARPC to the card");
 					res = (DataResponse) m.send(_this, new String(msg.pack()));
+					log.info(LogUtils.MARKER_COMPONENT_INFO, "ETP receive the final agreement");
 					sdata = ISO7816Tools.read(res.getData());
 
 					// final agreement
@@ -112,7 +122,7 @@ public class EPTChipsetStrategy implements IStrategy<ComponentIO> {
 				break;
 
 			default:
-				log.info("Event " + event + " not implemented.");
+				log.warn(LogUtils.MARKER_COMPONENT_INFO, "Event " + event + " not implemented.");
 		}
 	}
 
@@ -164,6 +174,7 @@ public class EPTChipsetStrategy implements IStrategy<ComponentIO> {
 	 * @throws ISOException
 	 */
 	public ISOMsg generateAuthorizationRequest(ComponentIO _this, ISOMsg parsedData) throws ISOException {
+		log.debug(LogUtils.MARKER_COMPONENT_INFO, "ETP sends a request for secured channel");
 		String pan = parsedData.getString(ISO7816Tools.FIELD_PAN);
 		String amount = parsedData.getString(ISO7816Tools.FIELD_AMOUNT);
 		String stan = parsedData.getString(ISO7816Tools.FIELD_STAN);

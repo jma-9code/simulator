@@ -16,6 +16,7 @@ import fr.ensicaen.simulator.model.properties.PropertyDefinition;
 import fr.ensicaen.simulator.model.response.IResponse;
 import fr.ensicaen.simulator.model.strategies.IStrategy;
 import fr.ensicaen.simulator.simulator.Context;
+import fr.ensicaen.simulator.tools.LogUtils;
 import fr.ensicaen.simulator_ep.ep.strategies.fo.FOStrategy;
 import fr.ensicaen.simulator_ep.utils.ComponentEP;
 
@@ -49,6 +50,8 @@ public class FOAcquirerStrategy implements IStrategy<ComponentIO> {
 				(IInput) purchaserAuthorization);
 
 		// forward to the chipset
+		log.debug(LogUtils.MARKER_COMPONENT_INFO,
+				"FO Acquirer module forward the msg to the acquirer authorization module");
 		return m_purchaser_authorization.send(frontOfficeAcquirer, data);
 
 	}

@@ -2,6 +2,9 @@ package fr.ensicaen.simulator.model.mediator;
 
 import java.util.concurrent.BrokenBarrierException;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import fr.ensicaen.simulator.model.component.IInput;
 import fr.ensicaen.simulator.model.component.IInputOutput;
 import fr.ensicaen.simulator.model.component.IOutput;
@@ -9,6 +12,7 @@ import fr.ensicaen.simulator.model.mediator.listener.MediatorListener;
 import fr.ensicaen.simulator.model.response.IResponse;
 import fr.ensicaen.simulator.simulator.Context;
 import fr.ensicaen.simulator.simulator.Simulator;
+import fr.ensicaen.simulator.tools.LogUtils;
 
 /**
  * Permet d'envoyer un message dans un canal multi-directionnel entre deux
@@ -18,6 +22,8 @@ import fr.ensicaen.simulator.simulator.Simulator;
  * 
  */
 public class HalfDuplexMediator extends Mediator {
+
+	private static Logger log = LoggerFactory.getLogger(HalfDuplexMediator.class);
 
 	public HalfDuplexMediator() {
 		super(null, null);
@@ -44,6 +50,9 @@ public class HalfDuplexMediator extends Mediator {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
+
+		log.info(LogUtils.MARKER_MEDIATOR_MSG,
+				c.getName() + "send " + data + " to " + ((c.equals(sender)) ? receiver.getName() : sender.getName()));
 
 		if (c == this.sender) {
 			ret = this.receiver.notifyMessage(this, data);

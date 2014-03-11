@@ -12,6 +12,7 @@ import fr.ensicaen.simulator.model.response.IResponse;
 import fr.ensicaen.simulator.model.response.VoidResponse;
 import fr.ensicaen.simulator.simulator.Context;
 import fr.ensicaen.simulator.simulator.Simulator;
+import fr.ensicaen.simulator.tools.LogUtils;
 
 /**
  * Permet d'envoyer un message dans un seul sens (unidirectionnel) Rq :
@@ -54,6 +55,9 @@ public class SimplexMediator extends Mediator {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
+
+		log.info(LogUtils.MARKER_MEDIATOR_MSG,
+				c.getName() + " send " + data + " to " + ((c.equals(sender)) ? receiver.getName() : sender.getName()));
 
 		IResponse response = this.receiver.notifyMessage(this, data);
 		if (response == null || !(response instanceof VoidResponse)) {

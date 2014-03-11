@@ -16,6 +16,7 @@ import fr.ensicaen.simulator.model.properties.PropertyDefinition;
 import fr.ensicaen.simulator.model.response.IResponse;
 import fr.ensicaen.simulator.model.strategies.IStrategy;
 import fr.ensicaen.simulator.simulator.Context;
+import fr.ensicaen.simulator.tools.LogUtils;
 import fr.ensicaen.simulator_ep.ep.strategies.fo.FOStrategy;
 import fr.ensicaen.simulator_ep.utils.ComponentEP;
 
@@ -48,6 +49,7 @@ public class FOIssuerStrategy implements IStrategy<ComponentIO> {
 				(IInput) issuerAuthorization);
 
 		// forward to the chipset
+		log.debug(LogUtils.MARKER_COMPONENT_INFO, "FO Issuer send the msg to the FO issuer authorization module");
 		return m_issuer_authorization.send(frontOfficeIssuer, data);
 
 	}

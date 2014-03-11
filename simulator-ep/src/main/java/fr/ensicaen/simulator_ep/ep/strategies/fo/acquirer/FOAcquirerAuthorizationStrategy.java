@@ -19,14 +19,13 @@ import fr.ensicaen.simulator.model.strategies.IStrategy;
 import fr.ensicaen.simulator.simulator.Context;
 import fr.ensicaen.simulator.simulator.exception.ContextException;
 import fr.ensicaen.simulator.tools.LogUtils;
-import fr.ensicaen.simulator_ep.ep.strategies.fo.FOStrategy;
 import fr.ensicaen.simulator_ep.utils.ComponentEP;
 import fr.ensicaen.simulator_ep.utils.ISO8583Exception;
 import fr.ensicaen.simulator_ep.utils.ISO8583Tools;
 
 public class FOAcquirerAuthorizationStrategy implements IStrategy<ComponentIO> {
 
-	private static Logger log = LoggerFactory.getLogger(FOStrategy.class);
+	private static Logger log = LoggerFactory.getLogger(FOAcquirerAuthorizationStrategy.class);
 
 	public final static String CKEY_IIN_ON_US = "iin_on_us";
 

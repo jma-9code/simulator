@@ -1,8 +1,10 @@
 package fr.ensicaen.simulator.model.factory;
 
 import java.util.Collection;
+import java.util.HashSet;
 import java.util.Hashtable;
 import java.util.Map;
+import java.util.Set;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -11,6 +13,7 @@ import fr.ensicaen.simulator.model.component.Component;
 import fr.ensicaen.simulator.model.component.IInput;
 import fr.ensicaen.simulator.model.component.IInputOutput;
 import fr.ensicaen.simulator.model.component.IOutput;
+import fr.ensicaen.simulator.model.factory.listener.MediatorFactoryListener;
 import fr.ensicaen.simulator.model.mediator.ChildHalfDuplexMediator;
 import fr.ensicaen.simulator.model.mediator.ChildSimplexMediator;
 import fr.ensicaen.simulator.model.mediator.ForwardMediator;
@@ -30,12 +33,18 @@ public class MediatorFactory {
 
 	private Map<String, Mediator> mediators;
 
+	private Set<MediatorFactoryListener> listeners = new HashSet<>();
+
 	private MediatorFactory() {
 		this.mediators = new Hashtable<String, Mediator>();
 	}
 
 	public Collection<Mediator> getMediators() {
 		return mediators.values();
+	}
+
+	public void addListener(MediatorFactoryListener list) {
+		listeners.add(list);
 	}
 
 	public void reset() {
@@ -46,6 +55,9 @@ public class MediatorFactory {
 		String uid = m.getUuid();
 		if (!this.mediators.containsKey(uid)) {
 			mediators.put(uid, m);
+			for (MediatorFactoryListener l : listeners) {
+				l.addMediator(m);
+			}
 		}
 	}
 
@@ -59,6 +71,9 @@ public class MediatorFactory {
 		String uid = m.getUuid();
 		if (this.mediators.containsKey(uid)) {
 			mediators.remove(uid);
+			for (MediatorFactoryListener l : listeners) {
+				l.removeMediator(m);
+			}
 		}
 	}
 
@@ -93,7 +108,7 @@ public class MediatorFactory {
 					}
 					break;
 			}
-			mediators.put(uid, mediator);
+			add(mediator);
 			return mediator;
 		}
 	}
@@ -128,7 +143,9 @@ public class MediatorFactory {
 			return null;
 		}
 
-		return new ForwardMediator(origin, dst);
+		Mediator m = new ForwardMediator(origin, dst);
+		add(m);
+		return m;
 	}
 
 	/**
@@ -140,7 +157,9 @@ public class MediatorFactory {
 	 * @return
 	 */
 	public Mediator getPipedMediator(Mediator m1, Mediator m2) {
-		return new PipedMediator(m1, m2);
+		Mediator m = new PipedMediator(m1, m2);
+		add(m);
+		return m;
 	}
 
 	private static class MediatorFactoryHolder {

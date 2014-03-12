@@ -1,6 +1,6 @@
 package fr.ensicaen.gui_simulator.gui.bridge;
 
-import java.util.Arrays;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -163,10 +163,22 @@ public class SimulatorGUIBridge {
 		return recursiveFindVertex(wanted, graph, graph.getDefaultParent());
 	}
 
-	public static List<mxCell> getAllCell(mxGraph graph) {
-		List<mxCell> cells = Arrays.asList((mxCell[]) graph
-				.getChildVertices(graph.getDefaultParent()));
-		return cells;
+	public static List<mxCell> findAllComponentCell(mxGraph graph) {
+		return recursiveComponentCell(graph, graph.getDefaultParent());
+	}
+
+	private static List<mxCell> recursiveComponentCell(mxGraph graph,
+			Object parent) {
+		List<mxCell> ret = new ArrayList<>();
+		Object[] cells = graph.getChildCells(parent, true, false);
+
+		for (Object obj : cells) {
+			mxCell cell = (mxCell) obj;
+			ret.addAll(recursiveComponentCell(graph, cell));
+			ret.add(cell);
+		}
+
+		return ret;
 	}
 
 	private static mxCell recursiveFindVertex(Component wanted, mxGraph graph,

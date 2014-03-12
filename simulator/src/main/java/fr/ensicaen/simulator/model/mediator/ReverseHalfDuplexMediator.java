@@ -14,7 +14,7 @@ public class ReverseHalfDuplexMediator extends HalfDuplexMediator {
 	}
 
 	public ReverseHalfDuplexMediator(HalfDuplexMediator mediator) {
-		super((IInputOutput) mediator.getSender(), (IInputOutput) mediator.getReceiver());
+		super((IInputOutput) mediator.getReceiver(), (IInputOutput) mediator.getSender());
 	}
 
 	@Override

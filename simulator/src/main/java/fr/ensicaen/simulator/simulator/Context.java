@@ -18,8 +18,10 @@ import fr.ensicaen.simulator.model.component.Component;
 import fr.ensicaen.simulator.model.component.IOutput;
 import fr.ensicaen.simulator.model.dao.ScenarioData;
 import fr.ensicaen.simulator.model.factory.MediatorFactory;
+import fr.ensicaen.simulator.model.mediator.ForwardMediator;
 import fr.ensicaen.simulator.model.mediator.HalfDuplexMediator;
 import fr.ensicaen.simulator.model.mediator.Mediator;
+import fr.ensicaen.simulator.model.mediator.PipedMediator;
 import fr.ensicaen.simulator.model.mediator.ReverseHalfDuplexMediator;
 import fr.ensicaen.simulator.model.mediator.SimplexMediator;
 import fr.ensicaen.simulator.model.properties.listener.DefaultPropertyListenerImpl;
@@ -297,6 +299,10 @@ public class Context implements SimulatorListener {
 		Iterator<Mediator> iMediators = MediatorFactory.getInstance().getMediators().iterator();
 		while (iMediators.hasNext()) {
 			Mediator cur = iMediators.next();
+			if (cur instanceof ForwardMediator || cur instanceof ReverseHalfDuplexMediator
+					|| cur instanceof PipedMediator) {
+				continue;
+			}
 			if (cur.getSender().equals(c) || cur.getReceiver().equals(c)) {
 				ret.add(cur);
 			}

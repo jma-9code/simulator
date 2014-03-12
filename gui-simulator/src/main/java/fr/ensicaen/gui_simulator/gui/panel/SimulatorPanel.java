@@ -27,6 +27,9 @@ import com.mxgraph.util.mxResources;
 import fr.ensicaen.gui_simulator.gui.bridge.StartPointJTableBridge;
 import fr.ensicaen.gui_simulator.gui.editor.DateTimeCellEditor;
 import fr.ensicaen.gui_simulator.gui.renderer.DateTimeCellRenderer;
+import fr.ensicaen.simulator.model.component.IOutput;
+import fr.ensicaen.simulator.model.mediator.Mediator;
+import fr.ensicaen.simulator.model.mediator.listener.MediatorListener;
 import fr.ensicaen.simulator.simulator.AsyncSimulator;
 import fr.ensicaen.simulator.simulator.Context;
 import fr.ensicaen.simulator.simulator.Simulator;
@@ -35,7 +38,7 @@ import fr.ensicaen.simulator.simulator.exception.SimulatorException;
 import fr.ensicaen.simulator.simulator.listener.SimulatorListener;
 
 public class SimulatorPanel extends JTabbedPane implements
-		ListSelectionListener, SimulatorListener {
+		ListSelectionListener, SimulatorListener, MediatorListener {
 
 	private JTable startPointTable;
 	private StartPointJTableBridge startPointModelTable;
@@ -43,6 +46,10 @@ public class SimulatorPanel extends JTabbedPane implements
 	private JButton btnLaunch = new JButton("Launch");
 	private JButton btnOneStep = new JButton("One Step");
 	private AsyncSimulator sim = SimulatorFactory.getAsyncSimulator();
+	private SimulatorPanel himself = null;
+	private BasicGraphEditor bge_frame = null;
+
+	private List<MediatorListener> mediatorListeners = new ArrayList<>();
 
 	public SimulatorPanel(BasicGraphEditor frame) {
 		// tab
@@ -52,6 +59,8 @@ public class SimulatorPanel extends JTabbedPane implements
 				initTab_simulatorPanel()));
 		// ajout du listener sur la simulation
 		sim.addListener(this);
+		bge_frame = frame;
+		himself = this;
 	}
 
 	private JPanel initTab_startPointTable() {
@@ -109,6 +118,13 @@ public class SimulatorPanel extends JTabbedPane implements
 			public void actionPerformed(ActionEvent e) {
 				if (btnLaunch.getText().equalsIgnoreCase("launch")) {
 					try {
+						// suppression des mediators
+						mediatorListeners.clear();
+						// ajout des nvx listenrs
+						for (Mediator m : Context.getInstance().getMediators()) {
+							m.addListener(himself);
+						}
+
 						sim.start();
 					} catch (SimulatorException e1) {
 						e1.printStackTrace();
@@ -218,4 +234,27 @@ public class SimulatorPanel extends JTabbedPane implements
 		btnLaunch.setText("Launch");
 	}
 
+	@Override
+	public void onSendData(IOutput sender, String data) {
+		// mxGraph graph = bge_frame.getGraphComponent().getGraph();
+		// System.out.println(sender.getName() + " " + data);
+		// Cell[] cells = (Cell[]) graph
+		// .getChildVertices(graph.getDefaultParent());
+		// for (Cell c : cells) {
+		// if (c.getValue() instanceof ComponentWrapper) {
+		// ComponentWrapper cw = (ComponentWrapper) c.getValue();
+		// } else if (c.getValue() instanceof MediatorWrapper) {
+		// MediatorWrapper mw = (MediatorWrapper) c.getValue();
+		// if (sender.equals(mw.getMediator())) {
+		// graph.setCellStyle("fillcolor=green", Arrays.asList(c)
+		// .toArray());
+		// bge_frame.getGraphComponent().refresh();
+		// }
+		// }
+		// }
+		// // mxgraph.setCellStyles(mxConstants.STYLE_FILLCOLOR, "green", new
+		// Object[]{vertex});
+		// graphComponent.refresh();
+
+	}
 }

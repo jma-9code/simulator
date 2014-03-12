@@ -296,6 +296,50 @@ public class Context {
 	}
 
 	/**
+	 * retrive the full mediators path for link src and dst (rec)
+	 * 
+	 * @param src
+	 * @param dst
+	 * @return
+	 */
+	private List<Mediator> getMediatorPath(Component src, final Component dst, List<Mediator> explored) {
+		List<Mediator> ret = new LinkedList<>();
+		List<Mediator> src_meds = getAllLinkedMediators(src);
+		// retire les liens explores
+		src_meds.removeAll(explored);
+
+		for (Mediator m : src_meds) {
+			explored.add(m);
+			// src (sender)<--->dst
+			if (!m.getReceiver().equals(src)) {
+				// ret.add(m);
+				if (m.getReceiver().equals(dst)) {
+					// find the dst component
+					return ret;
+				}
+				else {
+					ret.addAll(getMediatorPath((Component) m.getReceiver(), dst, explored));
+				}
+			}
+			// dst (sender)<---->src
+			else {
+				// sender = dst, il faut un half duplex
+				if (m instanceof HalfDuplexMediator) {
+					// ret.add(m);
+					if (m.getReceiver().equals(dst) || m.getSender().equals(dst)) {
+						// find the dst component
+						return ret;
+					}
+					else {
+						ret.addAll(getMediatorPath((Component) m.getSender(), dst, explored));
+					}
+				}
+			}
+		}
+		return ret;
+	}
+
+	/**
 	 * Returns mediators between the caller component and components with the
 	 * type given.
 	 * 
@@ -316,7 +360,10 @@ public class Context {
 		List<Mediator> whoAreYou_meds = getAllLinkedMediators((Component) whoAreYou);
 
 		// recuperation du composant root de whoAreYou
-		Component root = Component.getRoot((Component) whoAreYou, comps);
+		Component root = Component.getRoot((Component) whoAreYou);
+		if (whoAreYou != root) {
+			Component comp = (Component) whoAreYou;
+		}
 		// recuperation des mediators associes au whoareYou de plus haut niveau
 		List<Mediator> root_meds = getAllLinkedMediators(root);
 
@@ -340,11 +387,14 @@ public class Context {
 			if (m.getReceiver().equals(root)) {
 				tmp = (Component) m.getSender();
 				// recuperation du composant root de tmp
-				Component root_tmp = Component.getRoot(tmp, comps);
+				Component root_tmp = Component.getRoot(tmp);
 
 				tmp = Component.isContainType(root_tmp, typeYouWant);
+
 				// le sender est du type recherche, il faut etre en halfduplex
 				if (tmp != null && m instanceof HalfDuplexMediator) {
+					List<Mediator> media = getMediatorPath((Component) whoAreYou, tmp, new ArrayList<Mediator>());
+
 					matches.add(MediatorFactory.getInstance().getMediator((Component) whoAreYou, tmp,
 							EMediator.HALFDUPLEX));
 				}
@@ -352,11 +402,13 @@ public class Context {
 			else {
 				tmp = (Component) m.getReceiver();
 				// recuperation du composant root de tmp
-				Component root_tmp = Component.getRoot(tmp, comps);
+				Component root_tmp = Component.getRoot(tmp);
 
 				tmp = Component.isContainType(root_tmp, typeYouWant);
+
 				// le receiver est du type recherche
 				if (tmp != null && (m instanceof SimplexMediator || m instanceof HalfDuplexMediator)) {
+					List<Mediator> media = getMediatorPath((Component) whoAreYou, tmp, new ArrayList<Mediator>());
 					matches.add(MediatorFactory.getInstance().getMediator((Component) whoAreYou, tmp,
 							(m instanceof SimplexMediator) ? EMediator.SIMPLEX : EMediator.HALFDUPLEX));
 				}

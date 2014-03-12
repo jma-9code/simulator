@@ -6,7 +6,6 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
 import java.util.StringTokenizer;
@@ -78,6 +77,8 @@ public abstract class Component implements Serializable {
 	@XmlIDREF
 	protected List<Component> childs = new ArrayList<>();
 
+	protected transient Component parent = null;
+
 	public Component() {
 		this.name = "default";
 		this.uuid = UUID.randomUUID().toString();
@@ -136,6 +137,7 @@ public abstract class Component implements Serializable {
 	}
 
 	public void addChild(Component child) {
+		child.parent = this;
 		this.childs.add(child);
 		buildChildMediator(child);
 	}
@@ -194,42 +196,20 @@ public abstract class Component implements Serializable {
 	}
 
 	/**
-	 * Retrieve the parent component
-	 * 
-	 * @param c
-	 * @param components
-	 * @return
-	 */
-	public static Component getParent(Component c, List<Component> components) {
-		List<Component> comps = Component.organizeComponents(components);
-		Iterator<Component> icomp = comps.iterator();
-		while (icomp.hasNext()) {
-			Component cur = icomp.next();
-			if (cur.getChilds().contains(c)) {
-				return cur;
-			}
-		}
-		return null;
-	}
-
-	/**
 	 * Retrieve the root component
 	 * 
 	 * @param c
 	 * @param components
 	 * @return
 	 */
-	public static Component getRoot(Component c, List<Component> components) {
-		// find parent
-		Component cur = getParent(c, components);
+	public static Component getRoot(Component c) {
 		// root find
-		if (cur == null) {
+		if (c.parent == null) {
 			return c;
 		}
 
-		Component ret = getRoot(cur, components);
-
-		return ret;
+		// find parent
+		return getRoot(c.parent);
 	}
 
 	/**
@@ -242,7 +222,7 @@ public abstract class Component implements Serializable {
 		Set<Component> root_comps = new HashSet<>();
 		Component root_comp = null;
 		for (Component c : components) {
-			root_comp = getRoot(c, components);
+			root_comp = getRoot(c);
 			root_comps.add(root_comp);
 		}
 		return root_comps;
@@ -271,25 +251,6 @@ public abstract class Component implements Serializable {
 		}
 
 		return res;
-	}
-
-	/**
-	 * Confirm if the component is a child of the component
-	 * 
-	 * @param c
-	 * @param components
-	 * @return
-	 */
-	public static boolean isChild(Component parent, Component child) {
-		List<Component> comps = Component.organizeComponents(Arrays.asList(parent));
-		Iterator<Component> icomp = comps.iterator();
-		while (icomp.hasNext()) {
-			Component cur = icomp.next();
-			if (cur.equals(child)) {
-				return true;
-			}
-		}
-		return false;
 	}
 
 	public void setChilds(List<Component> components) {
@@ -429,7 +390,8 @@ public abstract class Component implements Serializable {
 			for (Component child : childs) {
 				// build implicit mediator (child/parent)
 				buildChildMediator(child);
-
+				// set the parent pointer
+				child.parent = this;
 				// recursive call
 				child.instanciate();
 			}
@@ -506,4 +468,5 @@ public abstract class Component implements Serializable {
 	public void setType(int type) {
 		this.type = type;
 	}
+
 }

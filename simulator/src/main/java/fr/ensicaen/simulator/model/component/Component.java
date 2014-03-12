@@ -77,7 +77,9 @@ public abstract class Component implements Serializable {
 	@XmlIDREF
 	protected List<Component> childs = new ArrayList<>();
 
-	protected transient Component parent = null;
+	@XmlAttribute
+	@XmlIDREF
+	protected Component parent = null;
 
 	public Component() {
 		this.name = "default";
@@ -150,11 +152,9 @@ public abstract class Component implements Serializable {
 	private void buildChildMediator(Component child) {
 		// auto create and register child mediator
 		Mediator m = MediatorFactory.getInstance().getMediator(this, child);
-		if (m != null) {
-			Context.getInstance().registerMediator(m);
-		}
-		else {
+		if (m == null) {
 			log.error("Child mediator registration failed.");
+			// Context.getInstance().registerMediator(m);
 		}
 	}
 

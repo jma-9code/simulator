@@ -1,6 +1,8 @@
 package fr.ensicaen.simulator.model.factory;
 
+import java.util.Collection;
 import java.util.Hashtable;
+import java.util.Map;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -26,10 +28,38 @@ public class MediatorFactory {
 		SIMPLEX, HALFDUPLEX, HALFDUPLEX_CHILD, SIMPLEX_CHILD;
 	}
 
-	private Hashtable<String, Mediator> mediators;
+	private Map<String, Mediator> mediators;
 
 	private MediatorFactory() {
 		this.mediators = new Hashtable<String, Mediator>();
+	}
+
+	public Collection<Mediator> getMediators() {
+		return mediators.values();
+	}
+
+	public void reset() {
+		mediators.clear();
+	}
+
+	public void add(Mediator m) {
+		String uid = m.getUuid();
+		if (!this.mediators.containsKey(uid)) {
+			mediators.put(uid, m);
+		}
+	}
+
+	public void addAll(Collection<Mediator> ms) {
+		for (Mediator m : ms) {
+			add(m);
+		}
+	}
+
+	public void remove(Mediator m) {
+		String uid = m.getUuid();
+		if (this.mediators.containsKey(uid)) {
+			mediators.remove(uid);
+		}
 	}
 
 	public Mediator getMediator(Component src, Component dst, EMediator channel) {

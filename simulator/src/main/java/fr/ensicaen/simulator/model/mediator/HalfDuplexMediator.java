@@ -40,7 +40,7 @@ public class HalfDuplexMediator extends Mediator {
 	public IResponse send(IOutput c, String data) {
 		IResponse ret = null;
 		for (MediatorListener l : listeners) {
-			l.onSendData(c, data);
+			l.onSendData(this, c, data);
 		}
 
 		try {
@@ -48,11 +48,11 @@ public class HalfDuplexMediator extends Mediator {
 		}
 		catch (BrokenBarrierException | InterruptedException e) {
 			// TODO Auto-generated catch block
-			e.printStackTrace();
+			log.debug(LogUtils.MARKER_MEDIATOR_MSG, "broken barrier for mediator : " + this);
 		}
 
 		log.info(LogUtils.MARKER_MEDIATOR_MSG,
-				c.getName() + "send " + data + " to " + ((c.equals(sender)) ? receiver.getName() : sender.getName()));
+				c.getName() + " send " + data + " to " + ((c.equals(sender)) ? receiver.getName() : sender.getName()));
 
 		if (c == this.sender) {
 			ret = this.receiver.notifyMessage(this, data);

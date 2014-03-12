@@ -1,6 +1,8 @@
 package fr.ensicaen.gui_simulator.gui.bridge;
 
+import java.util.Arrays;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import org.slf4j.Logger;
@@ -19,7 +21,8 @@ public class SimulatorGUIBridge {
 
 	public static final String EVT_RESUME_CTX_SYNC = "resume_ctx_sync";
 	public static final String EVT_PAUSE_CTX_SYNC = "pause_ctx_sync";
-	private static Logger logger = LoggerFactory.getLogger(SimulatorGUIBridge.class);
+	private static Logger logger = LoggerFactory
+			.getLogger(SimulatorGUIBridge.class);
 
 	/**
 	 * Save ui data
@@ -33,7 +36,8 @@ public class SimulatorGUIBridge {
 		return uiData;
 	}
 
-	private static void recursiveExportUiData(Map<String, Object> uiData, mxGraph graph, Object parent) {
+	private static void recursiveExportUiData(Map<String, Object> uiData,
+			mxGraph graph, Object parent) {
 		Object[] cells = graph.getChildCells(parent, true, true);
 
 		for (Object obj : cells) {
@@ -43,16 +47,17 @@ public class SimulatorGUIBridge {
 				ComponentWrapper wrapper = (ComponentWrapper) cell.getValue();
 				wrapper.saveUiComponent(cell);
 				uiData.put(wrapper.getComponent().getUuid(), wrapper);
-				logger.debug("UI Data saved for component " + wrapper.getComponent().getInstanceName());
+				logger.debug("UI Data saved for component "
+						+ wrapper.getComponent().getInstanceName());
 
 				// recursive call
 				recursiveExportUiData(uiData, graph, cell);
-			}
-			else if (cell.getValue() instanceof MediatorWrapper) {
+			} else if (cell.getValue() instanceof MediatorWrapper) {
 				MediatorWrapper wrapper = (MediatorWrapper) cell.getValue();
 				wrapper.saveUiComponent(cell);
 				uiData.put(wrapper.getMediator().getUuid(), wrapper);
-				logger.debug("UI Data saved for mediator " + wrapper.getMediator().getUuid());
+				logger.debug("UI Data saved for mediator "
+						+ wrapper.getMediator().getUuid());
 			}
 
 		}
@@ -100,13 +105,13 @@ public class SimulatorGUIBridge {
 
 		if (wrapper == null) {
 			wrapper = new ComponentWrapper(c);
-		}
-		else {
+		} else {
 			wrapper.init(c);
 		}
 
 		// parent vertex
-		String style = wrapper.isCollapsed() ? wrapper.getCollapsedStyle() : wrapper.getExpandedStyle();
+		String style = wrapper.isCollapsed() ? wrapper.getCollapsedStyle()
+				: wrapper.getExpandedStyle();
 		mxCell cell = new mxCell(wrapper, wrapper.getMxGeometry(), style);
 		cell.setValue(wrapper);
 		cell.setVertex(true);
@@ -127,7 +132,8 @@ public class SimulatorGUIBridge {
 
 	}
 
-	public static mxCell createEdge(Mediator m, Map<String, Object> uiData, mxGraph graph) {
+	public static mxCell createEdge(Mediator m, Map<String, Object> uiData,
+			mxGraph graph) {
 		// ui wrapper
 		MediatorWrapper wrapper = null;
 
@@ -137,13 +143,13 @@ public class SimulatorGUIBridge {
 
 		if (wrapper == null) {
 			wrapper = new MediatorWrapper(m);
-		}
-		else {
+		} else {
 			wrapper.init(m);
 		}
 
 		// parent vertex
-		mxCell cell = new mxCell(wrapper, wrapper.getMxGeometry(), wrapper.getStyle());
+		mxCell cell = new mxCell(wrapper, wrapper.getMxGeometry(),
+				wrapper.getStyle());
 		// cell.setSource();
 		// cell.setTarget();
 		cell.setValue(wrapper);
@@ -157,7 +163,14 @@ public class SimulatorGUIBridge {
 		return recursiveFindVertex(wanted, graph, graph.getDefaultParent());
 	}
 
-	private static mxCell recursiveFindVertex(Component wanted, mxGraph graph, Object parent) {
+	public static List<mxCell> getAllCell(mxGraph graph) {
+		List<mxCell> cells = Arrays.asList((mxCell[]) graph
+				.getChildVertices(graph.getDefaultParent()));
+		return cells;
+	}
+
+	private static mxCell recursiveFindVertex(Component wanted, mxGraph graph,
+			Object parent) {
 		Object[] cells = graph.getChildCells(parent, true, false);
 
 		for (Object obj : cells) {
@@ -173,6 +186,37 @@ public class SimulatorGUIBridge {
 
 			// recursive call
 			mxCell found = recursiveFindVertex(wanted, graph, cell);
+
+			if (found != null) {
+				return found;
+			}
+		}
+
+		return null;
+	}
+
+	public static mxCell findEdge(Mediator wanted, mxGraph graph) {
+		logger.debug("find edge with mediator " + wanted);
+		return recursiveFindEdge(wanted, graph, graph.getDefaultParent());
+	}
+
+	private static mxCell recursiveFindEdge(Mediator wanted, mxGraph graph,
+			Object parent) {
+		Object[] cells = graph.getChildCells(parent, true, false);
+
+		for (Object obj : cells) {
+			mxCell cell = (mxCell) obj;
+			if (cell.getValue() instanceof MediatorWrapper) {
+				MediatorWrapper wrapper = (MediatorWrapper) cell.getValue();
+
+				// instance equality
+				if (wrapper.getMediator().equals(wanted)) {
+					return cell;
+				}
+			}
+
+			// recursive call
+			mxCell found = recursiveFindEdge(wanted, graph, cell);
 
 			if (found != null) {
 				return found;

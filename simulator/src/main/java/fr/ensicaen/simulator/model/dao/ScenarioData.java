@@ -54,7 +54,7 @@ public class ScenarioData implements Serializable {
 
 	@XmlElement
 	@XmlElementWrapper
-	private List<Mediator> mediators = null;
+	private Collection<Mediator> mediators = null;
 
 	@XmlElement
 	@XmlElementWrapper
@@ -136,7 +136,7 @@ public class ScenarioData implements Serializable {
 		}
 	}
 
-	public List<Mediator> getMediators() {
+	public Collection<Mediator> getMediators() {
 		return mediators;
 	}
 

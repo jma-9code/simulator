@@ -34,15 +34,14 @@ public class PipedMediator extends Mediator {
 	public IResponse send(IOutput c, String data) {
 		IResponse ret = null;
 		for (MediatorListener l : listeners) {
-			l.onSendData(c, data);
+			l.onSendData(this, c, data);
 		}
 
 		try {
 			Simulator.barrier.await();
 		}
 		catch (BrokenBarrierException | InterruptedException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			log.debug(LogUtils.MARKER_MEDIATOR_MSG, "broken barrier for mediator : " + this);
 		}
 
 		log.info(LogUtils.MARKER_MEDIATOR_MSG,

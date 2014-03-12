@@ -1,8 +1,8 @@
 package fr.ensicaen.simulator.model.mediator;
 
 import java.io.Serializable;
-import java.util.ArrayList;
-import java.util.List;
+import java.util.HashSet;
+import java.util.Set;
 import java.util.UUID;
 
 import javax.xml.bind.annotation.XmlAccessType;
@@ -42,7 +42,7 @@ public abstract class Mediator implements Serializable {
 
 	protected PropertiesPlus properties;
 
-	protected transient List<MediatorListener> listeners = new ArrayList<>();
+	protected transient Set<MediatorListener> listeners = new HashSet<>();
 
 	public Mediator(IOutput _sender, IInput _receiver) {
 		this.properties = new PropertiesPlus();

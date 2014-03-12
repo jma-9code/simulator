@@ -74,6 +74,10 @@ public class ComponentWrapper implements Serializable {
 		return "group;whiteSpace=wrap";
 	}
 
+	public String getSenderStyle() {
+		return "group;whiteSpace=wrap;fillcolor=red";
+	}
+
 	public Component getComponent() {
 		return component;
 	}

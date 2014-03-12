@@ -63,7 +63,7 @@ public class SimulatorPanel extends JTabbedPane implements
 		// ctx.addStartPoint(new Date(), "COUCOU");
 		// ctx.addStartPoint(new Date(System.currentTimeMillis() + 3600 * 24 *
 		// 5), "LOL");
-		startPointModelTable = new StartPointJTableBridge(ctx.getStartPoints());
+		startPointModelTable = new StartPointJTableBridge(ctx.getUserStartPoints());
 
 		// view
 		startPointTable = new JTable(startPointModelTable);

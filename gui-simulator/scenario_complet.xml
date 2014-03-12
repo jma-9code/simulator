@@ -32,17 +32,17 @@
                 <type>3</type>
                 <properties>
                     <entry>
-                        <key>icvv</key>
-                        <value xsi:type="property">
-                            <required>false</required>
-                            <value>000</value>
-                        </value>
-                    </entry>
-                    <entry>
                         <key>date expiration</key>
                         <value xsi:type="property">
                             <required>false</required>
                             <value>09/15</value>
+                        </value>
+                    </entry>
+                    <entry>
+                        <key>icvv</key>
+                        <value xsi:type="property">
+                            <required>false</required>
+                            <value>000</value>
                         </value>
                     </entry>
                     <entry>
@@ -271,14 +271,6 @@
             </value>
         </entry>
         <entry>
-            <key>c-abf4e658-eaba-49b3-abb7-f25b51318cae</key>
-            <value xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:type="componentIO" uuid="c-abf4e658-eaba-49b3-abb7-f25b51318cae">
-                <name>controlesCarte</name>
-                <type>0</type>
-                <properties/>
-            </value>
-        </entry>
-        <entry>
             <key>c-1e2e6d9f-260d-4ca8-a886-9bc5a0f7bc49</key>
             <value xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:type="componentIO" uuid="c-1e2e6d9f-260d-4ca8-a886-9bc5a0f7bc49">
                 <name>FO Issuer</name>
@@ -286,6 +278,14 @@
                 <properties/>
                 <childs>c-af09b4b7-53eb-4000-96c0-838ea2929486</childs>
                 <childs>c-760d4c65-cba0-4221-8790-0e7174effc61</childs>
+            </value>
+        </entry>
+        <entry>
+            <key>c-abf4e658-eaba-49b3-abb7-f25b51318cae</key>
+            <value xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:type="componentIO" uuid="c-abf4e658-eaba-49b3-abb7-f25b51318cae">
+                <name>controlesCarte</name>
+                <type>0</type>
+                <properties/>
             </value>
         </entry>
         <entry>
@@ -559,17 +559,17 @@
                         </value>
                     </entry>
                     <entry>
-                        <key>pos_id</key>
-                        <value xsi:type="property">
-                            <required>false</required>
-                            <value>0000623598</value>
-                        </value>
-                    </entry>
-                    <entry>
                         <key>pin_enter</key>
                         <value xsi:type="property">
                             <required>false</required>
                             <value>1234</value>
+                        </value>
+                    </entry>
+                    <entry>
+                        <key>pos_id</key>
+                        <value xsi:type="property">
+                            <required>false</required>
+                            <value>0000623598</value>
                         </value>
                     </entry>
                     <entry>
@@ -860,8 +860,8 @@
         </entry>
     </allComponents>
     <rootComponents>
-        <rootComponents>c-b4ad5532-7ab5-4fec-8fed-9820dbded5d9</rootComponents>
         <rootComponents>c-6948b276-cfd7-4be9-bf4d-f88c8cb16cea</rootComponents>
+        <rootComponents>c-b4ad5532-7ab5-4fec-8fed-9820dbded5d9</rootComponents>
         <rootComponents>c-ea365da0-db48-40d0-b442-2935b4dbe459</rootComponents>
         <rootComponents>c-0284fbdc-b31d-4a1a-80b4-0515b5c585af</rootComponents>
         <rootComponents>c-dc4d3395-7424-4a17-bbab-9ee7c2fa09dc</rootComponents>
@@ -1079,7 +1079,7 @@
             <properties>
                 <entry>
                     <key>network_id</key>
-                    <value>e-RSB</value>
+                    <value xmlns:xs="http://www.w3.org/2001/XMLSchema" xsi:type="xs:string">e-RSB</value>
                 </entry>
             </properties>
         </mediators>
@@ -1244,12 +1244,17 @@
             <properties>
                 <entry>
                     <key>issuer_id</key>
-                    <value>Issuer1</value>
+                    <value xmlns:xs="http://www.w3.org/2001/XMLSchema" xsi:type="xs:string">Issuer1</value>
                 </entry>
             </properties>
         </mediators>
     </mediators>
-    <startPoints/>
+    <startPoints>
+        <startPoints>
+            <time>0312101730</time>
+            <event>SMART_CARD_INSERTED</event>
+        </startPoints>
+    </startPoints>
     <events>
         <events event="SMART_CARD_INSERTED">
             <components>
@@ -1359,12 +1364,12 @@
             <value>fr.ensicaen.simulator.model.strategies.NullStrategy</value>
         </entry>
         <entry>
-            <key>c-abf4e658-eaba-49b3-abb7-f25b51318cae</key>
-            <value>fr.ensicaen.simulator.model.strategies.NullStrategy</value>
-        </entry>
-        <entry>
             <key>c-1e2e6d9f-260d-4ca8-a886-9bc5a0f7bc49</key>
             <value>fr.ensicaen.simulator_ep.ep.strategies.fo.issuer.FOIssuerStrategy</value>
+        </entry>
+        <entry>
+            <key>c-abf4e658-eaba-49b3-abb7-f25b51318cae</key>
+            <value>fr.ensicaen.simulator.model.strategies.NullStrategy</value>
         </entry>
         <entry>
             <key>c-55b3c398-4ec1-4b23-bf1c-b9dfe9505ae1</key>
@@ -2261,7 +2266,7 @@
             <value xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:type="mediatorWrapper"/>
         </entry>
         <entry>
-            <key>c-55b3c398-4ec1-4b23-bf1c-b9dfe9505ae1</key>
+            <key>c-d22f0207-c68d-42df-891f-ff20eb9a9676</key>
             <value xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:type="componentWrapper">
                 <x>0.0</x>
                 <y>0.0</y>
@@ -2271,7 +2276,7 @@
             </value>
         </entry>
         <entry>
-            <key>c-d22f0207-c68d-42df-891f-ff20eb9a9676</key>
+            <key>c-55b3c398-4ec1-4b23-bf1c-b9dfe9505ae1</key>
             <value xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:type="componentWrapper">
                 <x>0.0</x>
                 <y>0.0</y>

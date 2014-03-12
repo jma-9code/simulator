@@ -77,8 +77,8 @@ public class FOAcquirerAuthorizationStrategy implements IStrategy<ComponentIO> {
 				String iin = token.nextToken();
 
 				// iin = auth_iin ?
-				if (iin != null && !iin.equals(auth_iin)) {
-					on_us = false;
+				if (iin != null && iin.equals(auth_iin)) {
+					on_us = true;
 					break;
 				}
 			}

@@ -60,6 +60,9 @@ import com.mxgraph.view.mxGraph;
 import fr.ensicaen.gui_simulator.gui.panel.ConsolePanel;
 import fr.ensicaen.gui_simulator.gui.panel.RightSplitPane;
 
+import fr.ensicaen.gui_simulator.gui.panel.ConsolePanel;
+import fr.ensicaen.gui_simulator.gui.panel.RightSplitPane;
+
 public class BasicGraphEditor extends JPanel {
 
 	/**
@@ -224,7 +227,7 @@ public class BasicGraphEditor extends JPanel {
 		JSplitPane hSplit2 = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT,
 				hSplit1, vRightSplit);
 		hSplit2.setOneTouchExpandable(true);
-		hSplit2.setDividerLocation(600);
+		hSplit2.setDividerLocation(575);
 		hSplit2.setDividerSize(6);
 		hSplit2.setResizeWeight(1);
 		hSplit2.setBorder(null);

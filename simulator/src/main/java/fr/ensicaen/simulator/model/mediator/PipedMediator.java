@@ -8,6 +8,7 @@ import org.slf4j.LoggerFactory;
 import fr.ensicaen.simulator.model.component.IInput;
 import fr.ensicaen.simulator.model.component.IOutput;
 import fr.ensicaen.simulator.model.mediator.listener.MediatorListener;
+import fr.ensicaen.simulator.model.properties.PropertiesPlus;
 import fr.ensicaen.simulator.model.response.IResponse;
 import fr.ensicaen.simulator.simulator.Simulator;
 import fr.ensicaen.simulator.tools.LogUtils;
@@ -67,4 +68,10 @@ public class PipedMediator extends Mediator {
 		return m2;
 	}
 
+	public PropertiesPlus getProperties() {
+		PropertiesPlus allprop = new PropertiesPlus();
+		allprop.putAll(m1.getProperties());
+		allprop.putAll(m2.getProperties());
+		return allprop;
+	}
 }

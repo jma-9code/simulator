@@ -40,7 +40,7 @@ public abstract class Mediator implements Serializable {
 	@XmlJavaTypeAdapter(InputAdapter.class)
 	protected IInput receiver;
 
-	private PropertiesPlus properties;
+	protected PropertiesPlus properties;
 
 	protected transient List<MediatorListener> listeners = new ArrayList<>();
 

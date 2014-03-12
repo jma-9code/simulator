@@ -63,6 +63,7 @@ public class MediatorFactory {
 					}
 					break;
 			}
+			mediators.put(uid, mediator);
 			return mediator;
 		}
 	}

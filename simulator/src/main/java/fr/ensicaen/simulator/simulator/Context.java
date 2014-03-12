@@ -272,9 +272,27 @@ public class Context {
 			}
 		}
 
-		log.warn("No mediator found to type= " + whoWantYou + "  with " + key + "=" + value);
+		log.warn("No mediator found to type " + whoWantYou + "  with " + key + "=" + value);
 
 		return null;
+	}
+
+	/**
+	 * Get all mediators link with the component
+	 * 
+	 * @param c
+	 * @return
+	 */
+	private List<Mediator> getAllLinkedMediators(Component c) {
+		List<Mediator> ret = new ArrayList<>();
+		Iterator<Mediator> iMediators = mediators.iterator();
+		while (iMediators.hasNext()) {
+			Mediator cur = iMediators.next();
+			if (cur.getSender().equals(c) || cur.getReceiver().equals(c)) {
+				ret.add(cur);
+			}
+		}
+		return ret;
 	}
 
 	/**
@@ -294,67 +312,57 @@ public class Context {
 		List<Component> comps = new ArrayList<Component>(components.values());
 		Component whoWantYou_c = null;
 
-		// mediateurs du context (attention, il est necessaire d'avoir les
-		// mediateurs implicites)
-		Iterator<Mediator> iMediators = mediators.iterator();
-		while (iMediators.hasNext()) {
-			Mediator cur = iMediators.next();
-			// le receiver est du type que l'on cherche
-			if (cur.getReceiver().getType() == typeYouWant) {
-				whoWantYou_c = (Component) cur.getReceiver();
+		// recuperation des mediators associes au whoareYou
+		List<Mediator> whoAreYou_meds = getAllLinkedMediators((Component) whoAreYou);
 
-				// il y a un mediateur direct entre le receiver et sender
-				if (whoAreYou.equals(cur.getSender())
-						&& (cur instanceof SimplexMediator || cur instanceof HalfDuplexMediator)) {
-					matches.add(cur);
-				}
+		// recuperation du composant root de whoAreYou
+		Component root = Component.getRoot((Component) whoAreYou, comps);
+		// recuperation des mediators associes au whoareYou de plus haut niveau
+		List<Mediator> root_meds = getAllLinkedMediators(root);
 
-				// il y a un mediateur indirect entre le receiver et sender (via
-				// un composant superieur du sender)
-				Component root = Component.getRoot((Component) whoAreYou, comps);
-				if (root.equals(cur.getSender())
-						&& (cur instanceof SimplexMediator || cur instanceof HalfDuplexMediator)) {
-					matches.add(MediatorFactory.getInstance().getMediator((Component) whoAreYou, whoWantYou_c,
-							(cur instanceof SimplexMediator) ? EMediator.SIMPLEX : EMediator.HALFDUPLEX));
-				}
-
-				// il y a un mediateur indirect entre le receiver et sender (via
-				// un composant superieur du receiver)
-				Component root1 = Component.getRoot((Component) whoWantYou_c, comps);
-				if (root1.equals(cur.getReceiver()) && root.equals(cur.getSender())
-						&& (cur instanceof SimplexMediator || cur instanceof HalfDuplexMediator)) {
-					matches.add(MediatorFactory.getInstance().getMediator((Component) whoAreYou, whoWantYou_c,
-							(cur instanceof SimplexMediator) ? EMediator.SIMPLEX : EMediator.HALFDUPLEX));
-				}
-
+		// recherche d'un lien direct entre le receiver et sender
+		for (Mediator m : whoAreYou_meds) {
+			// le receiver est du type recherche
+			if (m.getReceiver().getType() == typeYouWant
+					&& (m instanceof SimplexMediator || m instanceof HalfDuplexMediator)) {
+				matches.add(m);
 			}
-			// le sender est du type que l'on cherche
-			else if (cur.getSender().getType() == typeYouWant) {
-				whoWantYou_c = (Component) cur.getSender();
-				// il y a un mediateur direct entre le receiver et sender
-				if (whoAreYou.equals(cur.getReceiver()) && cur instanceof HalfDuplexMediator) {
-					matches.add(cur);
-				}
+			// le sender est du type recherche, il faut etre en halfduplex
+			else if (m.getSender().getType() == typeYouWant && m instanceof HalfDuplexMediator) {
+				matches.add(m);
+			}
+		}
 
-				// il y a un mediateur indirect entre le receiver et sender (via
-				// un composant superieur du receiver)
-				Component root = Component.getRoot((Component) whoAreYou, comps);
-				if (root.equals(cur.getReceiver()) && cur instanceof HalfDuplexMediator) {
-					matches.add(MediatorFactory.getInstance().getMediator((Component) whoAreYou, whoWantYou_c,
+		// recherche d'un lien indirect entre le receiver et sender (utilisation
+		// du composant root du whoareyou)
+		Component tmp = null;
+		for (Mediator m : root_meds) {
+			if (m.getReceiver().equals(root)) {
+				tmp = (Component) m.getSender();
+				// recuperation du composant root de tmp
+				Component root_tmp = Component.getRoot(tmp, comps);
+
+				tmp = Component.isContainType(root_tmp, typeYouWant);
+				// le sender est du type recherche, il faut etre en halfduplex
+				if (tmp != null && m instanceof HalfDuplexMediator) {
+					matches.add(MediatorFactory.getInstance().getMediator((Component) whoAreYou, tmp,
 							EMediator.HALFDUPLEX));
 				}
+			}
+			else {
+				tmp = (Component) m.getReceiver();
+				// recuperation du composant root de tmp
+				Component root_tmp = Component.getRoot(tmp, comps);
 
-				// il y a un mediateur indirect entre le receiver et sender (via
-				// un composant superieur du sender)
-				Component root1 = Component.getRoot((Component) whoWantYou_c, comps);
-				if (root1.equals(cur.getSender()) && root.equals(cur.getReceiver())
-						&& (cur instanceof SimplexMediator || cur instanceof HalfDuplexMediator)) {
-					matches.add(MediatorFactory.getInstance().getMediator((Component) whoAreYou, whoWantYou_c,
-							(cur instanceof SimplexMediator) ? EMediator.SIMPLEX : EMediator.HALFDUPLEX));
+				tmp = Component.isContainType(root_tmp, typeYouWant);
+				// le receiver est du type recherche
+				if (tmp != null && (m instanceof SimplexMediator || m instanceof HalfDuplexMediator)) {
+					matches.add(MediatorFactory.getInstance().getMediator((Component) whoAreYou, tmp,
+							(m instanceof SimplexMediator) ? EMediator.SIMPLEX : EMediator.HALFDUPLEX));
 				}
 			}
-
 		}
+
 		if (matches.isEmpty()) {
 			throw new ContextException("No mediator between component type " + typeYouWant + " and "
 					+ whoAreYou.getName() + " in the context.");

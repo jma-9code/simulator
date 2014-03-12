@@ -98,7 +98,7 @@ public class ScenarioData implements Serializable {
 
 		this.mediators = ctx.getMediators();
 		this.link_strat_component = computelinks(new ArrayList<Component>(allComponents.values()));
-		this.startPoints = ctx.getStartPoints();
+		this.startPoints = ctx.getUserStartPoints();
 		this.events = ctx.getEvents();
 		this.uiData = uiData;
 	}

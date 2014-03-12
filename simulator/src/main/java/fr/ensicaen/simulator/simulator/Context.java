@@ -27,6 +27,7 @@ import fr.ensicaen.simulator.model.properties.listener.PropertyListener;
 import fr.ensicaen.simulator.model.strategies.IStrategy;
 import fr.ensicaen.simulator.simulator.StartPoint.StartPointComparator;
 import fr.ensicaen.simulator.simulator.exception.ContextException;
+import fr.ensicaen.simulator.simulator.listener.SimulatorListener;
 
 /**
  * Simulation context configured by user, controlled by the simulator and
@@ -34,14 +35,19 @@ import fr.ensicaen.simulator.simulator.exception.ContextException;
  * 
  * @author Flo
  */
-public class Context {
+public class Context implements SimulatorListener {
 
 	private static Logger log = LoggerFactory.getLogger(Context.class);
 
 	/**
-	 * List of start points sorted by date
+	 * List of start points sorted by date defined by the user
 	 */
-	private Queue<StartPoint> startPoints;
+	private Queue<StartPoint> userStartPoints;
+
+	/**
+	 * List of start points sorted by date for the current execution
+	 */
+	private Queue<StartPoint> execStartPoints;
 
 	/**
 	 * Delegate access Modified by simulator via next() method.
@@ -70,20 +76,25 @@ public class Context {
 	private boolean autoRegistrationMode = false;
 
 	/**
-	 * Liste des composants enregistrés pour un évènement key = Evènement value
+	 * Liste des composants enregistres pour un evènement key = Evènement value
 	 * = Liste des composants
 	 */
 	private Map<String, List<IOutput>> events;
 
 	/**
-	 * Property listener à utiliser. Ce découplage permet à la couche GUI de
-	 * définir un listener particulier (ex : popup de renseignement de
-	 * l'information nécessaire).
+	 * Property listener à utiliser. Ce decouplage permet à la couche GUI de
+	 * definir un listener particulier (ex : popup de renseignement de
+	 * l'information necessaire).
 	 */
 	private PropertyListener propertyListener = new DefaultPropertyListenerImpl();
 
+	/**
+	 * Simulation in execution ?
+	 */
+	private boolean inExecution = false;
+
 	public Context() {
-		this.startPoints = new PriorityQueue<>(1, new StartPointComparator());
+		this.userStartPoints = new PriorityQueue<>(1, new StartPointComparator());
 		this.components = new HashMap<>();
 		this.mediators = new LinkedList<>();
 		this.events = new HashMap<>();
@@ -151,6 +162,9 @@ public class Context {
 		registerComponent(component, false);
 	}
 
+	/**
+	 * @param component
+	 */
 	public void unregisterComponent(Component component) {
 		log.info("Unregister component " + component.getInstanceName());
 		components.remove(component);
@@ -342,7 +356,7 @@ public class Context {
 				// recuperation du composant root de tmp
 				Component root_tmp = Component.getRoot(tmp, comps);
 
-				tmp = Component.isContainType(root_tmp, typeYouWant);
+				tmp = Component.containsType(root_tmp, typeYouWant);
 				// le sender est du type recherche, il faut etre en halfduplex
 				if (tmp != null && m instanceof HalfDuplexMediator) {
 					matches.add(MediatorFactory.getInstance().getMediator((Component) whoAreYou, tmp,
@@ -354,7 +368,7 @@ public class Context {
 				// recuperation du composant root de tmp
 				Component root_tmp = Component.getRoot(tmp, comps);
 
-				tmp = Component.isContainType(root_tmp, typeYouWant);
+				tmp = Component.containsType(root_tmp, typeYouWant);
 				// le receiver est du type recherche
 				if (tmp != null && (m instanceof SimplexMediator || m instanceof HalfDuplexMediator)) {
 					matches.add(MediatorFactory.getInstance().getMediator((Component) whoAreYou, tmp,
@@ -504,11 +518,17 @@ public class Context {
 	public void addStartPoint(Date time, String event) {
 		log.debug("Start point with event " + event + " and scheduled on " + time);
 		StartPoint sp = new StartPoint(time, event);
-		this.startPoints.add(sp);
+
+		if (inExecution) {
+			this.execStartPoints.add(sp);
+		}
+		else {
+			this.userStartPoints.add(sp);
+		}
 	}
 
-	public Queue<StartPoint> getStartPoints() {
-		return startPoints;
+	public Queue<StartPoint> getUserStartPoints() {
+		return userStartPoints;
 	}
 
 	/**
@@ -523,16 +543,17 @@ public class Context {
 	 */
 	public void reset() {
 		simulationReset();
-		startPoints.clear();
-		currentCounter = 0;
+		userStartPoints.clear();
 		components.clear();
 		mediators.clear();
+		currentCounter = 0;
 		autoRegistrationMode = false;
 	}
 
 	public void simulationReset() {
 		events.clear();
 		current = null;
+		execStartPoints = null;
 	}
 
 	/**
@@ -544,7 +565,7 @@ public class Context {
 	 */
 	public void restoreContext(ScenarioData sd) throws InstantiationException, IllegalAccessException {
 		reset();
-		startPoints.addAll(sd.getStartPoints());
+		userStartPoints.addAll(sd.getStartPoints());
 		components.putAll(sd.getRootComponents());
 		mediators.addAll(sd.getMediators());
 		events.putAll(sd.getEvents());
@@ -566,7 +587,7 @@ public class Context {
 	 * @return true or false
 	 */
 	boolean hasNext() {
-		return this.startPoints.peek() != null;
+		return this.execStartPoints.peek() != null;
 	}
 
 	/**
@@ -578,7 +599,7 @@ public class Context {
 			autoRegistrationMode = false;
 		}
 
-		this.current = this.startPoints.poll();
+		this.current = this.execStartPoints.poll();
 		this.currentCounter++;
 	}
 
@@ -638,6 +659,20 @@ public class Context {
 
 	public void setPropertyListener(PropertyListener propertyListener) {
 		this.propertyListener = propertyListener;
+	}
+
+	@Override
+	public void simulationStarted() {
+		// initialisation de la queue d'execution qui sera depilee à chaque
+		// iteration de point de demarrage
+		execStartPoints = new PriorityQueue<>(userStartPoints.size(), new StartPointComparator());
+		execStartPoints.addAll(userStartPoints);
+		inExecution = true;
+	}
+
+	@Override
+	public void simulationEnded() {
+		inExecution = false;
 	}
 
 }

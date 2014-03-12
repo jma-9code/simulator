@@ -256,7 +256,7 @@ public abstract class Component implements Serializable {
 	 * @return null if the component not contain specific type component in his
 	 *         childs
 	 */
-	public static Component isContainType(Component component, int type) {
+	public static Component containsType(Component component, int type) {
 
 		if (component.getType() == type) {
 			return component;
@@ -264,7 +264,7 @@ public abstract class Component implements Serializable {
 
 		Component res = null;
 		for (Component c : component.getChilds()) {
-			res = isContainType(c, type);
+			res = containsType(c, type);
 			if (res != null) {
 				break;
 			}

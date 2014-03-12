@@ -27,7 +27,11 @@ public class FOIssuerStrategy implements IStrategy<ComponentIO> {
 
 	@Override
 	public List<PropertyDefinition> getPropertyDefinitions() {
-		return new ArrayList<PropertyDefinition>();
+		ArrayList<PropertyDefinition> properties = new ArrayList<PropertyDefinition>();
+		properties.add(new PropertyDefinition("vasodilatation", "activee", "parametre de vasodilatation", true));
+		properties.add(new PropertyDefinition("contact", "electronique", "le contact est eletro", false));
+		return properties;
+		//return new ArrayList<PropertyDefinition>();
 	}
 
 	@Override

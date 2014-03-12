@@ -39,7 +39,6 @@ public class GenericNetworkStrategy implements IStrategy<ComponentIO> {
 
 	@Override
 	public void init(IOutput _this, Context ctx) {
-
 	}
 
 	@Override

@@ -32,7 +32,7 @@ public class ComponentIO extends Component implements IInputOutput {
 			log.error("Invalid call of input method, use mediator instead.");
 		}
 
-		log.debug("[" + this.getType() + "] IN: '" + data + "'");
+		// log.debug("[" + this.getType() + "] IN: '" + data + "'");
 		return this.strategy.processMessage(this, m, data);
 	}
 

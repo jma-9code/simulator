@@ -20,6 +20,7 @@ import fr.ensicaen.simulator.model.dao.ScenarioData;
 import fr.ensicaen.simulator.model.factory.MediatorFactory;
 import fr.ensicaen.simulator.model.mediator.HalfDuplexMediator;
 import fr.ensicaen.simulator.model.mediator.Mediator;
+import fr.ensicaen.simulator.model.mediator.ReverseHalfDuplexMediator;
 import fr.ensicaen.simulator.model.mediator.SimplexMediator;
 import fr.ensicaen.simulator.model.properties.listener.DefaultPropertyListenerImpl;
 import fr.ensicaen.simulator.model.properties.listener.PropertyListener;
@@ -344,15 +345,16 @@ public class Context implements SimulatorListener {
 				// sender = dst, il faut un half duplex
 				if (m instanceof HalfDuplexMediator) {
 					// ret.add(m);
-					if (m.getReceiver().equals(dst) || m.getSender().equals(dst)) {
-						// find the dst component
-						ret.add(m);
+					if (m.getSender().equals(dst)) {
+						// find the dst component, invert the direction
+						ret.add(new ReverseHalfDuplexMediator((HalfDuplexMediator) m));
 						return ret;
 					}
 					else {
 						List<Mediator> tmp = getMediatorPath((Component) m.getSender(), dst, explored);
 						if (!tmp.isEmpty()) {
-							ret.add(m);
+							// invert the direction
+							ret.add(new ReverseHalfDuplexMediator((HalfDuplexMediator) m));
 							ret.addAll(tmp);
 						}
 					}
@@ -422,7 +424,7 @@ public class Context implements SimulatorListener {
 							buff = me;
 						}
 						else {
-							buff = MediatorFactory.getInstance().getPipedMediator(me, buff);
+							buff = MediatorFactory.getInstance().getPipedMediator(buff, me);
 						}
 					}
 					matches.add(buff);
@@ -450,7 +452,7 @@ public class Context implements SimulatorListener {
 							buff = me;
 						}
 						else {
-							buff = MediatorFactory.getInstance().getPipedMediator(me, buff);
+							buff = MediatorFactory.getInstance().getPipedMediator(buff, me);
 						}
 					}
 					matches.add(buff);

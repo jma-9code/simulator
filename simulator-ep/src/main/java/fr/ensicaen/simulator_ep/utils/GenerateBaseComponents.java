@@ -45,7 +45,7 @@ public class GenerateBaseComponents {
 	private static ComponentIO frontOffice;
 	// Les trois grandes fonctions d'un FO
 	private static ComponentIO issuer;
-	private static ComponentIO acceptor;
+	// private static ComponentIO acceptor;
 	private static ComponentIO acquirer;
 
 	// Différents modules de la fonction émetteur */
@@ -165,31 +165,31 @@ public class GenerateBaseComponents {
 
 	public static void componentsProperties() {
 		/* CARD */
-		card = new ComponentIO(CommonNames.CARD);
+		card = new ComponentIO("Card", ComponentEP.CARD.ordinal());
 		card.getProperties().put("pan", "4976710025642130");
 		card.getProperties().put("icvv", "000");
 		card.getProperties().put("type", "M");
 		card.getProperties().put("name", "Florent Moisson");
 		card.getProperties().put("date expiration", "09/15");
-		chip = new ComponentIO(CommonNames.CARD_CHIP);
+		chip = new ComponentIO("Card Chip", ComponentEP.CARD_CHIP.ordinal());
 		chip.getProperties().put("protocol", "ISO7816");
 		chip.getProperties().put("pan", "4976710025642130");
 		chip.getProperties().put("bccs", "12421874");
 		chip.getProperties().put("ceil", "400");
 		chip.getProperties().put("approvalcode", "07B56=");
 		chip.getProperties().put("state", "OFF");
-		magstrippe = new ComponentIO(CommonNames.CARD_MAGSTRIPPE);
+		magstrippe = new ComponentIO("Card Magstrippe", ComponentEP.CARD_MAGSTRIPPE.ordinal());
 		magstrippe.getProperties().put("iso2", "59859595985888648468454684");
 		card.addChild(magstrippe);
 		card.addChild(chip);
 
 		/* ETP */
-		ept = new ComponentIO(CommonNames.ETP);
+		ept = new ComponentIO("Electronic Terminal Payment", ComponentEP.ELETRONIC_TERMINAL_PAYMENT.ordinal());
 		ept.setStrategy(new EPTStrategy());
-		smartCardReader = new ComponentIO(CommonNames.ETP_SMARTCARDREADER);
+		smartCardReader = new ComponentIO("ETP Smart Card Reader", ComponentEP.ETP_SMART_CARD_READER.ordinal());
 		smartCardReader.setStrategy(new EPTSmartCardReaderStrategy());
 		ept.addChild(smartCardReader);
-		chipset = new ComponentIO(CommonNames.ETP_CHIPSET);
+		chipset = new ComponentIO("ETP Chipset", ComponentEP.ETP_CHIPSET.ordinal());
 		chipset.setStrategy(new EPTChipsetStrategy());
 		chipset.getProperties().put("pos_id", "0000623598");
 		chipset.getProperties().put("acceptor_id", "0000623598");
@@ -207,17 +207,17 @@ public class GenerateBaseComponents {
 		ept.addChild(networkInterface);
 
 		/* FO */
-		frontOffice = new ComponentIO(CommonNames.FO);
-		issuer = new ComponentIO(CommonNames.FO_ISSUER);
-		acceptor = new ComponentIO("Acceptor");
-		acquirer = new ComponentIO(CommonNames.FO_ACQUIRER);
+		frontOffice = new ComponentIO("Front Office", ComponentEP.FRONT_OFFICE.ordinal());
+		issuer = new ComponentIO("FO Issuer", ComponentEP.FO_ISSUER.ordinal());
+		// acceptor = new ComponentIO("FO Acceptor");
+		acquirer = new ComponentIO("FO Acquirer", ComponentEP.FO_ACQUIRER.ordinal());
 		/* Ajout des trois grandes fonctions du front Office */
 		frontOffice.addChild(issuer);
-		frontOffice.addChild(acceptor);
+		// frontOffice.addChild(acceptor);
 		frontOffice.addChild(acquirer);
 
 		/* Ajout des modules émetteur */
-		issuerAuthorization = new ComponentIO(CommonNames.FO_ISSUER_AUTH);
+		issuerAuthorization = new ComponentIO("FO Issuer Authorization", ComponentEP.FO_ISSUER_AUTHORIZATION.ordinal());
 		gestionDeLaFraude = new ComponentIO("GestionDeLaFraude");
 		issuer.addChild(issuerAuthorization);
 		issuer.addChild(gestionDeLaFraude);
@@ -237,9 +237,9 @@ public class GenerateBaseComponents {
 		systemeEncaissement = new ComponentIO("systemeEncaissement");
 		concentrateurMonetique = new ComponentIO("concentrateurMonetique");
 		telePaiement = new ComponentIO("telePaiement");
-		acceptor.addChild(systemeEncaissement);
-		acceptor.addChild(concentrateurMonetique);
-		acceptor.addChild(telePaiement);
+		// acceptor.addChild(systemeEncaissement);
+		// acceptor.addChild(concentrateurMonetique);
+		// acceptor.addChild(telePaiement);
 
 		/* Ajout des composants du module systemeEncaissement */
 		gestionEncaissementsMultiples = new ComponentIO("gestionEncaissementsMultiples");
@@ -280,7 +280,8 @@ public class GenerateBaseComponents {
 		gestionnaireTelepaiement.addChild(gestionDonneesFonctionnement);
 
 		/* Ajout des modules acquéreur */
-		acquirerAuthorization = new ComponentIO(CommonNames.FO_ACQUIRER_AUTH);
+		acquirerAuthorization = new ComponentIO("FO Acquirer Authorization",
+				ComponentEP.FO_ACQUIRER_AUTHORIZATION.ordinal());
 		GABHandler = new ComponentIO("GABHandler");
 		telecollection = new ComponentIO("telecollection");
 		paymentAcquirer = new ComponentIO("paymentAcquirer");
@@ -338,12 +339,12 @@ public class GenerateBaseComponents {
 		backOffice = new ComponentIO("BackOffice");
 
 		/* Network */
-		eRSBNetwork = new ComponentIO("Network");
+		eRSBNetwork = new ComponentIO("Network", ComponentEP.NETWORK.ordinal());
 		eRSBNetwork.getProperties().put(GenericNetworkStrategy.CKEY_NAME, "e-RSB");
-		eRSBNetwork.getProperties().put(GenericNetworkStrategy.CKEYPREFIX_ISSUER_OF + "49767", "Issuer1");
+		eRSBNetwork.getProperties().put(GenericNetworkStrategy.CKEYPREFIX_ISSUER_OF + "497671", "Issuer1");
 
 		/* Router */
-		router = new ComponentIO("Router");
+		router = new ComponentIO("Router", ComponentEP.ROUTER.ordinal());
 		router.setStrategy(new GenericRouterStrategy());
 		router.getProperties().put(GenericRouterStrategy.CKEYPREFIX_NETWORK_OF + "4", "e-RSB");
 		router.getProperties().put(GenericRouterStrategy.CKEYPREFIX_NETWORK_OF + "5", "e-RSB");

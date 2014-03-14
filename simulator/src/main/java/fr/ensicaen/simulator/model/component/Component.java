@@ -5,8 +5,9 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashMap;
-import java.util.Iterator;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 import java.util.StringTokenizer;
 import java.util.UUID;
 
@@ -55,6 +56,11 @@ public abstract class Component implements Serializable {
 	protected String name;
 
 	/**
+	 * Type du composant
+	 */
+	protected int type;
+
+	/**
 	 * Propriétés du composant
 	 */
 	protected PropertiesPlus properties = new PropertiesPlus();
@@ -71,6 +77,10 @@ public abstract class Component implements Serializable {
 	@XmlIDREF
 	protected List<Component> childs = new ArrayList<>();
 
+	@XmlAttribute
+	@XmlIDREF
+	protected Component parent = null;
+
 	public Component() {
 		this.name = "default";
 		this.uuid = UUID.randomUUID().toString();
@@ -81,6 +91,11 @@ public abstract class Component implements Serializable {
 		this.name = _name;
 		this.uuid = UUID.randomUUID().toString();
 		Context.getInstance().registerComponent(this, true);
+	}
+
+	public Component(String _name, int _type) {
+		this(_name);
+		type = _type;
 	}
 
 	/**
@@ -95,7 +110,7 @@ public abstract class Component implements Serializable {
 
 		if (name != null) {
 			for (Component child : this.childs) {
-				log.debug("Search child " + name + ", current " + child.getName());
+				log.debug("Search child " + name + ", current " + child.getType());
 				if ((name.equalsIgnoreCase(child.getName()) || name.equalsIgnoreCase(child.getAcronym()))
 						&& child.getClass() == type) {
 					return (T) child;
@@ -124,15 +139,22 @@ public abstract class Component implements Serializable {
 	}
 
 	public void addChild(Component child) {
+		child.parent = this;
 		this.childs.add(child);
+		buildChildMediator(child);
+	}
 
+	/**
+	 * Method factory des mediateurs implicites (relation parent-enfant)
+	 * 
+	 * @param child
+	 */
+	private void buildChildMediator(Component child) {
 		// auto create and register child mediator
 		Mediator m = MediatorFactory.getInstance().getMediator(this, child);
-		if (m != null) {
-			Context.getInstance().registerMediator(m);
-		}
-		else {
+		if (m == null) {
 			log.error("Child mediator registration failed.");
+			// Context.getInstance().registerMediator(m);
 		}
 	}
 
@@ -157,19 +179,17 @@ public abstract class Component implements Serializable {
 	}
 
 	/**
-	 * Retrieve the parent component
+	 * Recupere le "fils" du composant "pere" ayant un type preci.
 	 * 
-	 * @param c
-	 * @param components
-	 * @return
+	 * @param parent
+	 * @param type
+	 * @return null si pas trouve
 	 */
-	public static Component getParent(Component c, List<Component> components) {
-		List<Component> comps = Component.organizeComponents(components);
-		Iterator<Component> icomp = comps.iterator();
-		while (icomp.hasNext()) {
-			Component cur = icomp.next();
-			if (cur.getChilds().contains(c)) {
-				return cur;
+	public static Component getFirstChildType(Component parent, int type) {
+		List<Component> comps = Component.organizeComponents(Arrays.asList(parent));
+		for (Component c : comps) {
+			if (type == c.getType()) {
+				return c;
 			}
 		}
 		return null;
@@ -182,36 +202,55 @@ public abstract class Component implements Serializable {
 	 * @param components
 	 * @return
 	 */
-	public static Component getRoot(Component c, List<Component> components) {
-		// find parent
-		Component cur = getParent(c, components);
+	public static Component getRoot(Component c) {
 		// root find
-		if (cur == null) {
+		if (c.parent == null) {
 			return c;
 		}
 
-		Component ret = getRoot(cur, components);
-
-		return ret;
+		// find parent
+		return getRoot(c.parent);
 	}
 
 	/**
-	 * Confirm if the component is a child of the component
+	 * Permet de recuperer tout les composants racines de la liste
 	 * 
-	 * @param c
 	 * @param components
 	 * @return
 	 */
-	public static boolean isChild(Component parent, Component child) {
-		List<Component> comps = Component.organizeComponents(Arrays.asList(parent));
-		Iterator<Component> icomp = comps.iterator();
-		while (icomp.hasNext()) {
-			Component cur = icomp.next();
-			if (cur.equals(child)) {
-				return true;
+	public static Set<Component> retrieveAllRootComponents(List<Component> components) {
+		Set<Component> root_comps = new HashSet<>();
+		Component root_comp = null;
+		for (Component c : components) {
+			root_comp = getRoot(c);
+			root_comps.add(root_comp);
+		}
+		return root_comps;
+	}
+
+	/**
+	 * Search if the component contain child with specific type
+	 * 
+	 * @param component
+	 * @param type
+	 * @return null if the component not contain specific type component in his
+	 *         childs
+	 */
+	public static Component containsType(Component component, int type) {
+
+		if (component.getType() == type) {
+			return component;
+		}
+
+		Component res = null;
+		for (Component c : component.getChilds()) {
+			res = containsType(c, type);
+			if (res != null) {
+				break;
 			}
 		}
-		return false;
+
+		return res;
 	}
 
 	public void setChilds(List<Component> components) {
@@ -219,7 +258,7 @@ public abstract class Component implements Serializable {
 	}
 
 	public String getName() {
-		return this.name;
+		return name;
 	}
 
 	public void setName(String name) {
@@ -271,7 +310,7 @@ public abstract class Component implements Serializable {
 		StringBuilder sb = new StringBuilder();
 		sb.append("\t\n" + this.name + " - " + this.properties);
 		for (Component c : this.childs) {
-			sb.append("\t\n" + c.getName() + " - ");
+			sb.append("\t\n" + c.getType() + " - ");
 			sb.append(c.getProperties());
 		}
 		return sb.toString();
@@ -342,8 +381,21 @@ public abstract class Component implements Serializable {
 	 * Instancie le composant
 	 */
 	public void instanciate() {
+		// generate id
 		this.uuid = "c-" + UUID.randomUUID().toString();
 		log.info(getInstanceName() + " instancied");
+
+		// child operation
+		if (childs != null) {
+			for (Component child : childs) {
+				// build implicit mediator (child/parent)
+				buildChildMediator(child);
+				// set the parent pointer
+				child.parent = this;
+				// recursive call
+				child.instanciate();
+			}
+		}
 	}
 
 	/**
@@ -408,4 +460,13 @@ public abstract class Component implements Serializable {
 			return false;
 		return true;
 	}
+
+	public int getType() {
+		return type;
+	}
+
+	public void setType(int type) {
+		this.type = type;
+	}
+
 }

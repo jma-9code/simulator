@@ -1,26 +1,25 @@
 package fr.ensicaen.simulator.model.properties;
 
-import fr.ensicaen.simulator.model.strategies.IStrategy;
-
 public class PropertyDefinition {
-	private boolean writable = false;
 	private String key;
 	private String defaultValue;
+	private boolean required = false;
 	private String comment;
-	
-	public PropertyDefinition (String _key, String _defaultValue, String _comment, boolean _writable) {
-		key = _key;
-		defaultValue = _defaultValue;
-		comment = _comment;
-		writable = _writable;
+
+	public PropertyDefinition(String key, String defaultValue, boolean required, String comment) {
+		super();
+		this.required = required;
+		this.key = key;
+		this.defaultValue = defaultValue;
+		this.comment = comment;
 	}
 
-	public boolean isWritable() {
-		return writable;
+	public boolean isRequired() {
+		return required;
 	}
 
-	public void setWritable(boolean required) {
-		this.writable = required;
+	public void setRequired(boolean required) {
+		this.required = required;
 	}
 
 	public String getKey() {

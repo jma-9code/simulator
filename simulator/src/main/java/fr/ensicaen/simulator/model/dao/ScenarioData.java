@@ -4,9 +4,11 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Queue;
+import java.util.Set;
 
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
@@ -21,6 +23,8 @@ import fr.ensicaen.simulator.model.component.Component;
 import fr.ensicaen.simulator.model.component.IOutput;
 import fr.ensicaen.simulator.model.dao.jaxbadapter.EventMapAdapter;
 import fr.ensicaen.simulator.model.mediator.Mediator;
+import fr.ensicaen.simulator.model.strategies.IStrategy;
+import fr.ensicaen.simulator.model.strategies.NullStrategy;
 import fr.ensicaen.simulator.simulator.Context;
 import fr.ensicaen.simulator.simulator.StartPoint;
 
@@ -50,7 +54,7 @@ public class ScenarioData implements Serializable {
 
 	@XmlElement
 	@XmlElementWrapper
-	private List<Mediator> mediators = null;
+	private Collection<Mediator> mediators = null;
 
 	@XmlElement
 	@XmlElementWrapper
@@ -87,14 +91,14 @@ public class ScenarioData implements Serializable {
 
 		// all = root + childs components
 		Map<String, Component> tmp = new HashMap<>();
-		List<Component> c1 = organizeComponents(ctx.getComponents().values());
+		List<Component> c1 = Component.organizeComponents(ctx.getComponents().values());
 		for (Component c : c1)
 			tmp.put(c.getUuid(), c);
 		this.allComponents = tmp;
 
 		this.mediators = ctx.getMediators();
 		this.link_strat_component = computelinks(new ArrayList<Component>(allComponents.values()));
-		this.startPoints = ctx.getStartPoints();
+		this.startPoints = ctx.getUserStartPoints();
 		this.events = ctx.getEvents();
 		this.uiData = uiData;
 	}
@@ -122,7 +126,17 @@ public class ScenarioData implements Serializable {
 		return ret;
 	}
 
-	public List<Mediator> getMediators() {
+	public void instanciatelinks() throws InstantiationException, IllegalAccessException {
+		for (Component c : Component.organizeComponents(rootComponents)) {
+			Class strat = link_strat_component.get(c.getUuid());
+			if (strat == null) {
+				strat = NullStrategy.class;
+			}
+			c.setStrategy((IStrategy<? extends Component>) strat.newInstance());
+		}
+	}
+
+	public Collection<Mediator> getMediators() {
 		return mediators;
 	}
 
@@ -177,26 +191,6 @@ public class ScenarioData implements Serializable {
 		return true;
 	}
 
-	/**
-	 * Recursive function to re-organize components.
-	 * 
-	 * @param components
-	 * @return
-	 */
-	public static List<Component> organizeComponents(Collection<Component> components) {
-		List<Component> ret = new ArrayList<>();
-		ret.addAll(components);
-		for (Component c : components) {
-			List<Component> tmp = organizeComponents(c.getChilds());
-			for (Component c1 : tmp) {
-				if (!components.contains(c1)) {
-					ret.add(c1);
-				}
-			}
-		}
-		return ret;
-	}
-
 	public Queue<StartPoint> getStartPoints() {
 		return startPoints;
 	}
@@ -239,10 +233,14 @@ public class ScenarioData implements Serializable {
 
 	public Map<String, Component> getRootComponents() {
 		Map<String, Component> map = new HashMap<String, Component>();
-		for (Component c : rootComponents) {
-			map.put(c.getName(), c);
+		Set<Component> roots = Component.retrieveAllRootComponents(new ArrayList<Component>(allComponents.values()));
+		Component c = null;
+		Iterator<Component> it = roots.iterator();
+		while (it.hasNext()) {
+			c = it.next();
+			map.put(c.getUuid(), c);
 		}
+
 		return map;
 	}
-
 }

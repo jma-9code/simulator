@@ -5,7 +5,6 @@ import java.util.List;
 
 import org.jpos.iso.ISOException;
 import org.jpos.iso.ISOMsg;
-import org.jpos.iso.packager.GenericPackager;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -20,6 +19,9 @@ import fr.ensicaen.simulator.model.strategies.IStrategy;
 import fr.ensicaen.simulator.simulator.Context;
 import fr.ensicaen.simulator.simulator.exception.ContextException;
 import fr.ensicaen.simulator_ep.utils.CB2AValues;
+import fr.ensicaen.simulator_ep.utils.ComponentEP;
+import fr.ensicaen.simulator_ep.utils.ISO8583Exception;
+import fr.ensicaen.simulator_ep.utils.ISO8583Tools;
 
 public class GenericNetworkStrategy implements IStrategy<ComponentIO> {
 
@@ -37,7 +39,6 @@ public class GenericNetworkStrategy implements IStrategy<ComponentIO> {
 
 	@Override
 	public void init(IOutput _this, Context ctx) {
-
 	}
 
 	@Override
@@ -52,12 +53,10 @@ public class GenericNetworkStrategy implements IStrategy<ComponentIO> {
 		log.info("Message received on network " + _this.getProperty(CKEY_NAME));
 
 		// message 8583
-		ISOMsg input = new ISOMsg();
+		ISOMsg input = null;
 
 		try {
-			input.setPackager(new GenericPackager(getClass().getResource("/8583.xml").toExternalForm()));
-			input.unpack(data.getBytes());
-
+			input = ISO8583Tools.read(data);
 			if (!input.isRequest()) {
 				log.warn("Message is not a request");
 			}
@@ -86,14 +85,16 @@ public class GenericNetworkStrategy implements IStrategy<ComponentIO> {
 							// model, the mediator represents the support, then
 							// it also contains this identifiant.
 							Context ctx = Context.getInstance();
-							Mediator mediatorToIssuer = ctx.getFirstMediator(_this, "Issuer Authorization Module",
-									MKEY_ISSUER_ID, issuerId);
+							Mediator mediatorToIssuer = ctx.getFirstMediator(_this,
+									ComponentEP.FO_ISSUER_AUTHORIZATION.ordinal(), MKEY_ISSUER_ID, issuerId);
 
 							if (mediatorToIssuer != null) {
 								// The server response check is not implemented
 								return mediatorToIssuer.send(_this, data);
 							}
 							else {
+								log.warn("No mediator found for issuer id : " + issuerId);
+
 								// answer that card issuer is unreachable
 								input.setResponseMTI();
 								input.set(39, CB2AValues.Field39.UNREACHABLE_CARD_ISSUER);
@@ -134,7 +135,7 @@ public class GenericNetworkStrategy implements IStrategy<ComponentIO> {
 			}
 
 		}
-		catch (ISOException e) {
+		catch (ISOException | ISO8583Exception e) {
 			log.error("Exception while unpacking message", e);
 
 			try {

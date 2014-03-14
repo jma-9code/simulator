@@ -8,6 +8,13 @@ import fr.ensicaen.simulator.simulator.Context;
 public interface IOutput {
 
 	/**
+	 * Retourne le type de l'élément.
+	 * 
+	 * @return
+	 */
+	public int getType();
+
+	/**
 	 * Retourne le nom de l'élément.
 	 * 
 	 * @return

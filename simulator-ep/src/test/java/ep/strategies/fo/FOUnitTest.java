@@ -29,6 +29,7 @@ import fr.ensicaen.simulator_ep.ep.strategies.fo.acquirer.FOAcquirerAuthorizatio
 import fr.ensicaen.simulator_ep.ep.strategies.fo.acquirer.FOAcquirerStrategy;
 import fr.ensicaen.simulator_ep.ep.strategies.fo.issuer.FOIssuerAuthorizationStrategy;
 import fr.ensicaen.simulator_ep.ep.strategies.fo.issuer.FOIssuerStrategy;
+import fr.ensicaen.simulator_ep.utils.ComponentEP;
 import fr.ensicaen.simulator_ep.utils.ISO7816Tools;
 import fr.ensicaen.simulator_ep.utils.ISO8583Tools;
 
@@ -123,11 +124,11 @@ public class FOUnitTest {
 	@Before
 	public void init() throws Exception {
 		Context.getInstance().autoRegistrationMode();
-		frontOffice = new ComponentIO("Front Office");
+		frontOffice = new ComponentIO("Front Office", ComponentEP.FRONT_OFFICE.ordinal());
 
-		issuer = new ComponentIO("Issuer");
+		issuer = new ComponentIO("Issuer", ComponentEP.FO_ISSUER.ordinal());
 		acceptor = new ComponentIO("Acceptor");
-		acquirer = new ComponentIO("Acquirer");
+		acquirer = new ComponentIO("Acquirer", ComponentEP.FO_ACQUIRER.ordinal());
 
 		/* Ajout des trois grandes fonctions du front Office */
 		frontOffice.addChild(issuer);
@@ -135,7 +136,7 @@ public class FOUnitTest {
 		frontOffice.addChild(acquirer);
 
 		/* Ajout des modules émetteur */
-		issuerAuthorization = new ComponentIO("IssuerAuthorization");
+		issuerAuthorization = new ComponentIO("IssuerAuthorization", ComponentEP.FO_ISSUER_AUTHORIZATION.ordinal());
 		gestionDeLaFraude = new ComponentIO("GestionDeLaFraude");
 		issuer.addChild(issuerAuthorization);
 		issuer.addChild(gestionDeLaFraude);
@@ -198,7 +199,8 @@ public class FOUnitTest {
 		gestionnaireTelepaiement.addChild(gestionDonneesFonctionnement);
 
 		/* Ajout des modules acquéreur */
-		acquirerAuthorization = new ComponentIO("AcquirerAuthorization");
+		acquirerAuthorization = new ComponentIO("AcquirerAuthorization",
+				ComponentEP.FO_ACQUIRER_AUTHORIZATION.ordinal());
 		GABHandler = new ComponentIO("GABHandler");
 		telecollection = new ComponentIO("telecollection");
 		paymentAcquirer = new ComponentIO("paymentAcquirer");
@@ -263,7 +265,7 @@ public class FOUnitTest {
 		issuer.setStrategy(new FOIssuerStrategy());
 		issuerAuthorization.setStrategy(new FOIssuerAuthorizationStrategy());
 
-		ept = new ComponentIO("Electronic Payment Terminal");
+		ept = new ComponentIO("Electronic Payment Terminal", ComponentEP.ELETRONIC_TERMINAL_PAYMENT.ordinal());
 
 		m_ept_fo = MediatorFactory.getInstance().getMediator(frontOffice, ept, EMediator.HALFDUPLEX);
 
@@ -350,6 +352,7 @@ public class FOUnitTest {
 
 		// execute simulation.
 		try {
+			SimulatorFactory.getSimulator().resume();
 			SimulatorFactory.getSimulator().start();
 		}
 		catch (SimulatorException e) {
@@ -412,7 +415,9 @@ public class FOUnitTest {
 
 		// execute simulation.
 		try {
+			SimulatorFactory.getSimulator().resume();
 			SimulatorFactory.getSimulator().start();
+
 		}
 		catch (SimulatorException e) {
 			e.printStackTrace();

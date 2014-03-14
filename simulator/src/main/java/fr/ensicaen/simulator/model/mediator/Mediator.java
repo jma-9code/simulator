@@ -1,8 +1,8 @@
 package fr.ensicaen.simulator.model.mediator;
 
 import java.io.Serializable;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.HashSet;
+import java.util.Set;
 import java.util.UUID;
 
 import javax.xml.bind.annotation.XmlAccessType;
@@ -12,16 +12,23 @@ import javax.xml.bind.annotation.XmlID;
 import javax.xml.bind.annotation.XmlSeeAlso;
 import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import fr.ensicaen.simulator.model.component.IInput;
 import fr.ensicaen.simulator.model.component.IOutput;
 import fr.ensicaen.simulator.model.dao.jaxbadapter.InputAdapter;
 import fr.ensicaen.simulator.model.dao.jaxbadapter.OutputAdapter;
+import fr.ensicaen.simulator.model.mediator.listener.MediatorListener;
+import fr.ensicaen.simulator.model.properties.PropertiesPlus;
 import fr.ensicaen.simulator.model.response.IResponse;
 
 @XmlSeeAlso({ SimplexMediator.class, ReverseHalfDuplexMediator.class, ForwardMediator.class, PipedMediator.class,
 		HalfDuplexMediator.class })
 @XmlAccessorType(XmlAccessType.FIELD)
 public abstract class Mediator implements Serializable {
+
+	protected static Logger log = LoggerFactory.getLogger(Mediator.class);
 
 	@XmlAttribute
 	@XmlID
@@ -33,16 +40,24 @@ public abstract class Mediator implements Serializable {
 	@XmlJavaTypeAdapter(InputAdapter.class)
 	protected IInput receiver;
 
-	private Map<String, String> properties = null;
+	protected PropertiesPlus properties;
 
-	public Mediator() {
-	}
+	protected transient Set<MediatorListener> listeners = new HashSet<>();
 
 	public Mediator(IOutput _sender, IInput _receiver) {
-		this.properties = new HashMap<>();
+		this.properties = new PropertiesPlus();
 		this.sender = _sender;
 		this.receiver = _receiver;
 		this.uuid = "m-" + UUID.randomUUID().toString();
+	}
+
+	/**
+	 * Ajouter un listener au mediator
+	 * 
+	 * @param list
+	 */
+	public void addListener(MediatorListener list) {
+		listeners.add(list);
 	}
 
 	/**
@@ -95,11 +110,11 @@ public abstract class Mediator implements Serializable {
 		return true;
 	}
 
-	public Map<String, String> getProperties() {
+	public PropertiesPlus getProperties() {
 		return this.properties;
 	}
 
-	public void setProperties(Map<String, String> properties) {
+	public void setProperties(PropertiesPlus properties) {
 		this.properties = properties;
 	}
 

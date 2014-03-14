@@ -6,6 +6,7 @@ public class ChildHalfDuplexMediator extends HalfDuplexMediator {
 
 	public ChildHalfDuplexMediator(IInputOutput a, IInputOutput b) {
 		super(a, b);
+
 	}
 
 }

@@ -79,6 +79,13 @@ public class PropertiesPlus extends HashMap<String, Object> {
 		// case insensitive
 		key = key.toLowerCase();
 
+		// si des petits malins mettent des String ... on va les gérer quand
+		// même hein!
+		Object value = super.get(key);
+		if (value instanceof String) {
+			put(key, (String) value);
+		}
+
 		// abstract impl
 		Property prop = (Property) super.get(key);
 
@@ -141,7 +148,13 @@ public class PropertiesPlus extends HashMap<String, Object> {
 		prop.value = value;
 
 		// comportement hashmap
-		Property replace = (Property) super.put(key.toLowerCase(), prop);
-		return replace != null ? prop.value : null;
+		Object obj = super.put(key.toLowerCase(), prop);
+		if (obj instanceof String) {
+			return (String) obj;
+		}
+		else {
+			Property replace = (Property) obj;
+			return replace != null ? prop.value : null;
+		}
 	}
 }

@@ -110,7 +110,7 @@ public class HelpPanel extends JDialog implements ActionListener {
 
 			try {
 				tp_component.setPage(Paths
-						.get(PATH_DOC_COMPONENTS + component.getName()
+						.get(PATH_DOC_COMPONENTS + component.getType()
 								+ ".html").toUri().toURL());
 			} catch (IOException e1) {
 				printTodoPage(tp_component);

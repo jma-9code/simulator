@@ -27,10 +27,10 @@ public class CustomGraphComponent extends mxGraphComponent {
 		setConnectable(true);
 		getConnectionHandler().setCreateTarget(false);
 		getConnectionHandler().setHandleEnabled(false);
-
 		// Loads the defalt stylesheet from an external file
 		mxCodec codec = new mxCodec();
-		Document doc = mxUtils.loadDocument(SimulatorGUI.class.getResource("/gui/simulator-ep-style.xml").toString());
+		Document doc = mxUtils.loadDocument(SimulatorGUI.class.getResource(
+				"/gui/simulator-ep-style.xml").toString());
 		codec.decode(doc.getDocumentElement(), graph.getStylesheet());
 
 		// Sets the background to white
@@ -43,7 +43,8 @@ public class CustomGraphComponent extends mxGraphComponent {
 	 * valid drop target and the cells are of the same type (eg. both vertices
 	 * or both edges).
 	 */
-	public Object[] importCells(Object[] cells, double dx, double dy, Object target, Point location) {
+	public Object[] importCells(Object[] cells, double dx, double dy,
+			Object target, Point location) {
 		/*
 		 * if (target == null && cells.length == 1 && location != null) { target
 		 * = getCellAt(location.x, location.y);

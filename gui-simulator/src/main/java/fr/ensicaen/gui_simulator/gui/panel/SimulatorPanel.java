@@ -22,11 +22,20 @@ import javax.swing.table.JTableHeader;
 import javax.swing.table.TableColumn;
 
 import com.mxgraph.examples.swing.editor.BasicGraphEditor;
+import com.mxgraph.model.mxCell;
+import com.mxgraph.util.mxConstants;
 import com.mxgraph.util.mxResources;
 
+import fr.ensicaen.gui_simulator.gui.bridge.ComponentWrapper;
+import fr.ensicaen.gui_simulator.gui.bridge.SimulatorGUIBridge;
 import fr.ensicaen.gui_simulator.gui.bridge.StartPointJTableBridge;
 import fr.ensicaen.gui_simulator.gui.editor.DateTimeCellEditor;
 import fr.ensicaen.gui_simulator.gui.renderer.DateTimeCellRenderer;
+import fr.ensicaen.simulator.model.component.IOutput;
+import fr.ensicaen.simulator.model.factory.MediatorFactory;
+import fr.ensicaen.simulator.model.factory.listener.MediatorFactoryListener;
+import fr.ensicaen.simulator.model.mediator.Mediator;
+import fr.ensicaen.simulator.model.mediator.listener.MediatorListener;
 import fr.ensicaen.simulator.simulator.AsyncSimulator;
 import fr.ensicaen.simulator.simulator.Context;
 import fr.ensicaen.simulator.simulator.Simulator;
@@ -35,7 +44,8 @@ import fr.ensicaen.simulator.simulator.exception.SimulatorException;
 import fr.ensicaen.simulator.simulator.listener.SimulatorListener;
 
 public class SimulatorPanel extends JTabbedPane implements
-		ListSelectionListener, SimulatorListener {
+		ListSelectionListener, SimulatorListener, MediatorListener,
+		MediatorFactoryListener {
 
 	private JTable startPointTable;
 	private StartPointJTableBridge startPointModelTable;
@@ -43,6 +53,8 @@ public class SimulatorPanel extends JTabbedPane implements
 	private JButton btnLaunch = new JButton("Launch");
 	private JButton btnOneStep = new JButton("One Step");
 	private AsyncSimulator sim = SimulatorFactory.getAsyncSimulator();
+	private SimulatorPanel himself = null;
+	private BasicGraphEditor bge_frame = null;
 
 	public SimulatorPanel(BasicGraphEditor frame) {
 		// tab
@@ -52,6 +64,8 @@ public class SimulatorPanel extends JTabbedPane implements
 				initTab_simulatorPanel()));
 		// ajout du listener sur la simulation
 		sim.addListener(this);
+		himself = this;
+		bge_frame = frame;
 	}
 
 	private JPanel initTab_startPointTable() {
@@ -63,7 +77,8 @@ public class SimulatorPanel extends JTabbedPane implements
 		// ctx.addStartPoint(new Date(), "COUCOU");
 		// ctx.addStartPoint(new Date(System.currentTimeMillis() + 3600 * 24 *
 		// 5), "LOL");
-		startPointModelTable = new StartPointJTableBridge(ctx.getStartPoints());
+		startPointModelTable = new StartPointJTableBridge(
+				ctx.getUserStartPoints());
 
 		// view
 		startPointTable = new JTable(startPointModelTable);
@@ -109,6 +124,13 @@ public class SimulatorPanel extends JTabbedPane implements
 			public void actionPerformed(ActionEvent e) {
 				if (btnLaunch.getText().equalsIgnoreCase("launch")) {
 					try {
+						// ajout des listeners des mediateurs statiques
+						for (Mediator m : Context.getInstance().getMediators()) {
+							m.addListener(himself);
+						}
+						// ajout d'un listener pour recuperer les mediateurs
+						// dynamiques
+						MediatorFactory.getInstance().addListener(himself);
 						sim.start();
 					} catch (SimulatorException e1) {
 						e1.printStackTrace();
@@ -218,4 +240,68 @@ public class SimulatorPanel extends JTabbedPane implements
 		btnLaunch.setText("Launch");
 	}
 
+	@Override
+	public void onSendData(Mediator m, IOutput sender, String data) {
+		// all cell in blue
+		List<mxCell> cells = SimulatorGUIBridge.findAllComponentCell(bge_frame
+				.getGraphComponent().getGraph());
+		mxCell cell_sender = null;
+		mxCell cell_receiver = null;
+
+		for (mxCell c : cells) {
+			if (c.getValue() instanceof ComponentWrapper) {
+				if (((ComponentWrapper) c.getValue()).getComponent().equals(
+						m.getSender())) {
+					cell_sender = c;
+				} else if (((ComponentWrapper) c.getValue()).getComponent()
+						.equals(m.getReceiver())) {
+					cell_receiver = c;
+				}
+			}
+			bge_frame
+					.getGraphComponent()
+					.getGraph()
+					.setCellStyles(mxConstants.STYLE_FILLCOLOR, "blue",
+							new Object[] { c });
+
+		}
+
+		// concerned component
+		if (cell_sender != null) {
+			ComponentWrapper cw = (ComponentWrapper) cell_sender.getValue();
+			bge_frame
+					.getGraphComponent()
+					.getGraph()
+					.setCellStyles(mxConstants.STYLE_FILLCOLOR, "red",
+							new Object[] { cell_sender });
+		}
+
+		if (cell_receiver != null) {
+			ComponentWrapper cw = (ComponentWrapper) cell_receiver.getValue();
+			bge_frame
+					.getGraphComponent()
+					.getGraph()
+					.setCellStyles(mxConstants.STYLE_FILLCOLOR, "green",
+							new Object[] { cell_receiver });
+		}
+
+		bge_frame.getGraphComponent().refresh();
+	}
+
+	@Override
+	public void addMediator(Mediator m) {
+		m.addListener(himself);
+	}
+
+	@Override
+	public void addImplicitMediator(Mediator m) {
+		// TODO Auto-generated method stub
+
+	}
+
+	@Override
+	public void removeMediator(Mediator m) {
+		// TODO Auto-generated method stub
+
+	}
 }

@@ -17,6 +17,7 @@ import fr.ensicaen.simulator.model.response.DataResponse;
 import fr.ensicaen.simulator.model.response.IResponse;
 import fr.ensicaen.simulator.model.strategies.IStrategy;
 import fr.ensicaen.simulator.simulator.Context;
+import fr.ensicaen.simulator.tools.LogUtils;
 import fr.ensicaen.simulator_ep.utils.ISO7816Exception;
 import fr.ensicaen.simulator_ep.utils.ISO7816Tools;
 import fr.ensicaen.simulator_ep.utils.ISO7816Tools.MessageType;
@@ -44,6 +45,9 @@ public class CardChipStrategy implements IStrategy<ComponentIO> {
 
 	@Override
 	public void init(IOutput _this, Context ctx) {
+		ComponentIO c = (ComponentIO) _this;
+		c.getProperties().put("state", State.OFF.toString());
+		log.debug(LogUtils.MARKER_COMPONENT_INFO, "The card chip is reset");
 	}
 
 	@Override
@@ -52,26 +56,28 @@ public class CardChipStrategy implements IStrategy<ComponentIO> {
 		ISOMsg sdata;
 		try {
 			sdata = ISO7816Tools.read(data);
-
 			State state = State.valueOf(chip.getProperty("state"));
 			MessageType type = ISO7816Tools.convertCodeMsg2Type(sdata.getMTI());
 			switch (state) {
 				case OFF:
 					if (type == MessageType.SECURE_CHANNEL_RQ) {
-						log.debug("SC RQ");
+						log.info(LogUtils.MARKER_COMPONENT_INFO,
+								"The card chip receive data to establish a secure channel with ETP");
 						chip.getProperties().put("state", State.SC.name());
 						ret = DataResponse.build(m, new String(manageSC_RQ(chip, sdata).pack()));
 					}
 					break;
 				case SC:
 					if (type == MessageType.CARDHOLDER_AUTH_RQ) {
-						log.debug("AUTH RQ");
+						log.info(LogUtils.MARKER_COMPONENT_INFO,
+								"The card chip receive data to verify identity of the holder");
 						chip.getProperties().put("state", State.AUTH.name());
 						ret = DataResponse.build(m, new String(manageAUTH_RQ(chip, sdata).pack()));
 					}
 					break;
 				case AUTH:
 					if (type == MessageType.AUTHORIZATION_RP_CRYPTO) {
+						log.info(LogUtils.MARKER_COMPONENT_INFO, "The card chip receive ARPC data");
 						chip.getProperties().put("state", State.OFF.name());
 						ret = DataResponse.build(m, new String(manageARPC(chip, sdata).pack()));
 					}

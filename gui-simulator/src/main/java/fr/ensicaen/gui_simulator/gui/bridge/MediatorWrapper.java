@@ -63,13 +63,15 @@ public class MediatorWrapper implements Serializable {
 	public String getStyle() {
 		if (mediator instanceof HalfDuplexMediator) {
 			return "lineHalfDuplex";
-		}
-		else if (mediator instanceof SimplexMediator) {
+		} else if (mediator instanceof SimplexMediator) {
 			return "lineSimplex";
-		}
-		else {
+		} else {
 			return "";
 		}
+	}
+
+	public String getUsedStyle() {
+		return "group;whiteSpace=wrap;fillcolor=red";
 	}
 
 	public List<mxPoint> getPoints() {

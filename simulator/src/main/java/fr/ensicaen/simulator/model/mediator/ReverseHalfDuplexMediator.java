@@ -1,27 +1,20 @@
 package fr.ensicaen.simulator.model.mediator;
 
-import fr.ensicaen.simulator.model.component.IInput;
-import fr.ensicaen.simulator.model.component.IOutput;
-import fr.ensicaen.simulator.model.response.IResponse;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
-public class ReverseHalfDuplexMediator extends Mediator {
+import fr.ensicaen.simulator.model.component.IInputOutput;
+
+public class ReverseHalfDuplexMediator extends HalfDuplexMediator {
+
+	private static Logger log = LoggerFactory.getLogger(ReverseHalfDuplexMediator.class);
 
 	public ReverseHalfDuplexMediator() {
-
+		super(null, null);
 	}
 
 	public ReverseHalfDuplexMediator(HalfDuplexMediator mediator) {
-		super((IOutput) mediator.getReceiver(), (IInput) mediator.getSender());
-	}
-
-	@Override
-	public IResponse send(IOutput c, String data) {
-		if (c == this.sender) {
-			return this.receiver.notifyMessage(this, data);
-		}
-		else {
-			return ((IInput) this.sender).notifyMessage(this, data);
-		}
+		super((IInputOutput) mediator.getReceiver(), (IInputOutput) mediator.getSender());
 	}
 
 	@Override

@@ -9,6 +9,13 @@ import fr.ensicaen.simulator.model.response.IResponse;
 public interface IInput {
 
 	/**
+	 * Retourne le type de l'élément.
+	 * 
+	 * @return
+	 */
+	public int getType();
+
+	/**
 	 * Retourne le nom de l'élément.
 	 * 
 	 * @return

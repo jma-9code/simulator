@@ -32,42 +32,59 @@ public class Simulator {
 	public void start() throws SimulatorException {
 		Context ctx = Context.getInstance();
 
-		// check if a start point is set
-		if (!ctx.hasNext()) {
-			throw new SimulatorException("No start point configured by user.");
+		// clear old events subscription and other things...
+		if (ctx.getEvents() != null) {
+			ctx.simulationReset();
 		}
+
+		// notify the context
+		ctx.simulationStarted();
 
 		// notify all listener
 		for (SimulatorListener sl : listeners)
 			sl.simulationStarted();
 
-		// init all output components
-		for (Component c : Component.organizeComponents(ctx.getAllComponents())) {
-			if (c.isOutput()) {
-				((IOutput) c).init(ctx);
+		// check if a start point is set
+		if (!ctx.hasNext()) {
+			log.error("No start point configured by user.");
+			// throw new
+			// SimulatorException("No start point configured by user.");
+		}
+		else {
+
+			// init all output components
+			for (Component c : Component.organizeComponents(ctx.getAllComponents())) {
+				if (c.isOutput()) {
+					((IOutput) c).init(ctx);
+				}
 			}
+
+			while (ctx.hasNext()) {
+				// change context
+				ctx.next();
+				log.info("Context just moved to the next start point, the date is " + ctx.getTime());
+
+				// run simulation from start point defined
+				log.info("Simulation context " + ctx.currentCounter() + " with event " + ctx.getEvent()
+						+ " will start soon.");
+
+				try {
+					ctx.notifyComponents(ctx.getEvent());
+				}
+				catch (Throwable e) {
+					log.error("Error occured during simulation, throw an exception", e);
+					throw new SimulatorException(e);
+				}
+
+				log.info("Simulation context " + ctx.currentCounter() + " ended");
+			}
+
 		}
 
-		while (ctx.hasNext()) {
-			// change context
-			ctx.next();
-			log.info("Context just moved to the next start point, the date is " + ctx.getTime());
+		// notify the context
+		ctx.simulationEnded();
 
-			// run simulation from start point defined
-			log.info("Simulation context " + ctx.currentCounter() + " with event " + ctx.getEvent()
-					+ " will start soon.");
-
-			try {
-				ctx.notifyComponents(ctx.getEvent());
-			}
-			catch (Throwable e) {
-				log.error("Error occured during simulation, throw an exception", e);
-				throw new SimulatorException(e);
-			}
-
-			log.info("Simulation context " + ctx.currentCounter() + " ended");
-		}
-
+		// notify all listeners
 		for (SimulatorListener sl : listeners)
 			sl.simulationEnded();
 	}

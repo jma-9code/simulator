@@ -39,11 +39,14 @@ public final class EventMapAdapter extends XmlAdapter<EventMap, Map<String, List
 	public Map<String, List<IOutput>> unmarshal(EventMap v) throws Exception {
 		Map<String, List<IOutput>> hashMap = new HashMap<>();
 		for (MyMapEntryType myEntryType : v.events) {
-			List<IOutput> cs = new ArrayList<>();
-			for (Component io : myEntryType.components) {
-				cs.add((IOutput) io);
+			if (myEntryType != null && myEntryType.components != null) {
+				List<IOutput> cs = new ArrayList<>();
+
+				for (Component io : myEntryType.components) {
+					cs.add((IOutput) io);
+				}
+				hashMap.put(myEntryType.event, cs);
 			}
-			hashMap.put(myEntryType.event, cs);
 		}
 		return hashMap;
 	}

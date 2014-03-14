@@ -5,7 +5,6 @@ import java.util.List;
 
 import org.jpos.iso.ISOException;
 import org.jpos.iso.ISOMsg;
-import org.jpos.iso.packager.GenericPackager;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -18,6 +17,9 @@ import fr.ensicaen.simulator.model.response.VoidResponse;
 import fr.ensicaen.simulator.model.strategies.IStrategy;
 import fr.ensicaen.simulator.simulator.Context;
 import fr.ensicaen.simulator.simulator.exception.ContextException;
+import fr.ensicaen.simulator_ep.utils.ComponentEP;
+import fr.ensicaen.simulator_ep.utils.ISO8583Exception;
+import fr.ensicaen.simulator_ep.utils.ISO8583Tools;
 
 /**
  * Generic component allows to route a CB2A message to the good network. This
@@ -50,11 +52,10 @@ public class GenericRouterStrategy implements IStrategy<ComponentIO> {
 		log.info("Message received on network router");
 
 		// message 8583
-		ISOMsg input = new ISOMsg();
+		ISOMsg input = null;
 
 		try {
-			input.setPackager(new GenericPackager(getClass().getResource("/8583.xml").toExternalForm()));
-			input.unpack(data.getBytes());
+			input = ISO8583Tools.read(data);
 
 			// PAN available ?
 			if (input.hasField(2)) {
@@ -85,8 +86,8 @@ public class GenericRouterStrategy implements IStrategy<ComponentIO> {
 							// this
 							// identifiant.
 							Context ctx = Context.getInstance();
-							Mediator mediatorToNetwork = ctx.getFirstMediator(_this, "Network", MKEY_NETWORK_ID,
-									networkId);
+							Mediator mediatorToNetwork = ctx.getFirstMediator(_this, ComponentEP.NETWORK.ordinal(),
+									MKEY_NETWORK_ID, networkId);
 
 							if (mediatorToNetwork != null) {
 								// The server response check is not implemented
@@ -111,7 +112,7 @@ public class GenericRouterStrategy implements IStrategy<ComponentIO> {
 				log.error("Field 39 (PAN) does not exist");
 			}
 		}
-		catch (ISOException e) {
+		catch (ISOException | ISO8583Exception e) {
 			log.error("Exception while unpacking message", e);
 
 			// anormal

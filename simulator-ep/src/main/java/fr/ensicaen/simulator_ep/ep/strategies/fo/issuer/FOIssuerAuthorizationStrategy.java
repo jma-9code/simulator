@@ -19,14 +19,14 @@ import fr.ensicaen.simulator.model.response.IResponse;
 import fr.ensicaen.simulator.model.response.VoidResponse;
 import fr.ensicaen.simulator.model.strategies.IStrategy;
 import fr.ensicaen.simulator.simulator.Context;
-import fr.ensicaen.simulator_ep.ep.strategies.fo.FOStrategy;
+import fr.ensicaen.simulator.tools.LogUtils;
 import fr.ensicaen.simulator_ep.utils.ISO7816Tools;
 import fr.ensicaen.simulator_ep.utils.ISO8583Exception;
 import fr.ensicaen.simulator_ep.utils.ISO8583Tools;
 
 public class FOIssuerAuthorizationStrategy implements IStrategy<ComponentIO> {
 
-	private static Logger log = LoggerFactory.getLogger(FOStrategy.class);
+	private static Logger log = LoggerFactory.getLogger(FOIssuerAuthorizationStrategy.class);
 
 	public FOIssuerAuthorizationStrategy() {
 		super();
@@ -35,7 +35,10 @@ public class FOIssuerAuthorizationStrategy implements IStrategy<ComponentIO> {
 
 	@Override
 	public List<PropertyDefinition> getPropertyDefinitions() {
-		return new ArrayList<PropertyDefinition>();
+		List<PropertyDefinition> propDefs = new ArrayList<PropertyDefinition>();
+		propDefs.add(new PropertyDefinition("acceptance", null, true,
+				"Stratégie d'approbation des autorisations (0 = OK, 1 = KO, 2 = Random)"));
+		return propDefs;
 	}
 
 	@Override
@@ -47,8 +50,8 @@ public class FOIssuerAuthorizationStrategy implements IStrategy<ComponentIO> {
 		ISOMsg authorizationAnswer = null;
 		Random r = new Random();
 		try {
+			log.debug(LogUtils.MARKER_COMPONENT_INFO, "FO Issuer authorization receive the ARQC from the FO acquierer");
 			authorizationAnswer = ISO8583Tools.read(data);
-
 			authorizationAnswer.setMTI("0110");
 			authorizationAnswer.set(7, ISO7816Tools.writeDATETIME(Context.getInstance().getTime()));
 			// FO utilisation du champs acceptance afin de definir la strategie
@@ -84,6 +87,7 @@ public class FOIssuerAuthorizationStrategy implements IStrategy<ComponentIO> {
 		}
 
 		try {
+			log.debug(LogUtils.MARKER_COMPONENT_INFO, "FO Issuer authorization send the ARPC to the FO acquierer");
 			return DataResponse.build(m, new String(authorizationAnswer.pack()));
 		}
 		catch (ISOException e) {

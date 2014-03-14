@@ -22,13 +22,17 @@ public class ComponentIO extends Component implements IInputOutput {
 		super(_name);
 	}
 
+	public ComponentIO(String _name, int type) {
+		super(_name, type);
+	}
+
 	@Override
 	public IResponse notifyMessage(Mediator m, String data) {
 		if (!"send".equals(Thread.currentThread().getStackTrace()[2].getMethodName())) {
 			log.error("Invalid call of input method, use mediator instead.");
 		}
 
-		log.debug("[" + this.getName() + "] IN: '" + data + "'");
+		// log.debug("[" + this.getType() + "] IN: '" + data + "'");
 		return this.strategy.processMessage(this, m, data);
 	}
 

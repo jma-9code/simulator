@@ -43,7 +43,8 @@ public class CustomGraph extends mxGraph {
 		setConnectableEdges(false);
 
 		// link to our code
-		ComponentAppearanceFeature appearanceFeature = new ComponentAppearanceFeature(this);
+		ComponentAppearanceFeature appearanceFeature = new ComponentAppearanceFeature(
+				this);
 		addListener(mxEvent.FOLD_CELLS, appearanceFeature);
 
 		ComponentRegistrationFeature registrationFeature = new ComponentRegistrationFeature();
@@ -51,6 +52,7 @@ public class CustomGraph extends mxGraph {
 		addListener(mxEvent.CELLS_REMOVED, registrationFeature);
 		addListener(SimulatorGUIBridge.EVT_PAUSE_CTX_SYNC, registrationFeature);
 		addListener(SimulatorGUIBridge.EVT_RESUME_CTX_SYNC, registrationFeature);
+
 	}
 
 	/**
@@ -169,19 +171,21 @@ public class CustomGraph extends mxGraph {
 		mxCell edge = (mxCell) _edge;
 
 		// get user objects
-		ComponentWrapper source = (ComponentWrapper) ((mxCell) _source).getValue();
-		ComponentWrapper target = (ComponentWrapper) ((mxCell) _target).getValue();
+		ComponentWrapper source = (ComponentWrapper) ((mxCell) _source)
+				.getValue();
+		ComponentWrapper target = (ComponentWrapper) ((mxCell) _target)
+				.getValue();
 
 		MediatorFactory factory = MediatorFactory.getInstance();
-		Mediator m = factory.getMediator(source.getComponent(), target.getComponent());
+		Mediator m = factory.getMediator(source.getComponent(),
+				target.getComponent());
 
 		if (m != null) {
 			MediatorWrapper wrapper = new MediatorWrapper(m);
 			edge.setValue(wrapper);
 			edge.setStyle(wrapper.getStyle());
 			return "";
-		}
-		else {
+		} else {
 			return mxResources.get("invalid_link");
 		}
 	}
@@ -194,12 +198,14 @@ public class CustomGraph extends mxGraph {
 
 	@Override
 	public boolean isValidSource(Object arg0) {
-		return arg0 != null && ((mxCell) arg0).getValue() instanceof ComponentWrapper;
+		return arg0 != null
+				&& ((mxCell) arg0).getValue() instanceof ComponentWrapper;
 	}
 
 	@Override
 	public boolean isValidTarget(Object arg0) {
-		return arg0 != null && ((mxCell) arg0).getValue() instanceof ComponentWrapper;
+		return arg0 != null
+				&& ((mxCell) arg0).getValue() instanceof ComponentWrapper;
 	}
 
 }

@@ -51,19 +51,19 @@ public class ContextTest {
 		ctx.reset();
 		ctx.autoRegistrationMode();
 
-		c1 = new ComponentIO("C1");
-		c2 = new ComponentIO("C2");
+		c1 = new ComponentIO("C1", 0);
+		c2 = new ComponentIO("C2", 1);
 
-		c1s1 = new ComponentIO("C1S1");
+		c1s1 = new ComponentIO("C1S1", 2);
 		c1.addChild(c1s1);
 
-		c1s2 = new ComponentIO("C1S2");
+		c1s2 = new ComponentIO("C1S2", 3);
 		c1.addChild(c1s2);
 
-		c2s1 = new ComponentIO("C2S1");
+		c2s1 = new ComponentIO("C2S1", 4);
 		c2.addChild(c2s1);
 
-		c2s2 = new ComponentIO("C2S2");
+		c2s2 = new ComponentIO("C2S2", 5);
 		c2.addChild(c2s2);
 	}
 
@@ -88,7 +88,7 @@ public class ContextTest {
 				TestPass.passed();
 
 				try {
-					Assert.assertEquals(Context.getInstance().getFirstMediator(_this, "C2"), mExpected);
+					Assert.assertEquals(Context.getInstance().getFirstMediator(_this, 1), mExpected);
 				}
 				catch (ContextException e) {
 					e.printStackTrace();
@@ -127,7 +127,7 @@ public class ContextTest {
 				TestPass.passed();
 
 				try {
-					Mediator m = Context.getInstance().getFirstMediator(_this, "C2");
+					Mediator m = Context.getInstance().getFirstMediator(_this, 1);
 					System.out.println("ETTSTTSTSTS" + m);
 					Assert.assertTrue(false);
 				}
@@ -173,7 +173,7 @@ public class ContextTest {
 				TestPass.passed();
 
 				try {
-					Mediator m = Context.getInstance().getFirstMediator(_this, "C1S2");
+					Mediator m = Context.getInstance().getFirstMediator(_this, 3);
 					Assert.assertEquals(m.getClass(), PipedMediator.class);
 					Assert.assertEquals(m.getSender(), c1s1);
 					Assert.assertEquals(m.getReceiver(), c1s2);
@@ -218,7 +218,7 @@ public class ContextTest {
 				TestPass.passed();
 
 				try {
-					Mediator m = Context.getInstance().getFirstMediator(_this, "C1S2");
+					Mediator m = Context.getInstance().getFirstMediator(_this, 3);
 					Assert.assertEquals(m.getClass(), PipedMediator.class);
 					Assert.assertEquals(m.getSender(), c1s1);
 					Assert.assertEquals(m.getReceiver(), c1s2);
@@ -267,7 +267,7 @@ public class ContextTest {
 				TestPass.passed();
 
 				try {
-					Mediator m = Context.getInstance().getFirstMediator(_this, "CI2");
+					Mediator m = Context.getInstance().getFirstMediator(_this, 9);
 					Assert.assertTrue(false);
 				}
 				catch (ContextException e) {
@@ -311,7 +311,7 @@ public class ContextTest {
 				TestPass.passed();
 
 				try {
-					List<Mediator> mList = Context.getInstance().getMediators(_this, "C2");
+					List<Mediator> mList = Context.getInstance().getMediators(_this, 1);
 					// Assert.assertEquals(mList.size(), 2);
 					Assert.assertThat("Mediators returned not correct", mList, CoreMatchers.hasItem(m1));
 					Assert.assertThat("Mediators returned not correct", mList, CoreMatchers.hasItem(m2));
@@ -336,6 +336,7 @@ public class ContextTest {
 
 		Context.getInstance().addStartPoint(new Date(), "TEST");
 		SimulatorFactory.getSimulator().start();
+		Simulator.resume();
 	}
 
 	@Test
@@ -348,20 +349,21 @@ public class ContextTest {
 		MediatorFactory factory = MediatorFactory.getInstance();
 		Mediator mMade = factory.getMediator(cTest, c1, EMediator.HALFDUPLEX);
 
-		try {
-			Mediator mGot = Context.getInstance().getFirstMediator(c1, "Composant de ouf");
-			Assert.assertEquals(mMade, mGot);
-
-			mGot = Context.getInstance().getFirstMediator(c1, "CDO");
-			Assert.assertEquals(mMade, mGot);
-
-			mGot = Context.getInstance().getFirstMediator(c1, "CDo");
-			Assert.assertEquals(mMade, mGot);
-		}
-		catch (ContextException e) {
-			e.printStackTrace();
-			Assert.assertTrue(false);
-		}
+		// try {
+		// Mediator mGot = Context.getInstance().getFirstMediator(c1,
+		// "Composant de ouf");
+		// Assert.assertEquals(mMade, mGot);
+		//
+		// mGot = Context.getInstance().getFirstMediator(c1, "CDO");
+		// Assert.assertEquals(mMade, mGot);
+		//
+		// mGot = Context.getInstance().getFirstMediator(c1, "CDo");
+		// Assert.assertEquals(mMade, mGot);
+		// }
+		// catch (ContextException e) {
+		// e.printStackTrace();
+		// Assert.assertTrue(false);
+		// }
 	}
 
 	@Test(expected = ContextException.class)
@@ -375,6 +377,6 @@ public class ContextTest {
 		factory.getMediator(cTest, c1, EMediator.HALFDUPLEX);
 
 		// test
-		Context.getInstance().getFirstMediator(c1, "CD");
+		// Context.getInstance().getFirstMediator(c1, "CD");
 	}
 }

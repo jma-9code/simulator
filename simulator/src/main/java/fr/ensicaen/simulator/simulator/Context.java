@@ -18,15 +18,18 @@ import fr.ensicaen.simulator.model.component.Component;
 import fr.ensicaen.simulator.model.component.IOutput;
 import fr.ensicaen.simulator.model.dao.ScenarioData;
 import fr.ensicaen.simulator.model.factory.MediatorFactory;
-import fr.ensicaen.simulator.model.factory.MediatorFactory.EMediator;
+import fr.ensicaen.simulator.model.mediator.ForwardMediator;
 import fr.ensicaen.simulator.model.mediator.HalfDuplexMediator;
 import fr.ensicaen.simulator.model.mediator.Mediator;
+import fr.ensicaen.simulator.model.mediator.PipedMediator;
+import fr.ensicaen.simulator.model.mediator.ReverseHalfDuplexMediator;
 import fr.ensicaen.simulator.model.mediator.SimplexMediator;
 import fr.ensicaen.simulator.model.properties.listener.DefaultPropertyListenerImpl;
 import fr.ensicaen.simulator.model.properties.listener.PropertyListener;
 import fr.ensicaen.simulator.model.strategies.IStrategy;
 import fr.ensicaen.simulator.simulator.StartPoint.StartPointComparator;
 import fr.ensicaen.simulator.simulator.exception.ContextException;
+import fr.ensicaen.simulator.simulator.listener.SimulatorListener;
 
 /**
  * Simulation context configured by user, controlled by the simulator and
@@ -34,14 +37,19 @@ import fr.ensicaen.simulator.simulator.exception.ContextException;
  * 
  * @author Flo
  */
-public class Context {
+public class Context implements SimulatorListener {
 
 	private static Logger log = LoggerFactory.getLogger(Context.class);
 
 	/**
-	 * List of start points sorted by date
+	 * List of start points sorted by date defined by the user
 	 */
-	private Queue<StartPoint> startPoints;
+	private Queue<StartPoint> userStartPoints;
+
+	/**
+	 * List of start points sorted by date for the current execution
+	 */
+	private Queue<StartPoint> execStartPoints;
 
 	/**
 	 * Delegate access Modified by simulator via next() method.
@@ -59,33 +67,32 @@ public class Context {
 	private Map<String, Component> components;
 
 	/**
-	 * List of static mediators
-	 */
-	private List<Mediator> mediators;
-
-	/**
 	 * In this mode, all component instancied when true, will be automatically
 	 * register in the context.
 	 */
 	private boolean autoRegistrationMode = false;
 
 	/**
-	 * Liste des composants enregistrés pour un évènement key = Evènement value
+	 * Liste des composants enregistres pour un evènement key = Evènement value
 	 * = Liste des composants
 	 */
 	private Map<String, List<IOutput>> events;
 
 	/**
-	 * Property listener à utiliser. Ce découplage permet à la couche GUI de
-	 * définir un listener particulier (ex : popup de renseignement de
-	 * l'information nécessaire).
+	 * Property listener à utiliser. Ce decouplage permet à la couche GUI de
+	 * definir un listener particulier (ex : popup de renseignement de
+	 * l'information necessaire).
 	 */
 	private PropertyListener propertyListener = new DefaultPropertyListenerImpl();
 
+	/**
+	 * Simulation in execution ?
+	 */
+	private boolean inExecution = false;
+
 	public Context() {
-		this.startPoints = new PriorityQueue<>(1, new StartPointComparator());
+		this.userStartPoints = new PriorityQueue<>(1, new StartPointComparator());
 		this.components = new HashMap<>();
-		this.mediators = new LinkedList<>();
 		this.events = new HashMap<>();
 	}
 
@@ -151,9 +158,28 @@ public class Context {
 		registerComponent(component, false);
 	}
 
+	/**
+	 * @param component
+	 */
 	public void unregisterComponent(Component component) {
 		log.info("Unregister component " + component.getInstanceName());
 		components.remove(component);
+	}
+
+	/**
+	 * Retourne la liste des composants du context ayant le type specifie
+	 * 
+	 * @param type
+	 * @return
+	 */
+	public List<Component> getComponentsType(int type) {
+		List<Component> comps = new ArrayList<>();
+		for (Component c : components.values()) {
+			if (c.getType() == type) {
+				comps.add(c);
+			}
+		}
+		return comps;
 	}
 
 	/**
@@ -166,8 +192,8 @@ public class Context {
 		// auto-register
 		if (autoRegistrationMode || !selfRegistration) {
 			log.info("Register mediator " + mediator.toString());
-			mediators.add(mediator);
-			log.debug(mediators.size() + " mediators");
+			MediatorFactory.getInstance().add(mediator);
+			log.debug(getMediators().size() + " mediators");
 		}
 	}
 
@@ -182,7 +208,8 @@ public class Context {
 
 	public void unregisterMediator(Mediator mediator) {
 		log.info("Unregister mediator " + mediator.toString());
-		mediators.remove(mediator);
+		MediatorFactory.getInstance().remove(mediator);
+		// mediators.remove(mediator);
 	}
 
 	/**
@@ -218,10 +245,10 @@ public class Context {
 	 * @param whoAreYou
 	 *            Reference of caller component
 	 * @param whoWantYou
-	 *            Name of wanted component
+	 *            Type of wanted component
 	 * @return Reference of mediator to use.
 	 */
-	public Mediator getFirstMediator(IOutput whoAreYou, String whoWantYou) throws ContextException {
+	public Mediator getFirstMediator(IOutput whoAreYou, int whoWantYou) throws ContextException {
 		List<Mediator> matches = getMediators(whoAreYou, whoWantYou);
 		return matches != null && !matches.isEmpty() ? matches.get(0) : null;
 	}
@@ -233,7 +260,7 @@ public class Context {
 	 * @param whoAreYou
 	 *            Reference of caller component
 	 * @param whoWantYou
-	 *            Name of wanted component
+	 *            type of wanted component
 	 * @param key
 	 *            Key of property to check
 	 * @param value
@@ -241,7 +268,7 @@ public class Context {
 	 * @return Reference of mediator to use.
 	 * @throws ContextException
 	 */
-	public Mediator getFirstMediator(IOutput whoAreYou, String whoWantYou, String key, String value)
+	public Mediator getFirstMediator(IOutput whoAreYou, int whoWantYou, String key, String value)
 			throws ContextException {
 		List<Mediator> mediators = getMediators(whoAreYou, whoWantYou);
 
@@ -256,192 +283,194 @@ public class Context {
 			}
 		}
 
-		log.warn("No mediator found to " + whoWantYou + " with " + key + "=" + value);
+		log.warn("No mediator found to type " + whoWantYou + "  with " + key + "=" + value);
 
 		return null;
 	}
 
 	/**
-	 * Returns mediators between the caller component and components with the
-	 * name given.
+	 * Get all mediators link with the component
 	 * 
-	 * @param whoAreYou
-	 *            Reference of caller component
-	 * @param whoWantYou
-	 *            Name of wanted component
-	 * @return List of mediators with potential multiple components
+	 * @param c
+	 * @return
 	 */
-	public List<Mediator> getMediators(IOutput whoAreYou, String whoWantYou) throws ContextException {
-		List<Mediator> matches = new LinkedList<>();
-		List<Component> comps = new ArrayList<Component>(components.values());
-		Component whoWantYou_c = components.get(whoWantYou);
-		// analyse des mediators, recherche du whoWantYou
-		Iterator<Mediator> iMediators = mediators.iterator();
+	private List<Mediator> getAllLinkedMediators(Component c) {
+		List<Mediator> ret = new ArrayList<>();
+		Iterator<Mediator> iMediators = MediatorFactory.getInstance().getMediators().iterator();
 		while (iMediators.hasNext()) {
 			Mediator cur = iMediators.next();
-			if (cur.getReceiver().getName().equalsIgnoreCase(whoWantYou)) {
-				// direct
-				if (whoAreYou.equals(cur.getSender())
-						&& (cur instanceof SimplexMediator || cur instanceof HalfDuplexMediator)) {
-					matches.add(cur);
-				}
-
-				// indirect
-				Component root = Component.getRoot((Component) whoAreYou, comps);
-				if (root.equals(cur.getSender())
-						&& (cur instanceof SimplexMediator || cur instanceof HalfDuplexMediator)) {
-					matches.add(MediatorFactory.getInstance().getMediator((Component) whoAreYou, whoWantYou_c,
-							(cur instanceof SimplexMediator) ? EMediator.SIMPLEX : EMediator.HALFDUPLEX));
-				}
-
+			if (cur instanceof ForwardMediator || cur instanceof ReverseHalfDuplexMediator
+					|| cur instanceof PipedMediator) {
+				continue;
 			}
-			else if (cur.getSender().getName().equalsIgnoreCase(whoWantYou)) {
-				// direct
-				if (whoAreYou.equals(cur.getReceiver()) && cur instanceof HalfDuplexMediator) {
-					matches.add(cur);
-				}
+			if (cur.getSender().equals(c) || cur.getReceiver().equals(c)) {
+				ret.add(cur);
+			}
+		}
+		return ret;
+	}
 
-				// indirect
-				Component root = Component.getRoot((Component) whoAreYou, comps);
-				if (root.equals(cur.getReceiver()) && cur instanceof HalfDuplexMediator) {
-					matches.add(MediatorFactory.getInstance().getMediator((Component) whoAreYou, whoWantYou_c,
-							EMediator.HALFDUPLEX));
+	/**
+	 * retrive the full mediators path for link src and dst (rec)
+	 * 
+	 * @param src
+	 * @param dst
+	 * @return
+	 */
+	private List<Mediator> getMediatorPath(Component src, final Component dst, List<Mediator> explored) {
+		List<Mediator> ret = new LinkedList<>();
+		List<Mediator> src_meds = getAllLinkedMediators(src);
+		// retire les liens explores
+		src_meds.removeAll(explored);
+
+		for (Mediator m : src_meds) {
+			explored.add(m);
+			// src (sender)<--->dst
+			if (!m.getReceiver().equals(src)) {
+				// ret.add(m);
+				if (m.getReceiver().equals(dst)) {
+					// find the dst component
+					ret.add(m);
+					return ret;
+				}
+				else {
+					List<Mediator> tmp = getMediatorPath((Component) m.getReceiver(), dst, explored);
+					if (!tmp.isEmpty()) {
+						ret.add(m);
+						ret.addAll(tmp);
+					}
+				}
+			}
+			// dst (sender)<---->src
+			else {
+				// sender = dst, il faut un half duplex
+				if (m instanceof HalfDuplexMediator) {
+					// ret.add(m);
+					if (m.getSender().equals(dst)) {
+						// find the dst component, invert the direction
+						ret.add(new ReverseHalfDuplexMediator((HalfDuplexMediator) m));
+						return ret;
+					}
+					else {
+						List<Mediator> tmp = getMediatorPath((Component) m.getSender(), dst, explored);
+						if (!tmp.isEmpty()) {
+							// invert the direction
+							ret.add(new ReverseHalfDuplexMediator((HalfDuplexMediator) m));
+							ret.addAll(tmp);
+						}
+					}
 				}
 			}
 		}
-		if (matches.isEmpty()) {
-			throw new ContextException("No mediator between component named " + whoWantYou + " and "
-					+ whoAreYou.getName() + " in the context.");
-		}
-		return matches;
+		return ret;
 	}
 
 	/**
 	 * Returns mediators between the caller component and components with the
-	 * name given.
+	 * type given.
 	 * 
 	 * @param whoAreYou
 	 *            Reference of caller component
-	 * @param whoWantYou
-	 *            Name of wanted component
+	 * @param typeYouWant
+	 *            type of wanted component
 	 * @return List of mediators with potential multiple components
 	 */
-	// public List<Mediator> getMediators(IOutput whoAreYou, String whoWantYou)
-	// throws ContextException {
-	// List<Mediator> matches = new LinkedList<>();
-	//
-	// Iterator<Mediator> iMediators = mediators.iterator();
-	// List<Mediator> dstFiltered = new LinkedList<Mediator>();
-	//
-	// // filter mediator with destination
-	// while (iMediators.hasNext()) {
-	// Mediator curMediator = iMediators.next();
-	//
-	// if (whoWantYou.equalsIgnoreCase(curMediator.getReceiver().getName())
-	// || whoWantYou.equalsIgnoreCase(curMediator.getSender().getName())
-	// || whoWantYou.equalsIgnoreCase(curMediator.getReceiver().getAcronym())
-	// || whoWantYou.equalsIgnoreCase(curMediator.getSender().getAcronym())) {
-	// dstFiltered.add(curMediator);
-	// log.debug("Mediator linking " + whoWantYou + " found : " + curMediator);
-	// }
-	// }
-	//
-	// log.debug("End of mediator filter with destination");
-	//
-	// // try to find mediator with depth = 1
-	// iMediators = dstFiltered.iterator();
-	// while (iMediators.hasNext()) {
-	// Mediator curMediator = iMediators.next();
-	//
-	// // half or simplex with whoAreYou in sender
-	// // or halfduplex with whoAreYou in receiver (reversable)
-	// if (curMediator.getSender() == whoAreYou
-	// || (curMediator.getReceiver() == whoAreYou && curMediator instanceof
-	// HalfDuplexMediator)) {
-	// log.debug("Direct mediator found : " + curMediator);
-	// matches.add(curMediator);
-	// }
-	// }
-	//
-	// // filter mediator with source
-	// List<Mediator> srcFiltered = new LinkedList<Mediator>();
-	// iMediators = mediators.iterator();
-	// while (iMediators.hasNext()) {
-	// Mediator curMediator = iMediators.next();
-	//
-	// if (whoAreYou == curMediator.getSender() || whoAreYou ==
-	// curMediator.getReceiver()) {
-	// srcFiltered.add(curMediator);
-	// log.debug("Mediator linked to " + whoAreYou.getName() + " found : " +
-	// curMediator);
-	// }
-	// }
-	//
-	// // not found, now try to find mediator with depth = 2
-	// iMediators = dstFiltered.iterator();
-	// while (iMediators.hasNext()) {
-	// Mediator m1 = iMediators.next();
-	//
-	// Iterator<Mediator> ite2 = srcFiltered.iterator();
-	// while (ite2.hasNext()) {
-	// Mediator m2 = ite2.next();
-	//
-	// log.debug("Is PipedMediator possible ? " + m1 + ", " + m2);
-	//
-	// // cas simplex vers simplex
-	// if (m1.getSender() == m2.getReceiver()) {
-	// // m1 link the component to another
-	// // m2 link this another to the component searched
-	// log.info("PipedMediator(m1, m2)");
-	// matches.add(MediatorFactory.getInstance().getPipedMediator(m1, m2));
-	// }
-	// // cas duplex vers simplex/duplex
-	// /*
-	// * else if (m1 instanceof HalfDuplexMediator && m1.getSender()
-	// * == m2.getSender()) { // m1 link another to the component //
-	// * m2 link the component searched to this another
-	// * log.info("PipedMediator(ReverseHalfDuplexMediator(m1), m2)");
-	// * return MediatorFactory.getInstance().getPipedMediator( new
-	// * ReverseHalfDuplexMediator((HalfDuplexMediator) m1), m2); }
-	// */
-	// // cas duplex vers simplex/duplex
-	// else if (m2 instanceof HalfDuplexMediator && m1.getSender() ==
-	// m2.getSender()) {
-	// // m1 link another to the component
-	// // m2 link the component searched to this another
-	// log.info("PipedMediator(ReverseHalfDuplexMediator(m2), m1)");
-	// matches.add(MediatorFactory.getInstance().getPipedMediator(
-	// new ReverseHalfDuplexMediator((HalfDuplexMediator) m2), m1));
-	// }
-	// // cas duplex vers duplex
-	// /*
-	// * else if (m1 instanceof HalfDuplexMediator && m1.getReceiver()
-	// * == m2.getReceiver()) { // m1 link another to the component //
-	// * m2 link the component searched to this another
-	// * log.info("PipedMediator(ReverseHalfDuplexMediator(m1), m2)");
-	// * return MediatorFactory.getInstance().getPipedMediator( new
-	// * ReverseHalfDuplexMediator((HalfDuplexMediator) m1), m2); }
-	// */
-	// // cas duplex vers duplex
-	// else if (m2 instanceof HalfDuplexMediator && m1.getReceiver() ==
-	// m2.getReceiver()) {
-	// // m1 link another to the component
-	// // m2 link the component searched to this another
-	// log.info("PipedMediator(ReverseHalfDuplexMediator(m2), m1)");
-	// matches.add(MediatorFactory.getInstance().getPipedMediator(
-	// new ReverseHalfDuplexMediator((HalfDuplexMediator) m2), m1));
-	// }
-	// }
-	// }
-	//
-	// if (matches.isEmpty()) {
-	// throw new ContextException("No mediator between component named " +
-	// whoWantYou + " and "
-	// + whoAreYou.getName() + " in the context.");
-	// }
-	//
-	// return matches;
-	// }
+	public List<Mediator> getMediators(IOutput whoAreYou, int typeYouWant) throws ContextException {
+		// candidats potentiels
+		List<Mediator> matches = new LinkedList<>();
+		// tout les composants du context
+		List<Component> comps = new ArrayList<Component>(components.values());
+		Component whoWantYou_c = null;
+
+		// recuperation des mediators associes au whoareYou
+		List<Mediator> whoAreYou_meds = getAllLinkedMediators((Component) whoAreYou);
+
+		// recuperation du composant root de whoAreYou
+		Component root = Component.getRoot((Component) whoAreYou);
+		// recuperation des mediators associes au whoareYou de plus haut niveau
+		List<Mediator> root_meds = getAllLinkedMediators(root);
+
+		// recherche d'un lien direct entre le receiver et sender
+		for (Mediator m : whoAreYou_meds) {
+			// le receiver est du type recherche
+			if (m.getReceiver().getType() == typeYouWant
+					&& (m instanceof SimplexMediator || m instanceof HalfDuplexMediator)) {
+				matches.add(m);
+			}
+			// le sender est du type recherche, il faut etre en halfduplex
+			else if (m.getSender().getType() == typeYouWant && m instanceof HalfDuplexMediator) {
+				matches.add(m);
+			}
+		}
+
+		// recherche d'un lien indirect entre le receiver et sender (utilisation
+		// du composant root du whoareyou)
+		Component tmp = null;
+		for (Mediator m : root_meds) {
+			if (m.getReceiver().equals(root)) {
+				tmp = (Component) m.getSender();
+				// recuperation du composant root de tmp
+				Component root_tmp = Component.getRoot(tmp);
+
+				tmp = Component.containsType(root_tmp, typeYouWant);
+				// le sender est du type recherche, il faut etre en halfduplex
+				if (tmp != null && m instanceof HalfDuplexMediator) {
+					List<Mediator> media = getMediatorPath((Component) whoAreYou, tmp, new LinkedList<Mediator>());
+
+					Iterator<Mediator> it = media.iterator();
+					Mediator buff = null;
+					while (it.hasNext()) {
+						Mediator me = it.next();
+						if (buff == null) {
+							buff = me;
+						}
+						else {
+							buff = MediatorFactory.getInstance().getPipedMediator(buff, me);
+						}
+					}
+					matches.add(buff);
+
+					// matches.add(MediatorFactory.getInstance().getMediator((Component)
+					// whoAreYou, tmp,
+					// EMediator.HALFDUPLEX));
+				}
+			}
+			else {
+				tmp = (Component) m.getReceiver();
+				// recuperation du composant root de tmp
+				Component root_tmp = Component.getRoot(tmp);
+
+				tmp = Component.containsType(root_tmp, typeYouWant);
+				// le receiver est du type recherche
+				if (tmp != null && (m instanceof SimplexMediator || m instanceof HalfDuplexMediator)) {
+					List<Mediator> media = getMediatorPath((Component) whoAreYou, tmp, new LinkedList<Mediator>());
+
+					Iterator<Mediator> it = media.iterator();
+					Mediator buff = null;
+					while (it.hasNext()) {
+						Mediator me = it.next();
+						if (buff == null) {
+							buff = me;
+						}
+						else {
+							buff = MediatorFactory.getInstance().getPipedMediator(buff, me);
+						}
+					}
+					matches.add(buff);
+					// matches.add(MediatorFactory.getInstance().getMediator((Component)
+					// whoAreYou, tmp,
+					// (m instanceof SimplexMediator) ? EMediator.SIMPLEX :
+					// EMediator.HALFDUPLEX));
+				}
+			}
+		}
+
+		if (matches.isEmpty()) {
+			throw new ContextException("No mediator between component type " + typeYouWant + " and "
+					+ whoAreYou.getName() + " in the context.");
+		}
+		return matches;
+	}
 
 	/**
 	 * Allow to add a start point for the simulation<br />
@@ -450,11 +479,17 @@ public class Context {
 	public void addStartPoint(Date time, String event) {
 		log.debug("Start point with event " + event + " and scheduled on " + time);
 		StartPoint sp = new StartPoint(time, event);
-		this.startPoints.add(sp);
+
+		if (inExecution) {
+			this.execStartPoints.add(sp);
+		}
+		else {
+			this.userStartPoints.add(sp);
+		}
 	}
 
-	public Queue<StartPoint> getStartPoints() {
-		return startPoints;
+	public Queue<StartPoint> getUserStartPoints() {
+		return userStartPoints;
 	}
 
 	/**
@@ -468,13 +503,18 @@ public class Context {
 	 * Reset the context entirely.
 	 */
 	public void reset() {
-		startPoints.clear();
-		current = null;
-		currentCounter = 0;
+		simulationReset();
+		userStartPoints.clear();
 		components.clear();
-		mediators.clear();
-		events.clear();
+		MediatorFactory.getInstance().reset();
+		currentCounter = 0;
 		autoRegistrationMode = false;
+	}
+
+	public void simulationReset() {
+		events.clear();
+		current = null;
+		execStartPoints = null;
 	}
 
 	/**
@@ -486,13 +526,15 @@ public class Context {
 	 */
 	public void restoreContext(ScenarioData sd) throws InstantiationException, IllegalAccessException {
 		reset();
-		startPoints.addAll(sd.getStartPoints());
+		userStartPoints.addAll(sd.getStartPoints());
 		components.putAll(sd.getRootComponents());
-		mediators.addAll(sd.getMediators());
+		MediatorFactory.getInstance().addAll(sd.getMediators());
 		events.putAll(sd.getEvents());
 
-		// associate strategy and component
-		for (Component c : components.values()) {
+		// on all components (root and childs)
+		for (Component c : Component.organizeComponents(components.values())) {
+
+			// associate strategy and component
 			Class strat = sd.getLink_strat_component().get(c.getUuid());
 			if (strat != null) {
 				c.setStrategy((IStrategy<? extends Component>) strat.newInstance());
@@ -506,7 +548,7 @@ public class Context {
 	 * @return true or false
 	 */
 	boolean hasNext() {
-		return this.startPoints.peek() != null;
+		return this.execStartPoints.peek() != null;
 	}
 
 	/**
@@ -518,7 +560,7 @@ public class Context {
 			autoRegistrationMode = false;
 		}
 
-		this.current = this.startPoints.poll();
+		this.current = this.execStartPoints.poll();
 		this.currentCounter++;
 	}
 
@@ -556,12 +598,8 @@ public class Context {
 		this.components = components;
 	}
 
-	public List<Mediator> getMediators() {
-		return mediators;
-	}
-
-	public void setMediators(List<Mediator> mediators) {
-		this.mediators = mediators;
+	public Collection<Mediator> getMediators() {
+		return MediatorFactory.getInstance().getMediators();
 	}
 
 	public Map<String, List<IOutput>> getEvents() {
@@ -578,6 +616,20 @@ public class Context {
 
 	public void setPropertyListener(PropertyListener propertyListener) {
 		this.propertyListener = propertyListener;
+	}
+
+	@Override
+	public void simulationStarted() {
+		// initialisation de la queue d'execution qui sera depilee à chaque
+		// iteration de point de demarrage
+		execStartPoints = new PriorityQueue<>(userStartPoints.size(), new StartPointComparator());
+		execStartPoints.addAll(userStartPoints);
+		inExecution = true;
+	}
+
+	@Override
+	public void simulationEnded() {
+		inExecution = false;
 	}
 
 }

@@ -17,6 +17,7 @@ import fr.ensicaen.simulator.model.response.IResponse;
 import fr.ensicaen.simulator.model.response.VoidResponse;
 import fr.ensicaen.simulator.model.strategies.IStrategy;
 import fr.ensicaen.simulator.simulator.Context;
+import fr.ensicaen.simulator.simulator.Simulator;
 
 public class ForwardMediatorTest {
 
@@ -192,6 +193,7 @@ public class ForwardMediatorTest {
 			}
 		});
 
+		Simulator.resume();
 		c1.notifyMessage(null, "ALLER1");
 		Assert.assertEquals(cpt.toString(), "5");
 	}

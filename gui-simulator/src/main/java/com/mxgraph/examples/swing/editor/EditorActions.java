@@ -39,6 +39,8 @@ import javax.swing.text.html.HTML;
 import javax.swing.text.html.HTMLDocument;
 import javax.swing.text.html.HTMLEditorKit;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.w3c.dom.Document;
 
 import com.mxgraph.analysis.mxDistanceCostFunction;
@@ -72,6 +74,9 @@ import fr.ensicaen.simulator.simulator.Context;
  *
  */
 public class EditorActions {
+
+	private static Logger logger = LoggerFactory.getLogger(EditorActions.class);
+
 	/**
 	 * 
 	 * @param e
@@ -582,7 +587,7 @@ public class EditorActions {
 						Context ctx = Context.getInstance();
 						Map<String, Object> uiData = SimulatorGUIBridge.exportUiData(graph);
 						boolean savesuccess = DAOFactory.getFactory().saveTo(new ScenarioData(s, ctx, uiData),
-								filename, ComponentWrapper.class, MediatorWrapper.class);
+								filename, ComponentWrapper.class, MediatorWrapper.class, PropertiesPlus.Property.class);
 						if (!savesuccess)
 							throw new Exception("Impossible to save data");
 						// not remove this
@@ -1789,4 +1794,29 @@ public class EditorActions {
 			new ComponentCreationPanel();
 		}
 	}
+	
+	@SuppressWarnings("serial")
+	public static class AcquisitionAction extends AbstractAction {
+		/**
+		 * 
+		 */
+		public void actionPerformed(ActionEvent e) {
+			if (e.getSource() instanceof mxGraphComponent) {
+				mxGraphComponent graphComponent = (mxGraphComponent) e.getSource();
+				mxGraph graph = graphComponent.getGraph();
+				mxCell selectedCell = (mxCell) graph.getSelectionCell();
+
+				// selection check && is component
+				if (selectedCell != null && selectedCell.getValue() instanceof ComponentWrapper) {
+					fr.ensicaen.simulator.model.component.Component component = ((ComponentWrapper) selectedCell
+							.getValue()).getComponent();
+
+					logger.info("Acquisition carte à puce");
+					// TODO Micky : impl ici ... t'as ton component à remplir =)
+
+				}
+			}
+		}
+	}
+
 }

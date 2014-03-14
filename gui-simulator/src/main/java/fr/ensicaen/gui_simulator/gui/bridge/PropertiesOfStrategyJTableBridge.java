@@ -66,7 +66,7 @@ public class PropertiesOfStrategyJTableBridge extends AbstractTableModel {
 	public boolean isCellEditable (int rowIndex, int columnIndex) {
 		if (columnIndex == 0) {
 			return false;
-		} else if (propertiesStrategy.get(rowIndex).isWritable()) {
+		} else if (propertiesStrategy.get(rowIndex).isRequired()) {
 			return true;
 		} else {
 			return false;

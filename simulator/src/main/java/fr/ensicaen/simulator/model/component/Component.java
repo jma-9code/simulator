@@ -295,7 +295,7 @@ public abstract class Component implements Serializable {
 
 				// on écrase pas ...
 				if (!properties.containsKey(def)) {
-					properties.put(def.getKey(), def.getDefaultValue(), def.isWritable());
+					properties.put(def.getKey(), def.getDefaultValue(), def.isRequired());
 				}
 			}
 		}

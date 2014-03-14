@@ -70,6 +70,8 @@ public class ComponentCreationPanel extends JDialog {
 	public void init() {
 		SpringLayout myLayout = new SpringLayout();
 		this.setLayout(myLayout);
+		setResizable(false);
+		
 		label_nameOfComponent = new JLabel (mxResources.get("name_of_component"));
 		label_typeOfComponent = new JLabel (mxResources.get("type_of_component"));
 		label_formatOfComponent = new JLabel (mxResources.get("format_of_component"));
@@ -182,8 +184,18 @@ public class ComponentCreationPanel extends JDialog {
 		myLayout.putConstraint(SpringLayout.NORTH, nameOfComponent, 00, SpringLayout.NORTH, label_nameOfComponent);
 		myLayout.putConstraint(SpringLayout.WEST, nameOfComponent, 150, SpringLayout.WEST, this);
 		
-		myLayout.putConstraint(SpringLayout.NORTH, label_typeOfComponent, 10, SpringLayout.SOUTH, label_nameOfComponent);
-		myLayout.putConstraint(SpringLayout.WEST, label_typeOfComponent, 0, SpringLayout.WEST, label_nameOfComponent);
+		
+		
+		myLayout.putConstraint(SpringLayout.NORTH, label_formatOfComponent, 10, SpringLayout.SOUTH, label_nameOfComponent);
+		myLayout.putConstraint(SpringLayout.WEST, label_formatOfComponent, 0, SpringLayout.WEST, label_nameOfComponent);
+		
+		myLayout.putConstraint(SpringLayout.NORTH, formatOfComponent, 10, SpringLayout.SOUTH, label_nameOfComponent);
+		myLayout.putConstraint(SpringLayout.WEST, formatOfComponent, 150, SpringLayout.WEST, this);
+		
+		
+		
+		myLayout.putConstraint(SpringLayout.NORTH, label_typeOfComponent, 10, SpringLayout.SOUTH, label_formatOfComponent);
+		myLayout.putConstraint(SpringLayout.WEST, label_typeOfComponent, 0, SpringLayout.WEST, label_formatOfComponent);
 		
 		myLayout.putConstraint(SpringLayout.NORTH, checkbox_inComponent, 00, SpringLayout.NORTH, label_typeOfComponent);
 		myLayout.putConstraint(SpringLayout.WEST, checkbox_inComponent, 0, SpringLayout.WEST, nameOfComponent);
@@ -194,16 +206,12 @@ public class ComponentCreationPanel extends JDialog {
 		myLayout.putConstraint(SpringLayout.NORTH, checkbox_inoutComponent, 00, SpringLayout.NORTH, label_typeOfComponent);
 		myLayout.putConstraint(SpringLayout.WEST, checkbox_inoutComponent, 20, SpringLayout.EAST, checkbox_outComponent);
 		
-		myLayout.putConstraint(SpringLayout.NORTH, label_formatOfComponent, 10, SpringLayout.SOUTH, label_typeOfComponent);
-		myLayout.putConstraint(SpringLayout.WEST, label_formatOfComponent, 0, SpringLayout.WEST, label_typeOfComponent);
 		
-		myLayout.putConstraint(SpringLayout.NORTH, formatOfComponent, 10, SpringLayout.SOUTH, label_typeOfComponent);
-		myLayout.putConstraint(SpringLayout.WEST, formatOfComponent, 150, SpringLayout.WEST, this);
 		
-		myLayout.putConstraint(SpringLayout.NORTH, label_typeOfStrategy, 10, SpringLayout.SOUTH, label_formatOfComponent);
+		myLayout.putConstraint(SpringLayout.NORTH, label_typeOfStrategy, 10, SpringLayout.SOUTH, label_typeOfComponent);
 		myLayout.putConstraint(SpringLayout.WEST, label_typeOfStrategy, 00, SpringLayout.WEST, label_nameOfComponent);
 		
-		myLayout.putConstraint(SpringLayout.NORTH, strategies, 10, SpringLayout.SOUTH, label_formatOfComponent);
+		myLayout.putConstraint(SpringLayout.NORTH, strategies, 10, SpringLayout.SOUTH, label_typeOfComponent);
 		myLayout.putConstraint(SpringLayout.WEST, strategies, 150, SpringLayout.WEST, this);
 		
 		myLayout.putConstraint(SpringLayout.NORTH, label_parametersOfStrategy, 10, SpringLayout.SOUTH, strategies);

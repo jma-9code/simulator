@@ -1784,7 +1784,7 @@ public class EditorActions {
 			}
 		}
 	}
-	
+
 	@SuppressWarnings("serial")
 	public static class NewComponentAction extends AbstractAction {
 		/**
@@ -1794,7 +1794,7 @@ public class EditorActions {
 			new ComponentCreationPanel();
 		}
 	}
-	
+
 	@SuppressWarnings("serial")
 	public static class AcquisitionAction extends AbstractAction {
 		/**
@@ -1811,8 +1811,8 @@ public class EditorActions {
 					fr.ensicaen.simulator.model.component.Component component = ((ComponentWrapper) selectedCell
 							.getValue()).getComponent();
 
-					logger.info("Acquisition carte à puce");
-					// TODO Micky : impl ici ... t'as ton component à remplir =)
+					logger.info("Acquisition carte Ã  puce");
+					// TODO Micky : impl ici ... t'as ton component a remplir =)
 
 				}
 			}

@@ -32,27 +32,6 @@ public class SimulatorTest {
 		ctx.autoRegistrationMode();
 	}
 
-	@Test(expected = SimulatorException.class)
-	public void testWithNoStartPoint() throws SimulatorException {
-		Simulator simulator = SimulatorFactory.getSimulator();
-		simulator.start();
-	}
-
-	@Test
-	public void testAsyncWithNoStartPoint() throws SimulatorException {
-		AsyncSimulator simulator = SimulatorFactory.getAsyncSimulator();
-		simulator.start();
-
-		try {
-			simulator.waitUntilEnd();
-		}
-		catch (Exception e) {
-			e.printStackTrace();
-		}
-
-		Assert.assertNotNull(simulator.getException());
-	}
-
 	@Test
 	public void testWithOneStartPoint() throws SimulatorException {
 		// setting simple model

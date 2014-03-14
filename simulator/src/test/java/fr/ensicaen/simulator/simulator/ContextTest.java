@@ -339,44 +339,4 @@ public class ContextTest {
 		Simulator.resume();
 	}
 
-	@Test
-	public void testMediatorWithAcronym() {
-		TestPass.passed(); // fake
-
-		ComponentIO cTest = new ComponentIO("Composant de ouf");
-
-		// factory
-		MediatorFactory factory = MediatorFactory.getInstance();
-		Mediator mMade = factory.getMediator(cTest, c1, EMediator.HALFDUPLEX);
-
-		// try {
-		// Mediator mGot = Context.getInstance().getFirstMediator(c1,
-		// "Composant de ouf");
-		// Assert.assertEquals(mMade, mGot);
-		//
-		// mGot = Context.getInstance().getFirstMediator(c1, "CDO");
-		// Assert.assertEquals(mMade, mGot);
-		//
-		// mGot = Context.getInstance().getFirstMediator(c1, "CDo");
-		// Assert.assertEquals(mMade, mGot);
-		// }
-		// catch (ContextException e) {
-		// e.printStackTrace();
-		// Assert.assertTrue(false);
-		// }
-	}
-
-	@Test(expected = ContextException.class)
-	public void testFailedMediatorWithAcronym() throws ContextException {
-		TestPass.passed(); // fake
-
-		ComponentIO cTest = new ComponentIO("Composant de ouf");
-
-		// factory
-		MediatorFactory factory = MediatorFactory.getInstance();
-		factory.getMediator(cTest, c1, EMediator.HALFDUPLEX);
-
-		// test
-		// Context.getInstance().getFirstMediator(c1, "CD");
-	}
 }

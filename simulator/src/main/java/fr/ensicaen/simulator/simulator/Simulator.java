@@ -73,6 +73,14 @@ public class Simulator {
 				}
 				catch (Throwable e) {
 					log.error("Error occured during simulation, throw an exception", e);
+
+					// notify the context
+					ctx.simulationEnded();
+
+					// notify all listeners
+					for (SimulatorListener sl : listeners)
+						sl.simulationEnded();
+
 					throw new SimulatorException(e);
 				}
 

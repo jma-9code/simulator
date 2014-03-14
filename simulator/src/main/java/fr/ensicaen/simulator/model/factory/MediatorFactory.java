@@ -108,7 +108,14 @@ public class MediatorFactory {
 					}
 					break;
 			}
-			add(mediator);
+
+			if (mediator == null) {
+				log.warn("getMediator() returns null !");
+			}
+			else {
+				add(mediator);
+			}
+
 			return mediator;
 		}
 	}

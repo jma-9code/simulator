@@ -29,6 +29,9 @@ public class MediatorWrapper implements Serializable {
 	@XmlElement
 	private List<mxPoint> points;
 
+	@XmlTransient
+	private String data;
+
 	public MediatorWrapper() {
 	}
 
@@ -76,6 +79,14 @@ public class MediatorWrapper implements Serializable {
 
 	public List<mxPoint> getPoints() {
 		return points;
+	}
+
+	public String getData() {
+		return data;
+	}
+
+	public void setData(String data) {
+		this.data = data;
 	}
 
 }

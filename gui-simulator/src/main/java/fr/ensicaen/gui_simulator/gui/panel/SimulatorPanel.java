@@ -6,7 +6,9 @@ import java.awt.FlowLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
@@ -27,6 +29,7 @@ import com.mxgraph.util.mxConstants;
 import com.mxgraph.util.mxResources;
 
 import fr.ensicaen.gui_simulator.gui.bridge.ComponentWrapper;
+import fr.ensicaen.gui_simulator.gui.bridge.MediatorWrapper;
 import fr.ensicaen.gui_simulator.gui.bridge.SimulatorGUIBridge;
 import fr.ensicaen.gui_simulator.gui.bridge.StartPointJTableBridge;
 import fr.ensicaen.gui_simulator.gui.editor.DateTimeCellEditor;
@@ -119,6 +122,7 @@ public class SimulatorPanel extends JTabbedPane implements
 
 	private JPanel initTab_simulatorPanel() {
 		final JPanel simulatorPanel = new JPanel();
+
 		btnLaunch.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
@@ -232,21 +236,39 @@ public class SimulatorPanel extends JTabbedPane implements
 		Simulator.pausable();
 		btnOneStep.setEnabled(true);
 		btnLaunch.setText("Skip");
+		restoreComponentColor();
 	}
 
 	@Override
 	public void simulationEnded() {
 		btnOneStep.setEnabled(false);
 		btnLaunch.setText("Launch");
+		restoreComponentColor();
+	}
+
+	private void restoreComponentColor() {
+		List<mxCell> cells = SimulatorGUIBridge.findAllCell(bge_frame
+				.getGraphComponent().getGraph());
+
+		// celltracker.hi
+		for (mxCell c : cells) {
+			bge_frame
+					.getGraphComponent()
+					.getGraph()
+					.setCellStyles(mxConstants.STYLE_FILLCOLOR, "#adc5ff",
+							new Object[] { c });
+
+		}
 	}
 
 	@Override
 	public void onSendData(Mediator m, IOutput sender, String data) {
 		// all cell in blue
-		List<mxCell> cells = SimulatorGUIBridge.findAllComponentCell(bge_frame
+		List<mxCell> cells = SimulatorGUIBridge.findAllCell(bge_frame
 				.getGraphComponent().getGraph());
 		mxCell cell_sender = null;
 		mxCell cell_receiver = null;
+		mxCell cell_mediator = null;
 
 		for (mxCell c : cells) {
 			if (c.getValue() instanceof ComponentWrapper) {
@@ -257,11 +279,15 @@ public class SimulatorPanel extends JTabbedPane implements
 						.equals(m.getReceiver())) {
 					cell_receiver = c;
 				}
+			} else if (c.getValue() instanceof MediatorWrapper) {
+				if (((MediatorWrapper) c.getValue()).getMediator().equals(m)) {
+					cell_mediator = c;
+				}
 			}
 			bge_frame
 					.getGraphComponent()
 					.getGraph()
-					.setCellStyles(mxConstants.STYLE_FILLCOLOR, "blue",
+					.setCellStyles(mxConstants.STYLE_FILLCOLOR, "#adc5ff",
 							new Object[] { c });
 
 		}
@@ -272,7 +298,7 @@ public class SimulatorPanel extends JTabbedPane implements
 			bge_frame
 					.getGraphComponent()
 					.getGraph()
-					.setCellStyles(mxConstants.STYLE_FILLCOLOR, "red",
+					.setCellStyles(mxConstants.STYLE_FILLCOLOR, "#FF463D",
 							new Object[] { cell_sender });
 		}
 
@@ -281,10 +307,29 @@ public class SimulatorPanel extends JTabbedPane implements
 			bge_frame
 					.getGraphComponent()
 					.getGraph()
-					.setCellStyles(mxConstants.STYLE_FILLCOLOR, "green",
+					.setCellStyles(mxConstants.STYLE_FILLCOLOR, "#30FF3A",
 							new Object[] { cell_receiver });
 		}
 
+		// concerned mediator
+		if (cell_mediator == null) {
+			Map<String, Object> map = new HashMap<>();
+			map.put(m.getUuid(), new MediatorWrapper(m));
+			cell_mediator = SimulatorGUIBridge.createEdge(m, map, bge_frame
+					.getGraphComponent().getGraph());
+			bge_frame
+					.getGraphComponent()
+					.getGraph()
+					.addEdge(cell_mediator, null, cell_sender, cell_receiver,
+							null);
+		}
+		bge_frame
+				.getGraphComponent()
+				.getGraph()
+				.setCellStyles(mxConstants.STYLE_FILLCOLOR, "#30FF3A",
+						new Object[] { cell_mediator });
+
+		// refresh frame
 		bge_frame.getGraphComponent().refresh();
 	}
 

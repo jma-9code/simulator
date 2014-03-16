@@ -66,16 +66,12 @@ public class ComponentWrapper implements Serializable {
 	}
 
 	public String getCollapsedStyle() {
-		return iconPath != null && !iconPath.isEmpty() ? "image;image="
-				+ iconPath : "group;whiteSpace=wrap";
+		return "";// iconPath != null && !iconPath.isEmpty() ? "image;image="
+					// + iconPath : "group;whiteSpace=wrap";
 	}
 
 	public String getExpandedStyle() {
-		return "group;whiteSpace=wrap";
-	}
-
-	public String getSenderStyle() {
-		return "group;whiteSpace=wrap;fillcolor=red";
+		return "";// "group;whiteSpace=wrap";
 	}
 
 	public Component getComponent() {

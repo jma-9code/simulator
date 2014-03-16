@@ -24,21 +24,21 @@ public class ComponentAppearanceFeature implements mxIEventListener {
 		if (e.getProperty("cells") != null) {
 			mxCell cell = (mxCell) ((Object[]) e.getProperty("cells"))[0];
 			switch (e.getName()) {
-				case "foldCells":
-					// change style (image or shape) + auto layout
-					cellsFolded(graph, cell);
-					break;
+			case "foldCells":
+				// change style (image or shape) + auto layout
+				cellsFolded(graph, cell);
+				break;
 			}
 		}
 	}
 
 	private void collapse(mxCell cell, ComponentWrapper wrapper) {
-		cell.setStyle(wrapper.getCollapsedStyle());
+		// cell.setStyle(wrapper.getCollapsedStyle());
 		layout.execute(cell);
 	}
 
 	private void expand(mxCell cell, ComponentWrapper wrapper, CustomGraph graph) {
-		cell.setStyle(wrapper.getExpandedStyle());
+		// cell.setStyle(wrapper.getExpandedStyle());
 		layout.execute(cell);
 		graph.updateGroupBounds(new Object[] { cell }, 30, false);
 	}
@@ -49,14 +49,14 @@ public class ComponentAppearanceFeature implements mxIEventListener {
 			ComponentWrapper wrapper = (ComponentWrapper) cell.getValue();
 			if (cell.isCollapsed()) {
 				collapse(cell, wrapper);
-			}
-			else {
+			} else {
 				expand(cell, wrapper, graph);
 			}
 
 			if (!cell.getParent().getId().equals("1")) {
 				layout.execute(cell.getParent());
-				graph.updateGroupBounds(new Object[] { cell.getParent() }, 30, false);
+				graph.updateGroupBounds(new Object[] { cell.getParent() }, 30,
+						false);
 			}
 
 		}

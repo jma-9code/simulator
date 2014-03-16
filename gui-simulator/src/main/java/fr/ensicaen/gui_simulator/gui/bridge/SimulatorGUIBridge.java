@@ -163,18 +163,17 @@ public class SimulatorGUIBridge {
 		return recursiveFindVertex(wanted, graph, graph.getDefaultParent());
 	}
 
-	public static List<mxCell> findAllComponentCell(mxGraph graph) {
-		return recursiveComponentCell(graph, graph.getDefaultParent());
+	public static List<mxCell> findAllCell(mxGraph graph) {
+		return recursiveAllCell(graph, graph.getDefaultParent());
 	}
 
-	private static List<mxCell> recursiveComponentCell(mxGraph graph,
-			Object parent) {
+	private static List<mxCell> recursiveAllCell(mxGraph graph, Object parent) {
 		List<mxCell> ret = new ArrayList<>();
-		Object[] cells = graph.getChildCells(parent, true, false);
+		Object[] cells = graph.getChildCells(parent, true, true);
 
 		for (Object obj : cells) {
 			mxCell cell = (mxCell) obj;
-			ret.addAll(recursiveComponentCell(graph, cell));
+			ret.addAll(recursiveAllCell(graph, cell));
 			ret.add(cell);
 		}
 

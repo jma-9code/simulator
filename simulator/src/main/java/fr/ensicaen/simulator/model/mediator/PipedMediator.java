@@ -21,7 +21,6 @@ public class PipedMediator extends Mediator {
 	private Mediator m2;
 
 	public PipedMediator() {
-		super(null, null);
 	}
 
 	public PipedMediator(Mediator m1, Mediator m2) {

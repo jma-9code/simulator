@@ -23,6 +23,13 @@ public interface IInput {
 	public String getName();
 
 	/**
+	 * Retourne l'identifiant unique
+	 * 
+	 * @return
+	 */
+	public String getUuid();
+
+	/**
 	 * Retourne l'acronyme de l'élément.
 	 * 
 	 * @return

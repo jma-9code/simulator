@@ -26,7 +26,6 @@ public class HalfDuplexMediator extends Mediator {
 	private static Logger log = LoggerFactory.getLogger(HalfDuplexMediator.class);
 
 	public HalfDuplexMediator() {
-		super(null, null);
 	}
 
 	public HalfDuplexMediator(IInputOutput a, IInputOutput b) {

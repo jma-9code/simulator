@@ -10,7 +10,6 @@ public class ReverseHalfDuplexMediator extends HalfDuplexMediator {
 	private static Logger log = LoggerFactory.getLogger(ReverseHalfDuplexMediator.class);
 
 	public ReverseHalfDuplexMediator() {
-		super(null, null);
 	}
 
 	public ReverseHalfDuplexMediator(HalfDuplexMediator mediator) {

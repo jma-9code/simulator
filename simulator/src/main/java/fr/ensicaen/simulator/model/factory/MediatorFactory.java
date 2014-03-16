@@ -78,7 +78,7 @@ public class MediatorFactory {
 	}
 
 	public Mediator getMediator(Component src, Component dst, EMediator channel) {
-		String uid = src.hashCode() + " " + dst.hashCode() + channel;
+		String uid = src.getUuid() + "-" + dst.getUuid();
 
 		if (this.mediators.containsKey(uid)) {
 			return this.mediators.get(uid);

@@ -14,8 +14,10 @@ import com.mxgraph.model.mxCell;
 import com.mxgraph.model.mxGeometry;
 import com.mxgraph.util.mxPoint;
 
+import fr.ensicaen.simulator.model.mediator.ForwardMediator;
 import fr.ensicaen.simulator.model.mediator.HalfDuplexMediator;
 import fr.ensicaen.simulator.model.mediator.Mediator;
+import fr.ensicaen.simulator.model.mediator.PipedMediator;
 import fr.ensicaen.simulator.model.mediator.SimplexMediator;
 
 @XmlRootElement
@@ -73,8 +75,18 @@ public class MediatorWrapper implements Serializable {
 		}
 	}
 
-	public String getUsedStyle() {
-		return "group;whiteSpace=wrap;fillcolor=red";
+	public String getUseStyle() {
+		if (mediator instanceof HalfDuplexMediator) {
+			return "lineUseHalfDuplex";
+		} else if (mediator instanceof SimplexMediator) {
+			return "lineUseSimplex";
+		} else if (mediator instanceof PipedMediator) {
+			return "lineUseHalfDuplex";
+		} else if (mediator instanceof ForwardMediator) {
+			return "lineUseHalfDuplex";
+		} else {
+			return "";
+		}
 	}
 
 	public List<mxPoint> getPoints() {

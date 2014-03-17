@@ -21,6 +21,7 @@ import fr.ensicaen.simulator.tools.LogUtils;
 import fr.ensicaen.simulator_ep.utils.ISO7816Exception;
 import fr.ensicaen.simulator_ep.utils.ISO7816Tools;
 import fr.ensicaen.simulator_ep.utils.ISO7816Tools.MessageType;
+import fr.ensicaen.simulator_ep.utils.ISOTools;
 
 public class CardChipStrategy implements IStrategy<ComponentIO> {
 
@@ -56,6 +57,7 @@ public class CardChipStrategy implements IStrategy<ComponentIO> {
 		ISOMsg sdata;
 		try {
 			sdata = ISO7816Tools.read(data);
+			ISOTools.logISOMsg(sdata, ISO7816Tools.getPackager());
 			State state = State.valueOf(chip.getProperty("state"));
 			MessageType type = ISO7816Tools.convertCodeMsg2Type(sdata.getMTI());
 			switch (state) {

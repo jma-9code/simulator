@@ -3,7 +3,6 @@ package fr.ensicaen.simulator.model.mediator;
 import java.io.Serializable;
 import java.util.HashSet;
 import java.util.Set;
-import java.util.UUID;
 
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
@@ -44,11 +43,14 @@ public abstract class Mediator implements Serializable {
 
 	protected transient Set<MediatorListener> listeners = new HashSet<>();
 
+	public Mediator() {
+	}
+
 	public Mediator(IOutput _sender, IInput _receiver) {
 		this.properties = new PropertiesPlus();
 		this.sender = _sender;
 		this.receiver = _receiver;
-		this.uuid = "m-" + UUID.randomUUID().toString();
+		this.uuid = _sender.getUuid() + "-" + _receiver.getUuid();
 	}
 
 	/**

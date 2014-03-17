@@ -10,6 +10,7 @@ import org.slf4j.LoggerFactory;
 
 import fr.ensicaen.simulator.model.component.Component;
 import fr.ensicaen.simulator.model.component.IOutput;
+import fr.ensicaen.simulator.model.factory.MediatorFactory;
 import fr.ensicaen.simulator.simulator.exception.SimulatorException;
 import fr.ensicaen.simulator.simulator.listener.SimulatorListener;
 
@@ -73,20 +74,30 @@ public class Simulator {
 				}
 				catch (Throwable e) {
 					log.error("Error occured during simulation, throw an exception", e);
+
+					end();
+
 					throw new SimulatorException(e);
 				}
 
-				log.info("Simulation context " + ctx.currentCounter() + " ended");
 			}
 
 		}
+		end();
+	}
 
+	public void end() {
 		// notify the context
-		ctx.simulationEnded();
+		Context.getInstance().simulationEnded();
 
 		// notify all listeners
 		for (SimulatorListener sl : listeners)
 			sl.simulationEnded();
+
+		// remove all generate mediators during the simulation
+		MediatorFactory.getInstance().removeAllImplicit();
+
+		log.info("Simulation context " + Context.getInstance().currentCounter() + " ended");
 	}
 
 	/**

@@ -43,7 +43,6 @@ public class ForwardMediator extends Mediator {
 	private Mediator origin;
 
 	public ForwardMediator() {
-		super(null, null);
 	}
 
 	public ForwardMediator(Mediator origin, IInput forward) {

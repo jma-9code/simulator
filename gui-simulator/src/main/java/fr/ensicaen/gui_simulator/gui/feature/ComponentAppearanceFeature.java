@@ -33,12 +33,12 @@ public class ComponentAppearanceFeature implements mxIEventListener {
 	}
 
 	private void collapse(mxCell cell, ComponentWrapper wrapper) {
-		// cell.setStyle(wrapper.getCollapsedStyle());
+		cell.setStyle(wrapper.getCollapsedStyle());
 		layout.execute(cell);
 	}
 
 	private void expand(mxCell cell, ComponentWrapper wrapper, CustomGraph graph) {
-		// cell.setStyle(wrapper.getExpandedStyle());
+		cell.setStyle(wrapper.getExpandedStyle());
 		layout.execute(cell);
 		graph.updateGroupBounds(new Object[] { cell }, 30, false);
 	}

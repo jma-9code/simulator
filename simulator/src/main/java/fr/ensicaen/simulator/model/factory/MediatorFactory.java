@@ -1,8 +1,11 @@
 package fr.ensicaen.simulator.model.factory;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.Hashtable;
+import java.util.Iterator;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
@@ -21,6 +24,7 @@ import fr.ensicaen.simulator.model.mediator.HalfDuplexMediator;
 import fr.ensicaen.simulator.model.mediator.Mediator;
 import fr.ensicaen.simulator.model.mediator.MediatorException;
 import fr.ensicaen.simulator.model.mediator.PipedMediator;
+import fr.ensicaen.simulator.model.mediator.ReverseHalfDuplexMediator;
 import fr.ensicaen.simulator.model.mediator.SimplexMediator;
 
 public class MediatorFactory {
@@ -67,6 +71,11 @@ public class MediatorFactory {
 		}
 	}
 
+	/**
+	 * remove specified mediator from the factory
+	 * 
+	 * @param m
+	 */
 	public void remove(Mediator m) {
 		String uid = m.getUuid();
 		if (this.mediators.containsKey(uid)) {
@@ -77,8 +86,25 @@ public class MediatorFactory {
 		}
 	}
 
+	/**
+	 * Remove all implicit mediator
+	 */
+	public void removeAllImplicit() {
+		log.debug("Remove all implicit mediators");
+		List<Mediator> meds = new ArrayList<>(mediators.values());
+		Iterator<Mediator> it = meds.iterator();
+		while (it.hasNext()) {
+			Mediator m = it.next();
+			if (m instanceof ChildHalfDuplexMediator || m instanceof ChildSimplexMediator
+					|| m instanceof ReverseHalfDuplexMediator || m instanceof PipedMediator
+					|| m instanceof ForwardMediator) {
+				remove(m);
+			}
+		}
+	}
+
 	public Mediator getMediator(Component src, Component dst, EMediator channel) {
-		String uid = src.hashCode() + " " + dst.hashCode() + channel;
+		String uid = src.getUuid() + "-" + dst.getUuid();
 
 		if (this.mediators.containsKey(uid)) {
 			return this.mediators.get(uid);
@@ -108,7 +134,14 @@ public class MediatorFactory {
 					}
 					break;
 			}
-			add(mediator);
+
+			if (mediator == null) {
+				log.warn("getMediator() returns null !");
+			}
+			else {
+				add(mediator);
+			}
+
 			return mediator;
 		}
 	}

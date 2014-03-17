@@ -52,18 +52,18 @@ public class ContextTest {
 		ctx.autoRegistrationMode();
 
 		c1 = new ComponentIO("C1", 0);
-		c2 = new ComponentIO("C2", 1);
+		c2 = new ComponentIO("C2", 0);
 
-		c1s1 = new ComponentIO("C1S1", 2);
+		c1s1 = new ComponentIO("C1S1", 0);
 		c1.addChild(c1s1);
 
-		c1s2 = new ComponentIO("C1S2", 3);
+		c1s2 = new ComponentIO("C1S2", 0);
 		c1.addChild(c1s2);
 
-		c2s1 = new ComponentIO("C2S1", 4);
+		c2s1 = new ComponentIO("C2S1", 0);
 		c2.addChild(c2s1);
 
-		c2s2 = new ComponentIO("C2S2", 5);
+		c2s2 = new ComponentIO("C2S2", 0);
 		c2.addChild(c2s2);
 	}
 
@@ -311,7 +311,7 @@ public class ContextTest {
 				TestPass.passed();
 
 				try {
-					List<Mediator> mList = Context.getInstance().getMediators(_this, 1);
+					List<Mediator> mList = Context.getInstance().getMediators(_this, 0);
 					// Assert.assertEquals(mList.size(), 2);
 					Assert.assertThat("Mediators returned not correct", mList, CoreMatchers.hasItem(m1));
 					Assert.assertThat("Mediators returned not correct", mList, CoreMatchers.hasItem(m2));
@@ -339,44 +339,4 @@ public class ContextTest {
 		Simulator.resume();
 	}
 
-	@Test
-	public void testMediatorWithAcronym() {
-		TestPass.passed(); // fake
-
-		ComponentIO cTest = new ComponentIO("Composant de ouf");
-
-		// factory
-		MediatorFactory factory = MediatorFactory.getInstance();
-		Mediator mMade = factory.getMediator(cTest, c1, EMediator.HALFDUPLEX);
-
-		// try {
-		// Mediator mGot = Context.getInstance().getFirstMediator(c1,
-		// "Composant de ouf");
-		// Assert.assertEquals(mMade, mGot);
-		//
-		// mGot = Context.getInstance().getFirstMediator(c1, "CDO");
-		// Assert.assertEquals(mMade, mGot);
-		//
-		// mGot = Context.getInstance().getFirstMediator(c1, "CDo");
-		// Assert.assertEquals(mMade, mGot);
-		// }
-		// catch (ContextException e) {
-		// e.printStackTrace();
-		// Assert.assertTrue(false);
-		// }
-	}
-
-	@Test(expected = ContextException.class)
-	public void testFailedMediatorWithAcronym() throws ContextException {
-		TestPass.passed(); // fake
-
-		ComponentIO cTest = new ComponentIO("Composant de ouf");
-
-		// factory
-		MediatorFactory factory = MediatorFactory.getInstance();
-		factory.getMediator(cTest, c1, EMediator.HALFDUPLEX);
-
-		// test
-		// Context.getInstance().getFirstMediator(c1, "CD");
-	}
 }

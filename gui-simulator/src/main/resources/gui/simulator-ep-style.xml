@@ -18,6 +18,12 @@
 		<add as="fontColor" value="#000"/>
 		<add as="fontFamily" value="Verdana"/>
 	</add>
+	<add as="sender_comp" extend="defaultVertex">
+		<add as="fillColor" value="#FF463D"/>
+	</add>
+	<add as="receiver_comp" extend="defaultVertex">
+		<add as="fillColor" value="#30FF3A"/>
+	</add>
 	<add as="label">
 		<add as="shape" value="label"/>
 		<add as="perimeter" value="rectanglePerimeter"/>
@@ -97,6 +103,16 @@
 	<add as="lineSimplex" extend="line">
 		<add as="endArrow" value="classic"/>
 		<add as="startArrow" value="none"/>
+	</add>
+	<add as="lineUseHalfDuplex" extend="line">
+		<add as="startArrow" value="classic"/>
+		<add as="endArrow" value="classic"/>
+		<add as="strokeColor" value="#E735FF"/>
+	</add>
+	<add as="lineUseSimplex" extend="line">
+		<add as="endArrow" value="classic"/>
+		<add as="startArrow" value="none"/>
+		<add as="strokeColor" value="#E735FF"/>
 	</add>
 	<add as="lineSimplexInverse" extend="line">
 	<add as="endArrow" value="none"/>

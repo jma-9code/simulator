@@ -87,6 +87,29 @@ public class MediatorFactory {
 	}
 
 	/**
+	 * return all mediator in factory without implicit mediators
+	 * 
+	 * @return
+	 */
+	public Collection<Mediator> getExplicitMediators() {
+		Collection<Mediator> ret = new ArrayList<>();
+		Iterator<Mediator> it = mediators.values().iterator();
+		while (it.hasNext()) {
+			Mediator m = it.next();
+			if (m instanceof ChildHalfDuplexMediator || m instanceof ChildSimplexMediator
+					|| m instanceof ReverseHalfDuplexMediator || m instanceof PipedMediator
+					|| m instanceof ForwardMediator) {
+				// implicit
+			}
+			else {
+				// explicit
+				ret.add(m);
+			}
+		}
+		return ret;
+	}
+
+	/**
 	 * Remove all implicit mediator
 	 */
 	public void removeAllImplicit() {

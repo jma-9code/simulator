@@ -20,6 +20,7 @@ import fr.ensicaen.simulator.simulator.exception.ContextException;
 import fr.ensicaen.simulator_ep.utils.ComponentEP;
 import fr.ensicaen.simulator_ep.utils.ISO8583Exception;
 import fr.ensicaen.simulator_ep.utils.ISO8583Tools;
+import fr.ensicaen.simulator_ep.utils.ProtocolEP;
 
 /**
  * Generic component allows to route a CB2A message to the good network. This
@@ -88,6 +89,7 @@ public class GenericRouterStrategy implements IStrategy<ComponentIO> {
 							Context ctx = Context.getInstance();
 							Mediator mediatorToNetwork = ctx.getFirstMediator(_this, ComponentEP.NETWORK.ordinal(),
 									MKEY_NETWORK_ID, networkId);
+							mediatorToNetwork.setProtocol(ProtocolEP.ISO8583.toString());
 
 							if (mediatorToNetwork != null) {
 								// The server response check is not implemented

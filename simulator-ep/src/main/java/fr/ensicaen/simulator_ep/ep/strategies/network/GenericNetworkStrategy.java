@@ -22,6 +22,7 @@ import fr.ensicaen.simulator_ep.utils.CB2AValues;
 import fr.ensicaen.simulator_ep.utils.ComponentEP;
 import fr.ensicaen.simulator_ep.utils.ISO8583Exception;
 import fr.ensicaen.simulator_ep.utils.ISO8583Tools;
+import fr.ensicaen.simulator_ep.utils.ProtocolEP;
 
 public class GenericNetworkStrategy implements IStrategy<ComponentIO> {
 
@@ -87,7 +88,7 @@ public class GenericNetworkStrategy implements IStrategy<ComponentIO> {
 							Context ctx = Context.getInstance();
 							Mediator mediatorToIssuer = ctx.getFirstMediator(_this,
 									ComponentEP.FO_ISSUER_AUTHORIZATION.ordinal(), MKEY_ISSUER_ID, issuerId);
-
+							mediatorToIssuer.setProtocol(ProtocolEP.ISO8583.toString());
 							if (mediatorToIssuer != null) {
 								// The server response check is not implemented
 								return mediatorToIssuer.send(_this, data);

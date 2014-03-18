@@ -18,6 +18,7 @@ import fr.ensicaen.simulator.model.strategies.IStrategy;
 import fr.ensicaen.simulator.simulator.Context;
 import fr.ensicaen.simulator.tools.LogUtils;
 import fr.ensicaen.simulator_ep.utils.ComponentEP;
+import fr.ensicaen.simulator_ep.utils.ProtocolEP;
 
 public class FOIssuerStrategy implements IStrategy<ComponentIO> {
 
@@ -46,6 +47,7 @@ public class FOIssuerStrategy implements IStrategy<ComponentIO> {
 		// get mediator between the issuer and the authorization module
 		Mediator m_issuer_authorization = MediatorFactory.getInstance().getForwardMediator(m,
 				(IInput) issuerAuthorization);
+		m_issuer_authorization.setProtocol(ProtocolEP.ISO8583.toString());
 
 		// forward to the chipset
 		log.debug(LogUtils.MARKER_COMPONENT_INFO, "FO Issuer send the msg to the FO issuer authorization module");

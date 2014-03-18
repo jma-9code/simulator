@@ -78,7 +78,7 @@ public class SimulatorGUIBridge {
 			graph.addCell(cell);
 		}
 
-		for (Mediator m : ctx.getMediators()) {
+		for (Mediator m : ctx.getExplicitMediators()) {
 			logger.debug("Init mediator " + m.getUuid() + " to graph");
 			mxCell cell = createEdge(m, uiData, graph);
 			mxCell source = findVertex((Component) m.getSender(), graph);
@@ -213,7 +213,7 @@ public class SimulatorGUIBridge {
 
 	private static mxCell recursiveFindEdge(Mediator wanted, mxGraph graph,
 			Object parent) {
-		Object[] cells = graph.getChildCells(parent, true, false);
+		Object[] cells = graph.getChildCells(parent, false, true);
 
 		for (Object obj : cells) {
 			mxCell cell = (mxCell) obj;

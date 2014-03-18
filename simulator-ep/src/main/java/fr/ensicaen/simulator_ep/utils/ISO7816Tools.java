@@ -18,7 +18,8 @@ public class ISO7816Tools {
 	public synchronized static GenericPackager getPackager() {
 		if (packager == null) {
 			try {
-				packager = new GenericPackager(ISO8583Tools.class.getResource("/7816.xml").toURI().getPath());
+				packager = new GenericPackager(ISO8583Tools.class
+						.getResource("/" + ProtocolEP.ISO7816.toString() + ".xml").toURI().getPath());
 			}
 			catch (ISOException e) {
 				// TODO Auto-generated catch block

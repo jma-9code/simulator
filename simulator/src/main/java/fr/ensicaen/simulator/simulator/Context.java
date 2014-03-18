@@ -602,6 +602,10 @@ public class Context implements SimulatorListener {
 		return MediatorFactory.getInstance().getMediators();
 	}
 
+	public Collection<Mediator> getExplicitMediators() {
+		return MediatorFactory.getInstance().getExplicitMediators();
+	}
+
 	public Map<String, List<IOutput>> getEvents() {
 		return events;
 	}

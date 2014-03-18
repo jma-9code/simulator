@@ -20,14 +20,15 @@ import fr.ensicaen.simulator.model.response.VoidResponse;
 import fr.ensicaen.simulator.model.strategies.IStrategy;
 import fr.ensicaen.simulator.simulator.Context;
 import fr.ensicaen.simulator.simulator.exception.ContextException;
-import fr.ensicaen.simulator_ep.utils.CB2AValues;
 import fr.ensicaen.simulator.tools.LogUtils;
+import fr.ensicaen.simulator_ep.utils.CB2AValues;
 import fr.ensicaen.simulator_ep.utils.ComponentEP;
 import fr.ensicaen.simulator_ep.utils.ISO7816Exception;
 import fr.ensicaen.simulator_ep.utils.ISO7816Tools;
 import fr.ensicaen.simulator_ep.utils.ISO7816Tools.MessageType;
 import fr.ensicaen.simulator_ep.utils.ISO8583Exception;
 import fr.ensicaen.simulator_ep.utils.ISO8583Tools;
+import fr.ensicaen.simulator_ep.utils.ProtocolEP;
 
 public class EPTChipsetStrategy implements IStrategy<ComponentIO> {
 
@@ -60,6 +61,7 @@ public class EPTChipsetStrategy implements IStrategy<ComponentIO> {
 					log.info(LogUtils.MARKER_COMPONENT_INFO, "A card has been inserted in the EPT");
 					msg = prepareSecureChannelRQ(_this);
 					Mediator m = Context.getInstance().getFirstMediator(_this, ComponentEP.CARD.ordinal());
+					m.setProtocol(ProtocolEP.ISO7816.toString());
 
 					log.info(LogUtils.MARKER_COMPONENT_INFO, "ETP sends a request for secured channel");
 					DataResponse res = (DataResponse) m.send(_this, new String(msg.pack()));
@@ -79,6 +81,7 @@ public class EPTChipsetStrategy implements IStrategy<ComponentIO> {
 						log.info(LogUtils.MARKER_COMPONENT_INFO, "ETP try to join the FO, and send an authorization...");
 						Mediator mFrontOffice = Context.getInstance().getFirstMediator(_this,
 								ComponentEP.FRONT_OFFICE.ordinal());
+						mFrontOffice.setProtocol(ProtocolEP.ISO8583.toString());
 						msg = generateAuthorizationRequest(_this, sdata);
 						res = (DataResponse) mFrontOffice.send(_this, new String(msg.pack()));
 						log.info(LogUtils.MARKER_COMPONENT_INFO, "ETP receive authorization from the FO");

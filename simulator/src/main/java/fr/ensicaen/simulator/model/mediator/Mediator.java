@@ -54,6 +54,15 @@ public abstract class Mediator implements Serializable {
 	}
 
 	/**
+	 * Set the protocol used by mediator.
+	 * 
+	 * @param protocol
+	 */
+	public void setProtocol(String protocol) {
+		properties.put("protocol", protocol);
+	}
+
+	/**
 	 * Ajouter un listener au mediator
 	 * 
 	 * @param list
@@ -130,6 +139,11 @@ public abstract class Mediator implements Serializable {
 
 	public String getUuid() {
 		return uuid;
+	}
+
+	@Override
+	public String toString() {
+		return "Mediator [sender=" + sender + ", receiver=" + receiver + "]";
 	}
 
 }

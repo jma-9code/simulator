@@ -22,6 +22,7 @@ import fr.ensicaen.simulator.tools.LogUtils;
 import fr.ensicaen.simulator_ep.utils.ComponentEP;
 import fr.ensicaen.simulator_ep.utils.ISO8583Exception;
 import fr.ensicaen.simulator_ep.utils.ISO8583Tools;
+import fr.ensicaen.simulator_ep.utils.ProtocolEP;
 
 public class FOAcquirerAuthorizationStrategy implements IStrategy<ComponentIO> {
 
@@ -89,6 +90,7 @@ public class FOAcquirerAuthorizationStrategy implements IStrategy<ComponentIO> {
 			if (on_us) {
 				Mediator mIssuerModule = Context.getInstance().getFirstMediator(_this,
 						ComponentEP.FO_ISSUER_AUTHORIZATION.ordinal());
+				mIssuerModule.setProtocol(ProtocolEP.ISO8583.toString());
 				log.debug(LogUtils.MARKER_COMPONENT_INFO,
 						"FO Acquirer authorization module send the msg to the FO issuer");
 				return mIssuerModule.send(_this, data);
@@ -96,6 +98,7 @@ public class FOAcquirerAuthorizationStrategy implements IStrategy<ComponentIO> {
 			// off_us
 			else {
 				Mediator mRouter = Context.getInstance().getFirstMediator(_this, ComponentEP.ROUTER.ordinal());
+				mRouter.setProtocol(ProtocolEP.ISO8583.toString());
 				log.debug(LogUtils.MARKER_COMPONENT_INFO, "FO Acquirer authorization module send the msg to the router");
 				return mRouter.send(_this, data);
 			}

@@ -25,9 +25,12 @@ import javax.swing.table.TableColumn;
 
 import com.mxgraph.examples.swing.editor.BasicGraphEditor;
 import com.mxgraph.model.mxCell;
+import com.mxgraph.util.mxEvent;
 import com.mxgraph.util.mxEventObject;
+import com.mxgraph.util.mxEventSource.mxIEventListener;
 import com.mxgraph.util.mxResources;
 import com.mxgraph.view.mxGraph;
+import com.mxgraph.view.mxGraphSelectionModel;
 
 import fr.ensicaen.gui_simulator.gui.bridge.ComponentWrapper;
 import fr.ensicaen.gui_simulator.gui.bridge.MediatorWrapper;
@@ -35,6 +38,7 @@ import fr.ensicaen.gui_simulator.gui.bridge.SimulatorGUIBridge;
 import fr.ensicaen.gui_simulator.gui.bridge.StartPointJTableBridge;
 import fr.ensicaen.gui_simulator.gui.editor.DateTimeCellEditor;
 import fr.ensicaen.gui_simulator.gui.renderer.DateTimeCellRenderer;
+import fr.ensicaen.gui_simulator.gui.tools.MediatorAnalysisPanel;
 import fr.ensicaen.simulator.model.component.Component;
 import fr.ensicaen.simulator.model.component.IOutput;
 import fr.ensicaen.simulator.model.factory.MediatorFactory;
@@ -50,7 +54,7 @@ import fr.ensicaen.simulator.simulator.listener.SimulatorListener;
 
 public class SimulatorPanel extends JTabbedPane implements
 		ListSelectionListener, SimulatorListener, MediatorListener,
-		MediatorFactoryListener {
+		MediatorFactoryListener, mxIEventListener {
 
 	private JTable startPointTable;
 	private StartPointJTableBridge startPointModelTable;
@@ -236,6 +240,8 @@ public class SimulatorPanel extends JTabbedPane implements
 	@Override
 	public void simulationStarted() {
 		Simulator.pausable();
+		bge_frame.getGraphComponent().getGraph().getSelectionModel()
+				.addListener(mxEvent.CHANGE, this);
 		btnOneStep.setEnabled(true);
 		btnLaunch.setText("Skip");
 		restoreCellColor();
@@ -245,11 +251,13 @@ public class SimulatorPanel extends JTabbedPane implements
 	public void simulationEnded() {
 		btnOneStep.setEnabled(false);
 		btnLaunch.setText("Launch");
+		bge_frame.getGraphComponent().getGraph().getSelectionModel()
+				.removeListener(this);
 		restoreCellColor();
 	}
 
 	/**
-	 * Restore default style for all components
+	 * Restore default style for all components & Remove data in mediatorwrapper
 	 */
 	private void restoreCellColor() {
 		List<mxCell> cells = SimulatorGUIBridge.findAllCell(bge_frame
@@ -263,6 +271,8 @@ public class SimulatorPanel extends JTabbedPane implements
 			} else if (c.getValue() instanceof MediatorWrapper) {
 				MediatorWrapper cw = (MediatorWrapper) c.getValue();
 				c.setStyle(cw.getStyle());
+				// remove data in mediator
+				cw.setData(null);
 			}
 		}
 		bge_frame.getGraphComponent().refresh();
@@ -272,9 +282,10 @@ public class SimulatorPanel extends JTabbedPane implements
 	public void onSendData(Mediator m, IOutput sender, String data) {
 		mxGraph graph = bge_frame.getGraphComponent().getGraph();
 		graph.fireEvent(new mxEventObject(SimulatorGUIBridge.EVT_PAUSE_CTX_SYNC));
-		// all cell in blue
+		// all cell in default style
 		restoreCellColor();
 
+		// retrieve cells
 		mxCell cell_sender = SimulatorGUIBridge.findVertex(
 				(Component) m.getSender(), graph);
 		mxCell cell_receiver = SimulatorGUIBridge.findVertex(
@@ -302,6 +313,8 @@ public class SimulatorPanel extends JTabbedPane implements
 		// useStyle
 		cell_mediator.setStyle(((MediatorWrapper) cell_mediator.getValue())
 				.getUseStyle());
+		// add data in mediatorWrapper
+		((MediatorWrapper) cell_mediator.getValue()).setData(data);
 
 		graph.fireEvent(new mxEventObject(
 				SimulatorGUIBridge.EVT_RESUME_CTX_SYNC));
@@ -315,20 +328,37 @@ public class SimulatorPanel extends JTabbedPane implements
 	}
 
 	@Override
-	public void addImplicitMediator(Mediator m) {
-		// TODO Auto-generated method stub
+	public void removeMediator(Mediator m) {
+		mxCell cell_mediator = SimulatorGUIBridge.findEdge(m, bge_frame
+				.getGraphComponent().getGraph());
+		if (cell_mediator != null) {
+			bge_frame.getGraphComponent().getGraph()
+					.removeCells(new Object[] { cell_mediator });
+
+			// refresh frame
+			bge_frame.getGraphComponent().refresh();
+		}
 
 	}
 
 	@Override
-	public void removeMediator(Mediator m) {
-		mxCell cell_mediator = SimulatorGUIBridge.findEdge(m, bge_frame
-				.getGraphComponent().getGraph());
-		bge_frame.getGraphComponent().getGraph()
-				.removeCells(new Object[] { cell_mediator });
-
-		// refresh frame
-		bge_frame.getGraphComponent().refresh();
+	public void invoke(Object sender, mxEventObject evt) {
+		// show data in mediator if its possible
+		if (sender instanceof mxGraphSelectionModel) {
+			mxGraphSelectionModel gsm = (mxGraphSelectionModel) sender;
+			mxCell cell = (mxCell) gsm.getCell();
+			// select mediator ?
+			if (cell != null
+					&& ((mxCell) cell).getValue() instanceof MediatorWrapper) {
+				MediatorWrapper mw = (MediatorWrapper) ((mxCell) cell)
+						.getValue();
+				// contains data ?
+				if (mw.getData() != null && !mw.getData().isEmpty()) {
+					MediatorAnalysisPanel frame = new MediatorAnalysisPanel(mw);
+					frame.setVisible(true);
+				}
+			}
+		}
 
 	}
 }

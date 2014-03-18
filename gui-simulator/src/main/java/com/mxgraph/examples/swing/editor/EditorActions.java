@@ -1817,7 +1817,7 @@ public class EditorActions {
 					final fr.ensicaen.simulator.model.component.Component component = ((ComponentWrapper) selectedCell
 							.getValue()).getComponent();
 
-					logger.info("Acquisition carte à puce");
+					logger.info("Acquisition carte Ã  puce");
 					System.setProperty("sun.security.smartcardio.t0GetResponse", "false");
 					final RMCGUI inst = new RMCGUI(RMCGUI.MODE_API);
 					inst.setLocationRelativeTo(null);

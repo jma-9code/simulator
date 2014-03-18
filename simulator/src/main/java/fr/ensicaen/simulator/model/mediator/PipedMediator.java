@@ -66,10 +66,17 @@ public class PipedMediator extends Mediator {
 		return m2;
 	}
 
+	@Override
 	public PropertiesPlus getProperties() {
 		PropertiesPlus allprop = new PropertiesPlus();
+		allprop.putAll(properties);
 		allprop.putAll(m1.getProperties());
 		allprop.putAll(m2.getProperties());
 		return allprop;
+	}
+
+	@Override
+	public String toString() {
+		return this.getClass().getSimpleName() + " - " + sender.getName() + " -> " + receiver.getName();
 	}
 }

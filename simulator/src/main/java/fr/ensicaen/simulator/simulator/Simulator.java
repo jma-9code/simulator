@@ -95,7 +95,7 @@ public class Simulator {
 			sl.simulationEnded();
 
 		// remove all generate mediators during the simulation
-		MediatorFactory.getInstance().removeAllImplicit();
+		MediatorFactory.getInstance().removeAllDynamic();
 
 		log.info("Simulation context " + Context.getInstance().currentCounter() + " ended");
 	}

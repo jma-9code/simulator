@@ -20,7 +20,6 @@ import org.jpos.iso.ISOException;
 import org.jpos.iso.packager.GenericPackager;
 
 import fr.ensicaen.gui_simulator.gui.bridge.MediatorWrapper;
-import fr.ensicaen.simulator_ep.utils.ISO7816Tools;
 import fr.ensicaen.simulator_ep.utils.ISOTools;
 import fr.ensicaen.simulator_ep.utils.ProtocolEP;
 
@@ -69,9 +68,9 @@ public class MediatorAnalysisPanel extends JDialog implements ActionListener {
 						.getResource(
 								"/" + ProtocolEP.valueOf(protocol).toString()
 										+ ".xml").toURI().getPath());
-				jtable_parsedData = new JTable(new DataTable(
-						ISOTools.readISOMsg(mediatorwrapper.getData(),
-								ISO7816Tools.getPackager())));
+				jtable_parsedData = new JTable(
+						new DataTable(ISOTools.readISOMsg(
+								mediatorwrapper.getData(), packager)));
 			} catch (ISOException | URISyntaxException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();

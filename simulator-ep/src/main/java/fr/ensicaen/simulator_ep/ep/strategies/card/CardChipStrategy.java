@@ -127,10 +127,10 @@ public class CardChipStrategy implements IStrategy<ComponentIO> {
 		rp.set(ISO7816Tools.FIELD_AMOUNT, amount);
 		rp.set(ISO7816Tools.FIELD_DATETIME, datetime);
 		rp.set(ISO7816Tools.FIELD_PAN, pan);
-		if (rpcode.equals("00") && apcode_tpe.equalsIgnoreCase(apcode_cb)) {
+		if (rpcode.equals("00") && apcode_tpe != null && !apcode_tpe.isEmpty()) {
 			rp.set(ISO7816Tools.FIELD_APPROVALCODE, apcode_cb);
 			rp.set(ISO7816Tools.FIELD_RESPONSECODE, rpcode);
-			chip.getProperties().put(datetime, rp.toString());
+			chip.getProperties().put(datetime, new String(rp.pack()));
 		}
 		else {
 			log.warn("chip can't verify the approval code or not connection with the FO (approvalcode from ept="

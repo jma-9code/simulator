@@ -50,59 +50,59 @@ public class GenerateBaseComponents {
 
 	// Différents modules de la fonction émetteur */
 	private static ComponentIO issuerAuthorization;
-	private static ComponentIO controlesSecurite;
-	private static ComponentIO controlesCarte;
-	private static ComponentIO traitementsAutorisation;
-	private static ComponentIO gestionDroitsCarte;
-	private static ComponentIO gestionSoldeCompte;
-	private static ComponentIO gestionDeLaFraude;
+	// private static ComponentIO controlesSecurite;
+	// private static ComponentIO controlesCarte;
+	// private static ComponentIO traitementsAutorisation;
+	// private static ComponentIO gestionDroitsCarte;
+	// private static ComponentIO gestionSoldeCompte;
+	// private static ComponentIO gestionDeLaFraude;
 
 	// Différents modules de la fonction accepteur */
-	private static ComponentIO systemeEncaissement;
-	private static ComponentIO gestionEncaissementsMultiples;
-	private static ComponentIO gestionRolesDeCaisse;
-	private static ComponentIO gestionRemises;
-	private static ComponentIO gestionTickets;
-	private static ComponentIO gestionPeripheriques;
-	private static ComponentIO editionDeFactures;
-	private static ComponentIO concentrateurMonetique;
-	private static ComponentIO gestionLigneDeCaisse;
-	private static ComponentIO gestionTerminauxDePaiementGrappes;
-	private static ComponentIO telePaiement;
-	private static ComponentIO passerelleTelepaiement;
-	private static ComponentIO acceptationPaiementPubliphone;
-	private static ComponentIO acceptationPaiementParInternet;
-	private static ComponentIO acceptationPaiementParGSM;
-	private static ComponentIO gestionnaireTelepaiement;
-	private static ComponentIO delivrancePaiement;
-	private static ComponentIO gestionDesRemises;
-	private static ComponentIO gestionDonneesFonctionnement;
+	// private static ComponentIO systemeEncaissement;
+	// private static ComponentIO gestionEncaissementsMultiples;
+	// private static ComponentIO gestionRolesDeCaisse;
+	// private static ComponentIO gestionRemises;
+	// private static ComponentIO gestionTickets;
+	// private static ComponentIO gestionPeripheriques;
+	// private static ComponentIO editionDeFactures;
+	// private static ComponentIO concentrateurMonetique;
+	// private static ComponentIO gestionLigneDeCaisse;
+	// private static ComponentIO gestionTerminauxDePaiementGrappes;
+	// private static ComponentIO telePaiement;
+	// private static ComponentIO passerelleTelepaiement;
+	// private static ComponentIO acceptationPaiementPubliphone;
+	// private static ComponentIO acceptationPaiementParInternet;
+	// private static ComponentIO acceptationPaiementParGSM;
+	// private static ComponentIO gestionnaireTelepaiement;
+	// private static ComponentIO delivrancePaiement;
+	// private static ComponentIO gestionDesRemises;
+	// private static ComponentIO gestionDonneesFonctionnement;
 
 	// Différents modules de la fonction acquéreur */
 	private static ComponentIO acquirerAuthorization;
-	private static ComponentIO GABHandler;
-	private static ComponentIO retrait;
-	private static ComponentIO libreServiceBancaire;
-	private static ComponentIO retraitAutoCompte;
-	private static ComponentIO depot;
-	private static ComponentIO virement;
-	private static ComponentIO commandeDeChequier;
-	private static ComponentIO demandeDeRIB;
-	private static ComponentIO demandeDeSolde;
-	private static ComponentIO historiqueOperations;
-	private static ComponentIO telecollection;
-	private static ComponentIO gestionCBPRCB2A;
-	private static ComponentIO paymentAcquirer;
-	private static ComponentIO paiementDeProximite;
-	private static ComponentIO preAutorisation;
-	private static ComponentIO venteADistance;
-	private static ComponentIO paiementSurAutomate;
-	private static ComponentIO telePaiementGSM;
-	private static ComponentIO paiementVocal;
-	private static ComponentIO paiementTelevise;
-	private static ComponentIO quasiCash;
-	private static ComponentIO cashAdvance;
-	private static ComponentIO compensationSingleMessage;
+	// private static ComponentIO GABHandler;
+	// private static ComponentIO retrait;
+	// private static ComponentIO libreServiceBancaire;
+	// private static ComponentIO retraitAutoCompte;
+	// private static ComponentIO depot;
+	// private static ComponentIO virement;
+	// private static ComponentIO commandeDeChequier;
+	// private static ComponentIO demandeDeRIB;
+	// private static ComponentIO demandeDeSolde;
+	// private static ComponentIO historiqueOperations;
+	// private static ComponentIO telecollection;
+	// private static ComponentIO gestionCBPRCB2A;
+	// private static ComponentIO paymentAcquirer;
+	// private static ComponentIO paiementDeProximite;
+	// private static ComponentIO preAutorisation;
+	// private static ComponentIO venteADistance;
+	// private static ComponentIO paiementSurAutomate;
+	// private static ComponentIO telePaiementGSM;
+	// private static ComponentIO paiementVocal;
+	// private static ComponentIO paiementTelevise;
+	// private static ComponentIO quasiCash;
+	// private static ComponentIO cashAdvance;
+	// private static ComponentIO compensationSingleMessage;
 
 	/* BO */
 	private static ComponentIO backOffice;
@@ -218,122 +218,130 @@ public class GenerateBaseComponents {
 
 		/* Ajout des modules émetteur */
 		issuerAuthorization = new ComponentIO("FO Issuer Authorization", ComponentEP.FO_ISSUER_AUTHORIZATION.ordinal());
-		gestionDeLaFraude = new ComponentIO("GestionDeLaFraude");
+		// gestionDeLaFraude = new ComponentIO("GestionDeLaFraude");
 		issuer.addChild(issuerAuthorization);
-		issuer.addChild(gestionDeLaFraude);
+		// issuer.addChild(gestionDeLaFraude);
 
 		/* Ajout des composants du module Autorisation */
-		controlesCarte = new ComponentIO("controlesCarte");
-		traitementsAutorisation = new ComponentIO("traitemntsAutorisation");
-		issuerAuthorization.addChild(controlesCarte);
-		issuerAuthorization.addChild(traitementsAutorisation);
+		// controlesCarte = new ComponentIO("controlesCarte");
+		// traitementsAutorisation = new ComponentIO("traitemntsAutorisation");
+		// issuerAuthorization.addChild(controlesCarte);
+		// issuerAuthorization.addChild(traitementsAutorisation);
 
-		gestionDroitsCarte = new ComponentIO("gestionDroitsCarte");
-		gestionSoldeCompte = new ComponentIO("gestionSoldeCompte");
-		traitementsAutorisation.addChild(gestionDroitsCarte);
-		traitementsAutorisation.addChild(gestionSoldeCompte);
+		// gestionDroitsCarte = new ComponentIO("gestionDroitsCarte");
+		// gestionSoldeCompte = new ComponentIO("gestionSoldeCompte");
+		// traitementsAutorisation.addChild(gestionDroitsCarte);
+		// traitementsAutorisation.addChild(gestionSoldeCompte);
 
 		/* Ajout des modules accepteur */
-		systemeEncaissement = new ComponentIO("systemeEncaissement");
-		concentrateurMonetique = new ComponentIO("concentrateurMonetique");
-		telePaiement = new ComponentIO("telePaiement");
+		// systemeEncaissement = new ComponentIO("systemeEncaissement");
+		// concentrateurMonetique = new ComponentIO("concentrateurMonetique");
+		// telePaiement = new ComponentIO("telePaiement");
 		// acceptor.addChild(systemeEncaissement);
 		// acceptor.addChild(concentrateurMonetique);
 		// acceptor.addChild(telePaiement);
 
 		/* Ajout des composants du module systemeEncaissement */
-		gestionEncaissementsMultiples = new ComponentIO("gestionEncaissementsMultiples");
-		gestionRolesDeCaisse = new ComponentIO("gestionRolesDeCaisse");
-		gestionTickets = new ComponentIO("gestionTickets");
-		gestionPeripheriques = new ComponentIO("gestionPeripheriques");
-		editionDeFactures = new ComponentIO("editionDeFactures");
-		systemeEncaissement.addChild(gestionEncaissementsMultiples);
-		systemeEncaissement.addChild(gestionRolesDeCaisse);
-		systemeEncaissement.addChild(gestionTickets);
-		systemeEncaissement.addChild(gestionPeripheriques);
-		systemeEncaissement.addChild(editionDeFactures);
+		// gestionEncaissementsMultiples = new
+		// ComponentIO("gestionEncaissementsMultiples");
+		// gestionRolesDeCaisse = new ComponentIO("gestionRolesDeCaisse");
+		// gestionTickets = new ComponentIO("gestionTickets");
+		// gestionPeripheriques = new ComponentIO("gestionPeripheriques");
+		// editionDeFactures = new ComponentIO("editionDeFactures");
+		// systemeEncaissement.addChild(gestionEncaissementsMultiples);
+		// systemeEncaissement.addChild(gestionRolesDeCaisse);
+		// systemeEncaissement.addChild(gestionTickets);
+		// systemeEncaissement.addChild(gestionPeripheriques);
+		// systemeEncaissement.addChild(editionDeFactures);
 
 		/* Ajout des composants du module concentrateur Monétique */
-		gestionLigneDeCaisse = new ComponentIO("gestionLigneDeCaisse");
-		gestionTerminauxDePaiementGrappes = new ComponentIO("gestionTerminauxDePaiementGrappes");
-		gestionRolesDeCaisse.addChild(gestionLigneDeCaisse);
-		gestionRolesDeCaisse.addChild(gestionTerminauxDePaiementGrappes);
+		// gestionLigneDeCaisse = new ComponentIO("gestionLigneDeCaisse");
+		// gestionTerminauxDePaiementGrappes = new
+		// ComponentIO("gestionTerminauxDePaiementGrappes");
+		// gestionRolesDeCaisse.addChild(gestionLigneDeCaisse);
+		// gestionRolesDeCaisse.addChild(gestionTerminauxDePaiementGrappes);
 
 		/* Ajout des composants du module télépaiement */
-		passerelleTelepaiement = new ComponentIO("passerelleTelepaiement");
-		gestionnaireTelepaiement = new ComponentIO("gestionnaireTelepaiement");
-		telePaiement.addChild(passerelleTelepaiement);
-		telePaiement.addChild(gestionnaireTelepaiement);
+		// passerelleTelepaiement = new ComponentIO("passerelleTelepaiement");
+		// gestionnaireTelepaiement = new
+		// ComponentIO("gestionnaireTelepaiement");
+		// telePaiement.addChild(passerelleTelepaiement);
+		// telePaiement.addChild(gestionnaireTelepaiement);
 
-		acceptationPaiementPubliphone = new ComponentIO("acceptationPaiementPubliphone");
-		acceptationPaiementParInternet = new ComponentIO("acceptationPaiementParInternet");
-		acceptationPaiementParGSM = new ComponentIO("acceptationPaiementParGSM");
-		passerelleTelepaiement.addChild(acceptationPaiementPubliphone);
-		passerelleTelepaiement.addChild(acceptationPaiementParInternet);
-		passerelleTelepaiement.addChild(acceptationPaiementParGSM);
+		// acceptationPaiementPubliphone = new
+		// ComponentIO("acceptationPaiementPubliphone");
+		// acceptationPaiementParInternet = new
+		// ComponentIO("acceptationPaiementParInternet");
+		// acceptationPaiementParGSM = new
+		// ComponentIO("acceptationPaiementParGSM");
+		// passerelleTelepaiement.addChild(acceptationPaiementPubliphone);
+		// passerelleTelepaiement.addChild(acceptationPaiementParInternet);
+		// passerelleTelepaiement.addChild(acceptationPaiementParGSM);
 
-		delivrancePaiement = new ComponentIO("delivrancePaiement");
-		gestionDesRemises = new ComponentIO("gestionDesRemises");
-		gestionDonneesFonctionnement = new ComponentIO("gestionDonneesFonctionnement");
-		gestionnaireTelepaiement.addChild(delivrancePaiement);
-		gestionnaireTelepaiement.addChild(gestionDesRemises);
-		gestionnaireTelepaiement.addChild(gestionDonneesFonctionnement);
+		// delivrancePaiement = new ComponentIO("delivrancePaiement");
+		// gestionDesRemises = new ComponentIO("gestionDesRemises");
+		// gestionDonneesFonctionnement = new
+		// ComponentIO("gestionDonneesFonctionnement");
+		// gestionnaireTelepaiement.addChild(delivrancePaiement);
+		// gestionnaireTelepaiement.addChild(gestionDesRemises);
+		// gestionnaireTelepaiement.addChild(gestionDonneesFonctionnement);
 
 		/* Ajout des modules acquéreur */
 		acquirerAuthorization = new ComponentIO("FO Acquirer Authorization",
 				ComponentEP.FO_ACQUIRER_AUTHORIZATION.ordinal());
-		GABHandler = new ComponentIO("GABHandler");
-		telecollection = new ComponentIO("telecollection");
-		paymentAcquirer = new ComponentIO("paymentAcquirer");
-		compensationSingleMessage = new ComponentIO("compensationSingleMessage");
+		// GABHandler = new ComponentIO("GABHandler");
+		// telecollection = new ComponentIO("telecollection");
+		// paymentAcquirer = new ComponentIO("paymentAcquirer");
+		// compensationSingleMessage = new
+		// ComponentIO("compensationSingleMessage");
 		acquirer.addChild(acquirerAuthorization);
-		acquirer.addChild(GABHandler);
-		acquirer.addChild(telecollection);
-		acquirer.addChild(paymentAcquirer);
-		acquirer.addChild(compensationSingleMessage);
+		// acquirer.addChild(GABHandler);
+		// acquirer.addChild(telecollection);
+		// acquirer.addChild(paymentAcquirer);
+		// acquirer.addChild(compensationSingleMessage);
 
 		/* Ajout des composants du module GABHandler" */
-		retrait = new ComponentIO("retrait");
-		libreServiceBancaire = new ComponentIO("libreServiceBancaire");
-		GABHandler.addChild(retrait);
-		GABHandler.addChild(libreServiceBancaire);
+		// retrait = new ComponentIO("retrait");
+		// libreServiceBancaire = new ComponentIO("libreServiceBancaire");
+		// GABHandler.addChild(retrait);
+		// GABHandler.addChild(libreServiceBancaire);
 
-		retraitAutoCompte = new ComponentIO("retraitAutoCompte");
-		depot = new ComponentIO("depot");
-		virement = new ComponentIO("virement");
-		commandeDeChequier = new ComponentIO("commandeDeChequier");
-		demandeDeRIB = new ComponentIO("demandeDeRIB");
-		demandeDeSolde = new ComponentIO("demandeDeSolde");
-		historiqueOperations = new ComponentIO("historiqueOperations");
-		libreServiceBancaire.addChild(retraitAutoCompte);
-		libreServiceBancaire.addChild(depot);
-		libreServiceBancaire.addChild(virement);
-		libreServiceBancaire.addChild(commandeDeChequier);
-		libreServiceBancaire.addChild(demandeDeRIB);
-		libreServiceBancaire.addChild(demandeDeSolde);
-		libreServiceBancaire.addChild(historiqueOperations);
+		// retraitAutoCompte = new ComponentIO("retraitAutoCompte");
+		// depot = new ComponentIO("depot");
+		// virement = new ComponentIO("virement");
+		// commandeDeChequier = new ComponentIO("commandeDeChequier");
+		// demandeDeRIB = new ComponentIO("demandeDeRIB");
+		// demandeDeSolde = new ComponentIO("demandeDeSolde");
+		// historiqueOperations = new ComponentIO("historiqueOperations");
+		// libreServiceBancaire.addChild(retraitAutoCompte);
+		// libreServiceBancaire.addChild(depot);
+		// libreServiceBancaire.addChild(virement);
+		// libreServiceBancaire.addChild(commandeDeChequier);
+		// libreServiceBancaire.addChild(demandeDeRIB);
+		// libreServiceBancaire.addChild(demandeDeSolde);
+		// libreServiceBancaire.addChild(historiqueOperations);
 
 		/* Ajout des composants du module telecollection */
-		gestionCBPRCB2A = new ComponentIO("gestionCBPRCB2A");
-		telecollection.addChild(gestionCBPRCB2A);
+		// gestionCBPRCB2A = new ComponentIO("gestionCBPRCB2A");
+		// telecollection.addChild(gestionCBPRCB2A);
 
 		/* Ajout des composants du module paymentAcquirer */
-		paiementDeProximite = new ComponentIO("paiementDeProximite");
-		preAutorisation = new ComponentIO("preAutorisation");
-		venteADistance = new ComponentIO("venteADistance");
-		telePaiementGSM = new ComponentIO("telePaiementGSM");
-		paiementVocal = new ComponentIO("paiementVocal");
-		paiementTelevise = new ComponentIO("paiementTelevise");
-		quasiCash = new ComponentIO("quasiCash");
-		cashAdvance = new ComponentIO("cashAdvance");
-		paymentAcquirer.addChild(paiementDeProximite);
-		paymentAcquirer.addChild(preAutorisation);
-		paymentAcquirer.addChild(venteADistance);
-		paymentAcquirer.addChild(telePaiementGSM);
-		paymentAcquirer.addChild(paiementVocal);
-		paymentAcquirer.addChild(paiementTelevise);
-		paymentAcquirer.addChild(quasiCash);
-		paymentAcquirer.addChild(cashAdvance);
+		// paiementDeProximite = new ComponentIO("paiementDeProximite");
+		// preAutorisation = new ComponentIO("preAutorisation");
+		// venteADistance = new ComponentIO("venteADistance");
+		// telePaiementGSM = new ComponentIO("telePaiementGSM");
+		// paiementVocal = new ComponentIO("paiementVocal");
+		// paiementTelevise = new ComponentIO("paiementTelevise");
+		// quasiCash = new ComponentIO("quasiCash");
+		// cashAdvance = new ComponentIO("cashAdvance");
+		// paymentAcquirer.addChild(paiementDeProximite);
+		// paymentAcquirer.addChild(preAutorisation);
+		// paymentAcquirer.addChild(venteADistance);
+		// paymentAcquirer.addChild(telePaiementGSM);
+		// paymentAcquirer.addChild(paiementVocal);
+		// paymentAcquirer.addChild(paiementTelevise);
+		// paymentAcquirer.addChild(quasiCash);
+		// paymentAcquirer.addChild(cashAdvance);
 
 		/* BO */
 		backOffice = new ComponentIO("BackOffice");

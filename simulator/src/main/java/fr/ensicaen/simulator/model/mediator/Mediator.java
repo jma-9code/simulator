@@ -23,7 +23,7 @@ import fr.ensicaen.simulator.model.properties.PropertiesPlus;
 import fr.ensicaen.simulator.model.response.IResponse;
 
 @XmlSeeAlso({ SimplexMediator.class, ReverseHalfDuplexMediator.class, ForwardMediator.class, PipedMediator.class,
-		HalfDuplexMediator.class })
+		HalfDuplexMediator.class, ChildHalfDuplexMediator.class, ChildSimplexMediator.class })
 @XmlAccessorType(XmlAccessType.FIELD)
 public abstract class Mediator implements Serializable {
 
@@ -125,10 +125,6 @@ public abstract class Mediator implements Serializable {
 		return this.properties;
 	}
 
-	public void setProperties(PropertiesPlus properties) {
-		this.properties = properties;
-	}
-
 	public IOutput getSender() {
 		return this.sender;
 	}
@@ -143,7 +139,7 @@ public abstract class Mediator implements Serializable {
 
 	@Override
 	public String toString() {
-		return "Mediator [sender=" + sender + ", receiver=" + receiver + "]";
+		return this.getClass().getSimpleName() + " - " + sender.getName() + " -> " + receiver.getName();
 	}
 
 }

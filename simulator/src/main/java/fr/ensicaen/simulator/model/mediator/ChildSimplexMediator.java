@@ -5,6 +5,10 @@ import fr.ensicaen.simulator.model.component.IOutput;
 
 public class ChildSimplexMediator extends SimplexMediator {
 
+	public ChildSimplexMediator() {
+		super();
+	}
+
 	public ChildSimplexMediator(IOutput a, IInput b) {
 		super(a, b);
 	}

@@ -15,10 +15,4 @@ public class ReverseHalfDuplexMediator extends HalfDuplexMediator {
 	public ReverseHalfDuplexMediator(HalfDuplexMediator mediator) {
 		super((IInputOutput) mediator.getReceiver(), (IInputOutput) mediator.getSender());
 	}
-
-	@Override
-	public String toString() {
-		return "M[ReverseHalfDuplex - " + this.sender + " <--> " + this.receiver + "]";
-	}
-
 }

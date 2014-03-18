@@ -107,9 +107,4 @@ public class ForwardMediator extends Mediator {
 	private static IOutput getRouter(Mediator origin) {
 		return (IOutput) origin.getReceiver();
 	}
-
-	@Override
-	public String toString() {
-		return "M[Forward - " + this.origin + " <--> " + this.receiver + "]";
-	}
 }

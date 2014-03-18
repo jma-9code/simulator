@@ -66,9 +66,4 @@ public class SimplexMediator extends Mediator {
 		Simulator.barrier.reset();
 		return (VoidResponse) response;
 	}
-
-	@Override
-	public String toString() {
-		return "M[Simplex - " + this.sender + " --> " + this.receiver + "]";
-	}
 }

@@ -67,7 +67,7 @@ public class HalfDuplexMediator extends Mediator {
 
 	@Override
 	public String toString() {
-		return "M[HalfDuplex - " + this.sender + " <--> " + this.receiver + "]";
+		return this.getClass().getSimpleName() + " - " + sender.getName() + " <-> " + receiver.getName();
 	}
 
 }

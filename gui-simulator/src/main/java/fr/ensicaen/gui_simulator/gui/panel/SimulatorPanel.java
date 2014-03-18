@@ -40,7 +40,6 @@ import fr.ensicaen.gui_simulator.gui.editor.DateTimeCellEditor;
 import fr.ensicaen.gui_simulator.gui.renderer.DateTimeCellRenderer;
 import fr.ensicaen.gui_simulator.gui.tools.MediatorAnalysisPanel;
 import fr.ensicaen.simulator.model.component.Component;
-import fr.ensicaen.simulator.model.component.IOutput;
 import fr.ensicaen.simulator.model.factory.MediatorFactory;
 import fr.ensicaen.simulator.model.factory.listener.MediatorFactoryListener;
 import fr.ensicaen.simulator.model.mediator.Mediator;
@@ -279,7 +278,7 @@ public class SimulatorPanel extends JTabbedPane implements
 	}
 
 	@Override
-	public void onSendData(Mediator m, IOutput sender, String data) {
+	public void onSendData(Mediator m, boolean response, String data) {
 		mxGraph graph = bge_frame.getGraphComponent().getGraph();
 		graph.fireEvent(new mxEventObject(SimulatorGUIBridge.EVT_PAUSE_CTX_SYNC));
 		// all cell in default style
@@ -287,9 +286,11 @@ public class SimulatorPanel extends JTabbedPane implements
 
 		// retrieve cells
 		mxCell cell_sender = SimulatorGUIBridge.findVertex(
-				(Component) m.getSender(), graph);
+				(!response) ? (Component) m.getSender() : (Component) m
+						.getReceiver(), graph);
 		mxCell cell_receiver = SimulatorGUIBridge.findVertex(
-				(Component) m.getReceiver(), graph);
+				(!response) ? (Component) m.getReceiver() : (Component) m
+						.getSender(), graph);
 		mxCell cell_mediator = SimulatorGUIBridge.findEdge(m, graph);
 
 		// concerned component

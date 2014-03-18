@@ -9,7 +9,9 @@ import fr.ensicaen.simulator.model.component.IInput;
 import fr.ensicaen.simulator.model.component.IOutput;
 import fr.ensicaen.simulator.model.mediator.listener.MediatorListener;
 import fr.ensicaen.simulator.model.properties.PropertiesPlus;
+import fr.ensicaen.simulator.model.response.DataResponse;
 import fr.ensicaen.simulator.model.response.IResponse;
+import fr.ensicaen.simulator.model.response.VoidResponse;
 import fr.ensicaen.simulator.simulator.Simulator;
 import fr.ensicaen.simulator.tools.LogUtils;
 
@@ -33,7 +35,7 @@ public class PipedMediator extends Mediator {
 	public IResponse send(IOutput c, String data) {
 		IResponse ret = null;
 		for (MediatorListener l : listeners) {
-			l.onSendData(this, c, data);
+			l.onSendData(this, false, data);
 		}
 
 		try {
@@ -51,6 +53,19 @@ public class PipedMediator extends Mediator {
 		}
 		else {
 			ret = ((IInput) this.sender).notifyMessage(this, data);
+		}
+		if (!(ret instanceof VoidResponse)) {
+			for (MediatorListener l : listeners) {
+				l.onSendData(this, true, ((DataResponse) ret).getData());
+			}
+			try {
+				Simulator.barrier.await();
+			}
+			catch (BrokenBarrierException | InterruptedException e) {
+				// TODO Auto-generated catch block
+				log.debug(LogUtils.MARKER_MEDIATOR_MSG, "broken barrier for mediator : " + this);
+			}
+
 		}
 
 		Simulator.barrier.reset();

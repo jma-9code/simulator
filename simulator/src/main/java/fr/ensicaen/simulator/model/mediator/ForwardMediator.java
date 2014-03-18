@@ -12,7 +12,9 @@ import fr.ensicaen.simulator.model.component.IInput;
 import fr.ensicaen.simulator.model.component.IOutput;
 import fr.ensicaen.simulator.model.factory.MediatorFactory.EMediator;
 import fr.ensicaen.simulator.model.mediator.listener.MediatorListener;
+import fr.ensicaen.simulator.model.response.DataResponse;
 import fr.ensicaen.simulator.model.response.IResponse;
+import fr.ensicaen.simulator.model.response.VoidResponse;
 import fr.ensicaen.simulator.simulator.Simulator;
 import fr.ensicaen.simulator.tools.LogUtils;
 
@@ -60,7 +62,7 @@ public class ForwardMediator extends Mediator {
 	public IResponse send(IOutput s, String data) {
 		IResponse ret = null;
 		for (MediatorListener l : listeners) {
-			l.onSendData(this, s, data);
+			l.onSendData(this, false, data);
 		}
 
 		try {
@@ -79,6 +81,20 @@ public class ForwardMediator extends Mediator {
 		}
 		else if (getOriginType() == EMediator.HALFDUPLEX) {
 			ret = ((IInput) this.sender).notifyMessage(this, data);
+		}
+
+		if (!(ret instanceof VoidResponse)) {
+			for (MediatorListener l : listeners) {
+				l.onSendData(this, true, ((DataResponse) ret).getData());
+			}
+			try {
+				Simulator.barrier.await();
+			}
+			catch (BrokenBarrierException | InterruptedException e) {
+				// TODO Auto-generated catch block
+				log.debug(LogUtils.MARKER_MEDIATOR_MSG, "broken barrier for mediator : " + this);
+			}
+
 		}
 
 		Simulator.barrier.reset();

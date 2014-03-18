@@ -44,7 +44,7 @@ public class SimplexMediator extends Mediator {
 	@Override
 	public VoidResponse send(IOutput c, String data) {
 		for (MediatorListener l : listeners) {
-			l.onSendData(this, c, data);
+			l.onSendData(this, false, data);
 		}
 
 		try {

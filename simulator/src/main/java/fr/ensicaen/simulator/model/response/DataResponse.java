@@ -37,4 +37,9 @@ public class DataResponse implements IResponse {
 		return new DataResponse(mediator, new String(data));
 	}
 
+	@Override
+	public boolean isVoid() {
+		return false;
+	}
+
 }

@@ -34,71 +34,88 @@ public class EPTChipsetStrategy implements IStrategy<ComponentIO> {
 
 	private static Logger log = LoggerFactory.getLogger(EPTChipsetStrategy.class);
 
+	public static final String CKEY_ACQUIRER_ID = "acquirer_id";
+	public static final String CKEY_ACCEPTOR_TERMINAL_ID = "acceptor_terminal_id";
+	public static final String CKEY_ACCEPTOR_ID = "acceptor_id";
+	public static final String CKEY_MERCHANT_CATEGORY_CODE = "merchant_category_code";
+	public static final String CKEY_CURRENCY_CODE = "currency_code";
+	public static final String CKEY_NB_MESSAGE = "nb_message";
+	public static final String CKEYPREFIX_MESSAGE = "message_";
+
 	public EPTChipsetStrategy() {
 		super();
-		// TODO Auto-generated constructor stub
 	}
 
 	@Override
 	public List<PropertyDefinition> getPropertyDefinitions() {
-		return new ArrayList<PropertyDefinition>();
+		ArrayList<PropertyDefinition> defs = new ArrayList<PropertyDefinition>();
+		defs.add(new PropertyDefinition(CKEY_ACQUIRER_ID, "", true, "Identifiant de l'acquéreur"));
+		defs.add(new PropertyDefinition(CKEY_ACCEPTOR_TERMINAL_ID, "", true, "Identifiant du système d'acceptation"));
+		defs.add(new PropertyDefinition(CKEY_ACCEPTOR_TERMINAL_ID, "", true, "Identifiant de l'accepteur"));
+		defs.add(new PropertyDefinition(CKEY_MERCHANT_CATEGORY_CODE, "", false, "Code de catégorie de marchandise"));
+		defs.add(new PropertyDefinition(CKEY_CURRENCY_CODE, "", true, "Code de la devise utilisée"));
+		return defs;
 	}
 
 	@Override
 	public void init(IOutput _this, Context ctx) {
+		// enregistrement aux évènements suivants
 		ctx.subscribeEvent(_this, "SMART_CARD_INSERTED");
+		ctx.subscribeEvent(_this, "REMOTE_DATA_COLLECTION");
+
 	}
 
 	@Override
 	public void processEvent(ComponentIO _this, String event) {
+		// msg
+		ISOMsg msg = null;
+
 		switch (event) {
+
 			case "SMART_CARD_INSERTED":
-				// setting secure channel with the card
-				// prepare initialization message
-				ISOMsg msg = null;
-				// get the card linked
+
 				try {
 					log.info(LogUtils.MARKER_COMPONENT_INFO, "A card has been inserted in the EPT");
 					msg = prepareSecureChannelRQ(_this);
 					Mediator m = Context.getInstance().getFirstMediator(_this, ComponentEP.CARD.ordinal());
 					m.setProtocol(ProtocolEP.ISO7816.toString());
 
-					log.info(LogUtils.MARKER_COMPONENT_INFO, "ETP sends a request for secured channel");
+					log.info(LogUtils.MARKER_COMPONENT_INFO, "EPT sends a request for secured channel");
 					DataResponse res = (DataResponse) m.send(_this, new String(msg.pack()));
-					log.info(LogUtils.MARKER_COMPONENT_INFO, "ETP receive the response for secure channel");
+					log.info(LogUtils.MARKER_COMPONENT_INFO, "EPT receive the response for secure channel");
 					ISOMsg sdata = ISO7816Tools.read(res.getData());
 
 					// card holder authentication (amount + PIN)
 					msg = prepareCardHolderAuthRQ(_this, sdata);
-					log.info(LogUtils.MARKER_COMPONENT_INFO, "ETP sends a authentification holder request");
+					log.info(LogUtils.MARKER_COMPONENT_INFO, "EPT sends a authentification holder request");
 					res = (DataResponse) m.send(_this, new String(msg.pack()));
-					log.info(LogUtils.MARKER_COMPONENT_INFO, "ETP receive the response for authentification holder");
+					log.info(LogUtils.MARKER_COMPONENT_INFO, "EPT receive the response for authentification holder");
 					sdata = ISO7816Tools.read(res.getData());
 
 					// auth request to bank (TPE -> Bank and bank -> TPE)
 					boolean fo_connection = false;
 					try {
-						log.info(LogUtils.MARKER_COMPONENT_INFO, "ETP try to join the FO, and send an authorization...");
+						log.info(LogUtils.MARKER_COMPONENT_INFO, "EPT try to join the FO, and send an authorization...");
 						Mediator mFrontOffice = Context.getInstance().getFirstMediator(_this,
 								ComponentEP.FRONT_OFFICE.ordinal());
 						mFrontOffice.setProtocol(ProtocolEP.ISO8583.toString());
 						msg = generateAuthorizationRequest(_this, sdata);
 						res = (DataResponse) mFrontOffice.send(_this, new String(msg.pack()));
-						log.info(LogUtils.MARKER_COMPONENT_INFO, "ETP receive authorization from the FO");
+						log.info(LogUtils.MARKER_COMPONENT_INFO, "EPT receive authorization from the FO");
 						sdata = ISO8583Tools.read(res.getData());
 						fo_connection = !sdata.getValue(39).equals(CB2AValues.Field39.UNREACHABLE_CARD_ISSUER)
 								&& !sdata.getValue(39).equals(CB2AValues.Field39.UNKNOWN_CARD_ISSUER);
 					}
 					catch (ContextException e) {
-						log.warn(LogUtils.MARKER_COMPONENT_INFO, "ETP has not succeeded to reach the FO", e);
+						log.warn(LogUtils.MARKER_COMPONENT_INFO, "EPT has not succeeded to reach the FO", e);
 					}
 
 					// ARPC
 					// no connection with fo ? use previous msg
 					msg = prepareARPC(_this, sdata, fo_connection);
-					log.info(LogUtils.MARKER_COMPONENT_INFO, "ETP send ARPC to the card");
+					log.info(LogUtils.MARKER_COMPONENT_INFO, "EPT send ARPC to the card");
 					res = (DataResponse) m.send(_this, new String(msg.pack()));
-					log.info(LogUtils.MARKER_COMPONENT_INFO, "ETP receive the final agreement");
+					log.info(LogUtils.MARKER_COMPONENT_INFO, "EPT receive the final agreement");
 					sdata = ISO7816Tools.read(res.getData());
 
 					// final agreement
@@ -114,11 +131,144 @@ public class EPTChipsetStrategy implements IStrategy<ComponentIO> {
 					return; // ABORT
 				}
 				catch (ISOException e) {
-					// TODO Auto-generated catch block
 					e.printStackTrace();
 				}
 				catch (ISO8583Exception e) {
-					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+
+				break;
+
+			case "REMOTE_DATA_COLLECTION":
+
+				try {
+					ISOMsg resData;
+					IResponse res;
+
+					// recuperation du mediateur avec le module fo de
+					// telecollecte
+					Mediator m = Context.getInstance().getFirstMediator(_this,
+							ComponentEP.FO_ACQUIRER_REMOTE_DATA_COLLECTION.ordinal());
+
+					log.info(LogUtils.MARKER_COMPONENT_INFO, "Begin of remote data collection.");
+
+					// ### 1 - initialisation de la télécollecte
+					// sign-on (0804)
+					msg = prepareSignOn(_this);
+					log.info(LogUtils.MARKER_COMPONENT_INFO, "EPT sends sign-on message");
+					res = m.send(_this, new String(msg.pack()));
+					log.info(LogUtils.MARKER_COMPONENT_INFO, "EPT receives sign-on ack message");
+					// res.throwExceptionIfVoid();
+
+					// Response data : ACK (0814 attendu)
+					resData = ISO8583Tools.read_CB2A_TLC(((DataResponse) res).getData());
+					if (!"0814".equals(resData.getMTI()) || !"0000".equals(resData.getValue(39))) {
+						// On réagit ?
+						log.error("0814 expected !!");
+					}
+
+					// init remise (0306)
+					msg = prepareSubmissionHeader(_this);
+					log.info(LogUtils.MARKER_COMPONENT_INFO, "EPT sends submission header message");
+					res = m.send(_this, new String(msg.pack()));
+					log.info(LogUtils.MARKER_COMPONENT_INFO, "EPT receives submission header ack message");
+					// res.throwExceptionIfVoid();
+
+					// Response data : ACK (0316 attendu)
+					resData = ISO8583Tools.read_CB2A_TLC(((DataResponse) res).getData());
+					if (!"0316".equals(resData.getMTI()) || !"0000".equals(resData.getValue(39))) {
+						// On réagit ?
+						log.error("0316 expected !!");
+					}
+
+					// ### 2 - remise
+					// Transaction financière (0246)
+					int nbMessage = Integer.parseInt(_this.getProperty(CKEY_NB_MESSAGE));
+					long totalAmount = 0;
+
+					log.info(LogUtils.MARKER_COMPONENT_INFO, nbMessage + " to transfer");
+
+					for (int i = 1; i <= nbMessage; i++) {
+						msg = prepareFinancialTransaction(_this.getProperty(CKEYPREFIX_MESSAGE + nbMessage));
+						log.info(LogUtils.MARKER_COMPONENT_INFO, "EPT sends transaction " + i);
+						res = m.send(_this, new String(msg.pack()));
+						// res.throwExceptionIfVoid();
+
+						// alimentation des totaux pour la consolidation
+						totalAmount += Long.parseLong(msg.getString(4));
+
+						if (!res.isVoid()) {
+							// acquittement global ? (0256 attendu)
+							resData = ISO8583Tools.read_CB2A_TLC(((DataResponse) res).getData());
+
+							if ("0256".equals(resData.getMTI())) {
+								log.info(LogUtils.MARKER_COMPONENT_INFO, "EPT receives transfer ack message");
+							}
+						}
+					}
+
+					// ### 3 - fin de remise et consolidation
+					msg = prepareFinancialConsolidation(_this, nbMessage, totalAmount);
+					log.info(LogUtils.MARKER_COMPONENT_INFO, "EPT sends financial consolidation message");
+					res = m.send(_this, new String(msg.pack()));
+					log.info(LogUtils.MARKER_COMPONENT_INFO, "EPT receives financial consolidation ack message");
+					// res.throwExceptionIfVoid();
+
+					// Response data : ACK (0516 attendu)
+					resData = ISO8583Tools.read_CB2A_TLC(((DataResponse) res).getData());
+					if (!"0516".equals(resData.getMTI())) {
+						// On réagit ?
+						log.error("0516 expected !!");
+					}
+					else {
+						// Suppression des transactions
+						_this.getProperties().put(CKEY_NB_MESSAGE, "0");
+						_this.getProperties().removeKeyStartsWith(CKEYPREFIX_MESSAGE);
+					}
+
+					// ### 4 - fin de connexion
+					// proposition de droit de parole
+					msg = prepareRightToSpeak(_this);
+					log.info(LogUtils.MARKER_COMPONENT_INFO, "EPT sends right to speak proposition message");
+					res = m.send(_this, new String(msg.pack()));
+					log.info(LogUtils.MARKER_COMPONENT_INFO, "EPT receives end of speak message");
+					// res.throwExceptionIfVoid();
+
+					// Response data : ACK (0854 attendu)
+					resData = ISO8583Tools.read_CB2A_TLC(((DataResponse) res).getData());
+					if (!"0854".equals(resData.getMTI()) || !"1000".equals(resData.getValue(39))) {
+						// On réagit ?
+						log.error("0854 expected !!");
+					}
+
+					// notif de déconnexion
+					msg = prepareDecoNotification(_this);
+					log.info(LogUtils.MARKER_COMPONENT_INFO, "EPT sends disconnect notification message");
+					res = m.send(_this, new String(msg.pack()));
+					log.info(LogUtils.MARKER_COMPONENT_INFO, "EPT receives disconnect notification message");
+					// res.throwExceptionIfVoid();
+
+					// Response data : ACK (0854 attendu)
+					resData = ISO8583Tools.read_CB2A_TLC(((DataResponse) res).getData());
+					if (!"0854".equals(resData.getMTI()) || !"0000".equals(resData.getValue(39))) {
+						// On réagit ?
+						log.error("0854 expected !!");
+					}
+
+					log.info(LogUtils.MARKER_COMPONENT_INFO, "End of remote data collection.");
+
+				}
+				catch (ContextException e) {
+					log.error("Context error", e);
+					return; // ABORT (to think) } catch (ISO7816Exception e) {
+				}
+				catch (ISOException e) {
+					e.printStackTrace();
+				}
+				catch (ISO8583Exception e) {
+					e.printStackTrace();
+				}
+				catch (ISO7816Exception e) {
 					e.printStackTrace();
 				}
 
@@ -133,6 +283,138 @@ public class EPTChipsetStrategy implements IStrategy<ComponentIO> {
 	public IResponse processMessage(ComponentIO _this, Mediator c, String data) {
 
 		return VoidResponse.build();
+	}
+
+	/**
+	 * Messae de connexion au front office (phase 1 - initialisation)
+	 * 
+	 * @param _this
+	 * @return
+	 */
+	private ISOMsg prepareSignOn(Component _this) throws ISOException {
+		ISOMsg msg = ISO8583Tools.create_CB2A_TLC();
+
+		msg.setMTI("0804"); // sign on
+		// signOnMsg.set(11, "000009"); // STAN
+		msg.set(12, ISO8583Tools.getDate_hhmmss()); // Heure hhmmss
+		msg.set(13, ISO8583Tools.getDate_MMJJ()); // Date MMJJ
+		msg.set(24, "862"); // Code Fonction => Dialogue + TLC
+		msg.set(25, "10"); // Code Raison => "Programmé par Acquéreur"
+		msg.set(32, _this.getProperty(CKEY_ACQUIRER_ID)); // (BIN+Banque)
+		msg.set(41, _this.getProperty(CKEY_ACCEPTOR_TERMINAL_ID)); // id tpe
+		msg.set(42, _this.getProperty(CKEY_ACCEPTOR_ID)); // id commercant
+		msg.set(67, "01"); // Nb fichiers
+
+		return msg;
+	}
+
+	/**
+	 * Message d'initialisation de la remise (phase 1 - initialisation)
+	 * 
+	 * @param _this
+	 * @return
+	 */
+	private ISOMsg prepareSubmissionHeader(Component _this) throws ISOException {
+		ISOMsg msg = ISO8583Tools.create_CB2A_TLC();
+
+		msg.setMTI("0306"); // ENTETE FICHIER REMISE
+		// signOnMsg.set(11, "000009"); // STAN
+		msg.set(12, ISO8583Tools.getDate_hhmmss()); // Heure hhmmss
+		msg.set(13, ISO8583Tools.getDate_MMJJ()); // Date MMJJ
+		msg.set(18, _this.getProperty(CKEY_MERCHANT_CATEGORY_CODE));
+		msg.set(26, "400001"); // Controle transfert
+		msg.set(49, _this.getProperty(CKEY_CURRENCY_CODE));
+
+		// n4 : identifiant du fichier
+		// n4 : nombre de message
+		// n2 : fenetre d'acquittement
+		msg.set(70, "000001" + ISO8583Tools.paddingLeft(_this.getProperty(CKEY_NB_MESSAGE), 4, '0') + "99");
+
+		return msg;
+	}
+
+	/**
+	 * Message transportant une transaction financière (phase 2 - remise)
+	 * 
+	 * @param property
+	 * @return
+	 * @throws ISO8583Exception
+	 * @throws ISO7816Exception
+	 */
+	private ISOMsg prepareFinancialTransaction(String data) throws ISOException, ISO8583Exception, ISO7816Exception {
+		ISOMsg msgAuto = ISO7816Tools.read(data);
+
+		ISOMsg msg = ISO8583Tools.create_CB2A_TLC();
+		msg.setMTI("0246"); // transaction financière
+		msg.set(2, msgAuto.getString(3)); // pan
+		msg.set(3, "000000"); // code traitement
+		msg.set(4, msgAuto.getString(6)); // montant
+		msg.set(12, msgAuto.getString(14).substring(4, 10)); // heure
+		msg.set(13, msgAuto.getString(14).substring(0, 4)); // date
+		msg.set(22, "000"); // condition de realisation
+		msg.set(26, "000002"); // controle transfert
+		// ignore stan (11), annee transaction (47 / 07), numero transaction (47
+		// / 10)
+		return msg;
+	}
+
+	/**
+	 * Message de fin de remise et de consolidation financière (phase 3 - fin de
+	 * remise)
+	 * 
+	 * @param _this
+	 * @return
+	 */
+	private ISOMsg prepareFinancialConsolidation(ComponentIO _this, long nbCredit, long totalAmount)
+			throws ISOException {
+		ISOMsg msg = ISO8583Tools.create_CB2A_TLC();
+
+		msg.setMTI("0506"); // fin de remise
+		msg.set(70, "00000200000199"); // Gestion du transfert
+		// nb crédit
+		msg.set(74, ISO8583Tools.paddingLeft(String.valueOf(nbCredit), 10, '0'));
+		// nb débit
+		msg.set(76, "0000000000");
+		// nb débit annulées
+		msg.set(77, "0000000000");
+		// Montant total crédit
+		msg.set(86, ISO8583Tools.paddingLeft(String.valueOf(totalAmount), 16, '0'));
+		// Montant total débit
+		msg.set(88, "0000000000000000");
+		// Montant total débit annulées
+		msg.set(89, "0000000000000000");
+
+		return msg;
+	}
+
+	/**
+	 * Message de proposition de droit de parole
+	 * 
+	 * @param _this
+	 * @return
+	 */
+	private ISOMsg prepareRightToSpeak(ComponentIO _this) throws ISOException {
+		ISOMsg msg = ISO8583Tools.create_CB2A_TLC();
+
+		msg.setMTI("0844"); // fin de remise
+		msg.set(24, "851"); // Code fonction = proposition droit de parole
+
+		return msg;
+	}
+
+	/**
+	 * Message de notification de déconnexion
+	 * 
+	 * @param _this
+	 * @return
+	 */
+	private ISOMsg prepareDecoNotification(ComponentIO _this) throws ISOException {
+		ISOMsg msg = ISO8583Tools.create_CB2A_TLC();
+
+		msg.setMTI("0844"); // fin de remise
+		msg.set(24, "860"); // Code fonction = fermeture de dialogue
+
+		return msg;
 	}
 
 	private ISOMsg prepareSecureChannelRQ(Component _this) throws ISOException {
@@ -177,7 +459,7 @@ public class EPTChipsetStrategy implements IStrategy<ComponentIO> {
 	 * @throws ISOException
 	 */
 	public ISOMsg generateAuthorizationRequest(ComponentIO _this, ISOMsg parsedData) throws ISOException {
-		log.debug(LogUtils.MARKER_COMPONENT_INFO, "ETP sends a request for secured channel");
+		log.debug(LogUtils.MARKER_COMPONENT_INFO, "EPT sends a request for secured channel");
 		String pan = parsedData.getString(ISO7816Tools.FIELD_PAN);
 		String amount = parsedData.getString(ISO7816Tools.FIELD_AMOUNT);
 		String stan = parsedData.getString(ISO7816Tools.FIELD_STAN);
@@ -189,7 +471,7 @@ public class EPTChipsetStrategy implements IStrategy<ComponentIO> {
 		authorizationRequest.set(2, pan); // PAN
 		authorizationRequest.set(3, "000101"); // Type of Auth + accounts
 		authorizationRequest.set(4, amount);
-		authorizationRequest.set(7, ISO7816Tools.writeDATETIME(Context.getInstance().getTime()));
+		authorizationRequest.set(7, ISO8583Tools.getDate_MMJJhhmmss());
 		// authorizationRequest.set(11, generateNextSTAN(_this, stan));
 		authorizationRequest.set(38, apcode);
 		authorizationRequest.set(42, _this.getProperties().get("acceptor_id")); // Acceptor's
@@ -254,9 +536,26 @@ public class EPTChipsetStrategy implements IStrategy<ComponentIO> {
 	 */
 	private void manageFinalAgrement(Component _this, ISOMsg data) {
 		// stockage de la transaction
-		String datetime = data.getString(ISO7816Tools.FIELD_DATETIME);
-		// String stan = data.getString(ISO7816Tools.FIELD_STAN);
-		_this.getProperties().put(datetime /* + stan */, data.toString());
+		int nb_message = 0;
+
+		try {
+			nb_message = Integer.parseInt(_this.getProperty(CKEY_NB_MESSAGE));
+		}
+		catch (NumberFormatException e) {
+		}
+
+		// +1
+		nb_message++;
+
+		// sauvegarde
+		try {
+			_this.getProperties().put(CKEYPREFIX_MESSAGE + nb_message, new String(data.pack()));
+			_this.getProperties().put(CKEY_NB_MESSAGE, String.valueOf(nb_message));
+		}
+		catch (ISOException e) {
+			log.error("Error while saving transaction.");
+		}
+
 	}
 
 	/**

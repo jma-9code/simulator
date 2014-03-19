@@ -2,6 +2,7 @@ package fr.ensicaen.simulator.model.properties;
 
 import java.io.Serializable;
 import java.util.HashMap;
+import java.util.Iterator;
 
 import javax.xml.bind.annotation.XmlRootElement;
 
@@ -119,6 +120,38 @@ public class PropertiesPlus extends HashMap<String, Object> {
 	}
 
 	/**
+	 * Idem que get(String) avec un cast automatique en int.
+	 * 
+	 * @param key
+	 * @return Integer.parseInt ou 0
+	 */
+	public int getInt(String key) {
+		try {
+			String value = get(key);
+			return Integer.parseInt(value);
+		}
+		catch (NumberFormatException e) {
+			return 0;
+		}
+	}
+
+	/**
+	 * Idem que get(String) avec un cast automatique en long.
+	 * 
+	 * @param key
+	 * @return Integer.parseInt ou 0
+	 */
+	public long getLong(String key) {
+		try {
+			String value = get(key);
+			return Long.parseLong(value);
+		}
+		catch (NumberFormatException e) {
+			return 0;
+		}
+	}
+
+	/**
 	 * Méthode d'insertion d'une propriété non requise.
 	 * 
 	 * @param key
@@ -129,6 +162,14 @@ public class PropertiesPlus extends HashMap<String, Object> {
 	 */
 	public String put(String key, String value) {
 		return put(key, value, false);
+	}
+
+	public String put(String key, int value) {
+		return put(key, String.valueOf(value));
+	}
+
+	public String put(String key, long value) {
+		return put(key, String.valueOf(value));
 	}
 
 	/**
@@ -155,6 +196,27 @@ public class PropertiesPlus extends HashMap<String, Object> {
 		else {
 			Property replace = (Property) obj;
 			return replace != null ? prop.value : null;
+		}
+	}
+
+	/**
+	 * Supprime l'ensemble des entrées dont la clé commence par prefix.
+	 * 
+	 * @param prefix
+	 *            Le préfix des clés à supprimer
+	 */
+	public void removeKeyStartsWith(String prefix) {
+		if (prefix == null || prefix.isEmpty()) {
+			return;
+		}
+
+		Iterator<String> ite = keySet().iterator();
+		while (ite.hasNext()) {
+			String key = ite.next();
+			if (key.startsWith(prefix)) {
+				ite.remove();
+				remove(key);
+			}
 		}
 	}
 }

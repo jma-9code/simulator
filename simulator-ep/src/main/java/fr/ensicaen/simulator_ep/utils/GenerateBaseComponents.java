@@ -80,6 +80,7 @@ public class GenerateBaseComponents {
 
 	// Différents modules de la fonction acquéreur */
 	private static ComponentIO acquirerAuthorization;
+	private static ComponentIO remoteDataCollection;
 	// private static ComponentIO GABHandler;
 	// private static ComponentIO retrait;
 	// private static ComponentIO libreServiceBancaire;
@@ -289,22 +290,19 @@ public class GenerateBaseComponents {
 		/* Ajout des modules acquéreur */
 		acquirerAuthorization = new ComponentIO("FO Acquirer Authorization",
 				ComponentEP.FO_ACQUIRER_AUTHORIZATION.ordinal());
-		// GABHandler = new ComponentIO("GABHandler");
-		// telecollection = new ComponentIO("telecollection");
-		// paymentAcquirer = new ComponentIO("paymentAcquirer");
-		// compensationSingleMessage = new
-		// ComponentIO("compensationSingleMessage");
-		acquirer.addChild(acquirerAuthorization);
-		// acquirer.addChild(GABHandler);
-		// acquirer.addChild(telecollection);
-		// acquirer.addChild(paymentAcquirer);
-		// acquirer.addChild(compensationSingleMessage);
+		remoteDataCollection = new ComponentIO("Remote data collection",
+				ComponentEP.FO_ACQUIRER_REMOTE_DATA_COLLECTION.ordinal());
 
-		/* Ajout des composants du module GABHandler" */
-		// retrait = new ComponentIO("retrait");
-		// libreServiceBancaire = new ComponentIO("libreServiceBancaire");
-		// GABHandler.addChild(retrait);
-		// GABHandler.addChild(libreServiceBancaire);
+		acquirer.addChild(acquirerAuthorization);
+		acquirer.addChild(remoteDataCollection);
+
+		// Composant télécollecte / remoteDataCollection
+		ept.getProperties().put(EPTChipsetStrategy.CKEY_ACQUIRER_ID, "51362500080");
+		ept.getProperties().put(EPTChipsetStrategy.CKEY_ACCEPTOR_TERMINAL_ID, "FB098F09");
+		ept.getProperties().put(EPTChipsetStrategy.CKEY_ACCEPTOR_ID, "316492580FA15BB");
+		ept.getProperties().put(EPTChipsetStrategy.CKEY_MERCHANT_CATEGORY_CODE, "4511");
+		ept.getProperties().put(EPTChipsetStrategy.CKEY_CURRENCY_CODE, "978");
+		ept.getProperties().put(EPTChipsetStrategy.CKEY_NB_MESSAGE, "0");
 
 		// retraitAutoCompte = new ComponentIO("retraitAutoCompte");
 		// depot = new ComponentIO("depot");

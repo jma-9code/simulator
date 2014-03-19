@@ -127,6 +127,7 @@ public class CardChipStrategy implements IStrategy<ComponentIO> {
 		rp.set(ISO7816Tools.FIELD_AMOUNT, amount);
 		rp.set(ISO7816Tools.FIELD_DATETIME, datetime);
 		rp.set(ISO7816Tools.FIELD_PAN, pan);
+		
 		if (rpcode.equals("00") && apcode_tpe != null && !apcode_tpe.isEmpty()) {
 			rp.set(ISO7816Tools.FIELD_APPROVALCODE, apcode_cb);
 			rp.set(ISO7816Tools.FIELD_RESPONSECODE, rpcode);

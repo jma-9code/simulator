@@ -1,0 +1,989 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<scenarioData name="TLC">
+    <allComponents>
+        <entry>
+            <key>c-c273df49-b831-4a75-88f3-dec2dd8e1b01</key>
+            <value xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:type="componentIO" uuid="c-c273df49-b831-4a75-88f3-dec2dd8e1b01" parent="c-7f888a39-65b1-4778-9de6-10f319dc6c96">
+                <name>FO Issuer</name>
+                <type>9</type>
+                <properties/>
+                <childs>c-0e2fc889-f24a-42b6-a651-dbe471e51d02</childs>
+                <childs>c-45d86653-83ed-4366-a23c-dada143ec920</childs>
+            </value>
+        </entry>
+        <entry>
+            <key>c-7f888a39-65b1-4778-9de6-10f319dc6c96</key>
+            <value xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:type="componentIO" uuid="c-7f888a39-65b1-4778-9de6-10f319dc6c96">
+                <name>Front Office</name>
+                <type>6</type>
+                <properties/>
+                <childs>c-c273df49-b831-4a75-88f3-dec2dd8e1b01</childs>
+                <childs>c-7e6bd9d3-c1c6-4b40-a5f2-28a1c596bbfa</childs>
+            </value>
+        </entry>
+        <entry>
+            <key>c-989a528b-d49d-4e35-aeb3-d16a35e151f4</key>
+            <value xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:type="componentIO" uuid="c-989a528b-d49d-4e35-aeb3-d16a35e151f4" parent="c-acc87d57-2e58-42e7-8e9e-c3c0393e3f61">
+                <name>FO Acquirer</name>
+                <type>7</type>
+                <properties/>
+                <childs>c-749b523f-4f40-46fb-a738-309499eda941</childs>
+                <childs>c-0ba0daea-00ec-4393-800e-b8af441008c4</childs>
+            </value>
+        </entry>
+        <entry>
+            <key>c-3d615f6d-f2ae-4b06-82a5-5b0d27551ba4</key>
+            <value xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:type="componentIO" uuid="c-3d615f6d-f2ae-4b06-82a5-5b0d27551ba4">
+                <name>Electronic Terminal Payment</name>
+                <type>0</type>
+                <properties/>
+                <childs>c-86028bc8-161c-40ac-8b63-8e20f9fd31ae</childs>
+                <childs>c-91ebee81-231b-4cb9-ab2f-40cb1315acd5</childs>
+                <childs>c-1c1ed58f-18a0-4c9d-a43d-b42af8d72aa0</childs>
+                <childs>c-77a32118-979a-4b71-bd92-708b504f7925</childs>
+                <childs>c-0b752554-f9fa-4a4f-9623-923f71b9a96b</childs>
+            </value>
+        </entry>
+        <entry>
+            <key>c-0e2fc889-f24a-42b6-a651-dbe471e51d02</key>
+            <value xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:type="componentIO" uuid="c-0e2fc889-f24a-42b6-a651-dbe471e51d02" parent="c-c273df49-b831-4a75-88f3-dec2dd8e1b01">
+                <name>FO Issuer Authorization</name>
+                <type>10</type>
+                <properties>
+                    <entry>
+                        <key>acceptance</key>
+                        <value xsi:type="property">
+                            <required>true</required>
+                        </value>
+                    </entry>
+                </properties>
+            </value>
+        </entry>
+        <entry>
+            <key>c-0b752554-f9fa-4a4f-9623-923f71b9a96b</key>
+            <value xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:type="componentIO" uuid="c-0b752554-f9fa-4a4f-9623-923f71b9a96b" parent="c-3d615f6d-f2ae-4b06-82a5-5b0d27551ba4">
+                <name>Network interface</name>
+                <type>0</type>
+                <properties/>
+            </value>
+        </entry>
+        <entry>
+            <key>c-3369e736-2c7a-4ea8-a72f-2281ef08d381</key>
+            <value xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:type="componentIO" uuid="c-3369e736-2c7a-4ea8-a72f-2281ef08d381">
+                <name>Network</name>
+                <type>11</type>
+                <properties>
+                    <entry>
+                        <key>issuer_of_497671</key>
+                        <value xsi:type="property">
+                            <required>false</required>
+                            <value>Issuer1</value>
+                        </value>
+                    </entry>
+                    <entry>
+                        <key>name</key>
+                        <value xsi:type="property">
+                            <required>false</required>
+                            <value>e-RSB</value>
+                        </value>
+                    </entry>
+                </properties>
+            </value>
+        </entry>
+        <entry>
+            <key>c-de3823e4-5687-4e66-a6c1-206e4b85c6be</key>
+            <value xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:type="componentIO" uuid="c-de3823e4-5687-4e66-a6c1-206e4b85c6be" parent="c-e0f7d035-6c07-4c0d-ac32-e5a8525545c2">
+                <name>GestionDeLaFraude</name>
+                <type>0</type>
+                <properties/>
+            </value>
+        </entry>
+        <entry>
+            <key>c-adc32f9b-595f-4228-816b-d4c0092fad1b</key>
+            <value xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:type="componentIO" uuid="c-adc32f9b-595f-4228-816b-d4c0092fad1b" parent="c-7e6bd9d3-c1c6-4b40-a5f2-28a1c596bbfa">
+                <name>FO Acquirer Authorization</name>
+                <type>8</type>
+                <properties/>
+            </value>
+        </entry>
+        <entry>
+            <key>c-0ba0daea-00ec-4393-800e-b8af441008c4</key>
+            <value xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:type="componentIO" uuid="c-0ba0daea-00ec-4393-800e-b8af441008c4" parent="c-989a528b-d49d-4e35-aeb3-d16a35e151f4">
+                <name>Remote data collection</name>
+                <type>13</type>
+                <properties>
+                    <entry>
+                        <key>nb_message</key>
+                        <value xsi:type="property">
+                            <required>false</required>
+                            <value>0</value>
+                        </value>
+                    </entry>
+                    <entry>
+                        <key>acceptor_terminal_id</key>
+                        <value xsi:type="property">
+                            <required>false</required>
+                            <value>FB098F09</value>
+                        </value>
+                    </entry>
+                    <entry>
+                        <key>currency_code</key>
+                        <value xsi:type="property">
+                            <required>false</required>
+                            <value>978</value>
+                        </value>
+                    </entry>
+                    <entry>
+                        <key>merchant_category_code</key>
+                        <value xsi:type="property">
+                            <required>false</required>
+                            <value>4511</value>
+                        </value>
+                    </entry>
+                    <entry>
+                        <key>acquirer_id</key>
+                        <value xsi:type="property">
+                            <required>false</required>
+                            <value>51362500080</value>
+                        </value>
+                    </entry>
+                    <entry>
+                        <key>acceptor_id</key>
+                        <value xsi:type="property">
+                            <required>false</required>
+                            <value>316492580FA15BB</value>
+                        </value>
+                    </entry>
+                </properties>
+            </value>
+        </entry>
+        <entry>
+            <key>c-91ebee81-231b-4cb9-ab2f-40cb1315acd5</key>
+            <value xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:type="componentIO" uuid="c-91ebee81-231b-4cb9-ab2f-40cb1315acd5" parent="c-3d615f6d-f2ae-4b06-82a5-5b0d27551ba4">
+                <name>ETP Chipset</name>
+                <type>1</type>
+                <properties>
+                    <entry>
+                        <key>posdatacode</key>
+                        <value xsi:type="property">
+                            <required>false</required>
+                            <value>510101511326105</value>
+                        </value>
+                    </entry>
+                    <entry>
+                        <key>acceptor_terminal_id</key>
+                        <value xsi:type="property">
+                            <required>true</required>
+                            <value></value>
+                        </value>
+                    </entry>
+                    <entry>
+                        <key>stan</key>
+                        <value xsi:type="property">
+                            <required>false</required>
+                            <value>000001</value>
+                        </value>
+                    </entry>
+                    <entry>
+                        <key>merchant_category_code</key>
+                        <value xsi:type="property">
+                            <required>false</required>
+                            <value></value>
+                        </value>
+                    </entry>
+                    <entry>
+                        <key>acceptor_id</key>
+                        <value xsi:type="property">
+                            <required>false</required>
+                            <value>0000623598</value>
+                        </value>
+                    </entry>
+                    <entry>
+                        <key>pin_enter</key>
+                        <value xsi:type="property">
+                            <required>false</required>
+                            <value>1234</value>
+                        </value>
+                    </entry>
+                    <entry>
+                        <key>pos_id</key>
+                        <value xsi:type="property">
+                            <required>false</required>
+                            <value>0000623598</value>
+                        </value>
+                    </entry>
+                    <entry>
+                        <key>currency_code</key>
+                        <value xsi:type="property">
+                            <required>true</required>
+                            <value></value>
+                        </value>
+                    </entry>
+                    <entry>
+                        <key>protocol_prefered</key>
+                        <value xsi:type="property">
+                            <required>false</required>
+                            <value>ISO7816</value>
+                        </value>
+                    </entry>
+                    <entry>
+                        <key>protocol_list</key>
+                        <value xsi:type="property">
+                            <required>false</required>
+                            <value>ISO7816 ISO8583 CB2A-T</value>
+                        </value>
+                    </entry>
+                    <entry>
+                        <key>acquirer_id</key>
+                        <value xsi:type="property">
+                            <required>true</required>
+                            <value></value>
+                        </value>
+                    </entry>
+                </properties>
+            </value>
+        </entry>
+        <entry>
+            <key>c-e856d174-1d99-4479-bc88-112cc710c76b</key>
+            <value xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:type="componentIO" uuid="c-e856d174-1d99-4479-bc88-112cc710c76b">
+                <name>Card</name>
+                <type>3</type>
+                <properties>
+                    <entry>
+                        <key>date expiration</key>
+                        <value xsi:type="property">
+                            <required>false</required>
+                            <value>09/15</value>
+                        </value>
+                    </entry>
+                    <entry>
+                        <key>icvv</key>
+                        <value xsi:type="property">
+                            <required>false</required>
+                            <value>000</value>
+                        </value>
+                    </entry>
+                    <entry>
+                        <key>type</key>
+                        <value xsi:type="property">
+                            <required>false</required>
+                            <value>M</value>
+                        </value>
+                    </entry>
+                    <entry>
+                        <key>pan</key>
+                        <value xsi:type="property">
+                            <required>false</required>
+                            <value>4976710025642130</value>
+                        </value>
+                    </entry>
+                    <entry>
+                        <key>name</key>
+                        <value xsi:type="property">
+                            <required>false</required>
+                            <value>Florent Moisson</value>
+                        </value>
+                    </entry>
+                </properties>
+                <childs>c-c9c9f448-98b6-499f-83ca-12d72f021f21</childs>
+                <childs>c-a1b1107f-c70d-42eb-919b-fc4d7afed902</childs>
+            </value>
+        </entry>
+        <entry>
+            <key>c-7e6bd9d3-c1c6-4b40-a5f2-28a1c596bbfa</key>
+            <value xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:type="componentIO" uuid="c-7e6bd9d3-c1c6-4b40-a5f2-28a1c596bbfa" parent="c-7f888a39-65b1-4778-9de6-10f319dc6c96">
+                <name>FO Acquirer</name>
+                <type>7</type>
+                <properties/>
+                <childs>c-adc32f9b-595f-4228-816b-d4c0092fad1b</childs>
+                <childs>c-afcd1e09-9f2b-40ff-95e5-ef75e48bc9f8</childs>
+            </value>
+        </entry>
+        <entry>
+            <key>c-749b523f-4f40-46fb-a738-309499eda941</key>
+            <value xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:type="componentIO" uuid="c-749b523f-4f40-46fb-a738-309499eda941" parent="c-989a528b-d49d-4e35-aeb3-d16a35e151f4">
+                <name>FO Acquirer Authorization</name>
+                <type>8</type>
+                <properties/>
+            </value>
+        </entry>
+        <entry>
+            <key>c-45d86653-83ed-4366-a23c-dada143ec920</key>
+            <value xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:type="componentIO" uuid="c-45d86653-83ed-4366-a23c-dada143ec920" parent="c-c273df49-b831-4a75-88f3-dec2dd8e1b01">
+                <name>GestionDeLaFraude</name>
+                <type>0</type>
+                <properties/>
+            </value>
+        </entry>
+        <entry>
+            <key>c-a1b1107f-c70d-42eb-919b-fc4d7afed902</key>
+            <value xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:type="componentIO" uuid="c-a1b1107f-c70d-42eb-919b-fc4d7afed902" parent="c-e856d174-1d99-4479-bc88-112cc710c76b">
+                <name>Card Chip</name>
+                <type>4</type>
+                <properties>
+                    <entry>
+                        <key>state</key>
+                        <value xsi:type="property">
+                            <required>false</required>
+                            <value>OFF</value>
+                        </value>
+                    </entry>
+                    <entry>
+                        <key>approvalcode</key>
+                        <value xsi:type="property">
+                            <required>false</required>
+                            <value>07B56=</value>
+                        </value>
+                    </entry>
+                    <entry>
+                        <key>protocol</key>
+                        <value xsi:type="property">
+                            <required>false</required>
+                            <value>ISO7816</value>
+                        </value>
+                    </entry>
+                    <entry>
+                        <key>ceil</key>
+                        <value xsi:type="property">
+                            <required>false</required>
+                            <value>400</value>
+                        </value>
+                    </entry>
+                    <entry>
+                        <key>pan</key>
+                        <value xsi:type="property">
+                            <required>false</required>
+                            <value>4976710025642130</value>
+                        </value>
+                    </entry>
+                    <entry>
+                        <key>bccs</key>
+                        <value xsi:type="property">
+                            <required>false</required>
+                            <value>12421874</value>
+                        </value>
+                    </entry>
+                </properties>
+            </value>
+        </entry>
+        <entry>
+            <key>c-acc87d57-2e58-42e7-8e9e-c3c0393e3f61</key>
+            <value xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:type="componentIO" uuid="c-acc87d57-2e58-42e7-8e9e-c3c0393e3f61">
+                <name>Front Office</name>
+                <type>6</type>
+                <properties/>
+                <childs>c-e0f7d035-6c07-4c0d-ac32-e5a8525545c2</childs>
+                <childs>c-989a528b-d49d-4e35-aeb3-d16a35e151f4</childs>
+            </value>
+        </entry>
+        <entry>
+            <key>c-77a32118-979a-4b71-bd92-708b504f7925</key>
+            <value xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:type="componentIO" uuid="c-77a32118-979a-4b71-bd92-708b504f7925" parent="c-3d615f6d-f2ae-4b06-82a5-5b0d27551ba4">
+                <name>Secure pin pad</name>
+                <type>0</type>
+                <properties/>
+            </value>
+        </entry>
+        <entry>
+            <key>c-c9c9f448-98b6-499f-83ca-12d72f021f21</key>
+            <value xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:type="componentIO" uuid="c-c9c9f448-98b6-499f-83ca-12d72f021f21" parent="c-e856d174-1d99-4479-bc88-112cc710c76b">
+                <name>Card Magstrippe</name>
+                <type>5</type>
+                <properties>
+                    <entry>
+                        <key>iso2</key>
+                        <value xsi:type="property">
+                            <required>false</required>
+                            <value>59859595985888648468454684</value>
+                        </value>
+                    </entry>
+                </properties>
+            </value>
+        </entry>
+        <entry>
+            <key>c-afcd1e09-9f2b-40ff-95e5-ef75e48bc9f8</key>
+            <value xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:type="componentIO" uuid="c-afcd1e09-9f2b-40ff-95e5-ef75e48bc9f8" parent="c-7e6bd9d3-c1c6-4b40-a5f2-28a1c596bbfa">
+                <name>Remote data collection</name>
+                <type>13</type>
+                <properties/>
+            </value>
+        </entry>
+        <entry>
+            <key>c-e0f7d035-6c07-4c0d-ac32-e5a8525545c2</key>
+            <value xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:type="componentIO" uuid="c-e0f7d035-6c07-4c0d-ac32-e5a8525545c2" parent="c-acc87d57-2e58-42e7-8e9e-c3c0393e3f61">
+                <name>FO Issuer</name>
+                <type>9</type>
+                <properties/>
+                <childs>c-170e09a6-c50a-40c1-9310-7b7c2acaf80d</childs>
+                <childs>c-de3823e4-5687-4e66-a6c1-206e4b85c6be</childs>
+            </value>
+        </entry>
+        <entry>
+            <key>c-1c1ed58f-18a0-4c9d-a43d-b42af8d72aa0</key>
+            <value xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:type="componentIO" uuid="c-1c1ed58f-18a0-4c9d-a43d-b42af8d72aa0" parent="c-3d615f6d-f2ae-4b06-82a5-5b0d27551ba4">
+                <name>Printer</name>
+                <type>0</type>
+                <properties/>
+            </value>
+        </entry>
+        <entry>
+            <key>c-f9784550-e070-4132-ac27-90975f7e3c80</key>
+            <value xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:type="componentIO" uuid="c-f9784550-e070-4132-ac27-90975f7e3c80">
+                <name>Router</name>
+                <type>12</type>
+                <properties>
+                    <entry>
+                        <key>network_of_4</key>
+                        <value xsi:type="property">
+                            <required>false</required>
+                            <value>e-RSB</value>
+                        </value>
+                    </entry>
+                    <entry>
+                        <key>network_of_5</key>
+                        <value xsi:type="property">
+                            <required>false</required>
+                            <value>e-RSB</value>
+                        </value>
+                    </entry>
+                </properties>
+            </value>
+        </entry>
+        <entry>
+            <key>c-86028bc8-161c-40ac-8b63-8e20f9fd31ae</key>
+            <value xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:type="componentIO" uuid="c-86028bc8-161c-40ac-8b63-8e20f9fd31ae" parent="c-3d615f6d-f2ae-4b06-82a5-5b0d27551ba4">
+                <name>ETP Smart Card Reader</name>
+                <type>2</type>
+                <properties/>
+            </value>
+        </entry>
+        <entry>
+            <key>c-170e09a6-c50a-40c1-9310-7b7c2acaf80d</key>
+            <value xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:type="componentIO" uuid="c-170e09a6-c50a-40c1-9310-7b7c2acaf80d" parent="c-e0f7d035-6c07-4c0d-ac32-e5a8525545c2">
+                <name>FO Issuer Authorization</name>
+                <type>10</type>
+                <properties>
+                    <entry>
+                        <key>acceptance</key>
+                        <value xsi:type="property">
+                            <required>true</required>
+                        </value>
+                    </entry>
+                </properties>
+            </value>
+        </entry>
+    </allComponents>
+    <rootComponents>
+        <rootComponents>c-3369e736-2c7a-4ea8-a72f-2281ef08d381</rootComponents>
+        <rootComponents>c-3d615f6d-f2ae-4b06-82a5-5b0d27551ba4</rootComponents>
+        <rootComponents>c-7f888a39-65b1-4778-9de6-10f319dc6c96</rootComponents>
+        <rootComponents>c-e856d174-1d99-4479-bc88-112cc710c76b</rootComponents>
+        <rootComponents>c-acc87d57-2e58-42e7-8e9e-c3c0393e3f61</rootComponents>
+        <rootComponents>c-f9784550-e070-4132-ac27-90975f7e3c80</rootComponents>
+    </rootComponents>
+    <mediators>
+        <mediators xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:type="halfDuplexMediator" uuid="c-e0f7d035-6c07-4c0d-ac32-e5a8525545c2-c-936bacc9-15b0-48bf-b494-33f105ae3593">
+            <sender uuidComponent="c-e0f7d035-6c07-4c0d-ac32-e5a8525545c2"/>
+            <receiver uuidComponent="c-de3823e4-5687-4e66-a6c1-206e4b85c6be"/>
+            <properties/>
+        </mediators>
+        <mediators xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:type="halfDuplexMediator" uuid="c-3d615f6d-f2ae-4b06-82a5-5b0d27551ba4-c-55e24833-3866-485d-a2c1-d3f3d6a3fe80">
+            <sender uuidComponent="c-3d615f6d-f2ae-4b06-82a5-5b0d27551ba4"/>
+            <receiver uuidComponent="c-0b752554-f9fa-4a4f-9623-923f71b9a96b"/>
+            <properties/>
+        </mediators>
+        <mediators xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:type="halfDuplexMediator" uuid="c-3d615f6d-f2ae-4b06-82a5-5b0d27551ba4-c-a60e51fe-de23-4ec9-93f2-b8db1ee6d51e">
+            <sender uuidComponent="c-3d615f6d-f2ae-4b06-82a5-5b0d27551ba4"/>
+            <receiver uuidComponent="c-77a32118-979a-4b71-bd92-708b504f7925"/>
+            <properties/>
+        </mediators>
+        <mediators xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:type="halfDuplexMediator" uuid="c-acc87d57-2e58-42e7-8e9e-c3c0393e3f61-c-3bb601e0-5b5d-499a-8bc4-64c624188896">
+            <sender uuidComponent="c-acc87d57-2e58-42e7-8e9e-c3c0393e3f61"/>
+            <receiver uuidComponent="c-989a528b-d49d-4e35-aeb3-d16a35e151f4"/>
+            <properties/>
+        </mediators>
+        <mediators xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:type="halfDuplexMediator" uuid="c-f9784550-e070-4132-ac27-90975f7e3c80-c-3369e736-2c7a-4ea8-a72f-2281ef08d381">
+            <sender uuidComponent="c-f9784550-e070-4132-ac27-90975f7e3c80"/>
+            <receiver uuidComponent="c-3369e736-2c7a-4ea8-a72f-2281ef08d381"/>
+            <properties>
+                <entry>
+                    <key>network_id</key>
+                    <value xmlns:xs="http://www.w3.org/2001/XMLSchema" xsi:type="xs:string">e-RSB</value>
+                </entry>
+            </properties>
+        </mediators>
+        <mediators xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:type="halfDuplexMediator" uuid="c-acc87d57-2e58-42e7-8e9e-c3c0393e3f61-c-3f1a8263-26fd-4b0c-abf5-b9660cdbaf8d">
+            <sender uuidComponent="c-acc87d57-2e58-42e7-8e9e-c3c0393e3f61"/>
+            <receiver uuidComponent="c-e0f7d035-6c07-4c0d-ac32-e5a8525545c2"/>
+            <properties/>
+        </mediators>
+        <mediators xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:type="halfDuplexMediator" uuid="c-3d615f6d-f2ae-4b06-82a5-5b0d27551ba4-c-44757fa2-b50b-4306-ba6c-3cfe0095dc11">
+            <sender uuidComponent="c-3d615f6d-f2ae-4b06-82a5-5b0d27551ba4"/>
+            <receiver uuidComponent="c-91ebee81-231b-4cb9-ab2f-40cb1315acd5"/>
+            <properties/>
+        </mediators>
+        <mediators xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:type="halfDuplexMediator" uuid="c-3d615f6d-f2ae-4b06-82a5-5b0d27551ba4-c-b0c86a4b-aafa-4eb8-9e34-1e5def793b6e">
+            <sender uuidComponent="c-3d615f6d-f2ae-4b06-82a5-5b0d27551ba4"/>
+            <receiver uuidComponent="c-86028bc8-161c-40ac-8b63-8e20f9fd31ae"/>
+            <properties/>
+        </mediators>
+        <mediators xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:type="halfDuplexMediator" uuid="c-989a528b-d49d-4e35-aeb3-d16a35e151f4-c-2e532bcb-6d1a-4437-8211-0e1985c423e7">
+            <sender uuidComponent="c-989a528b-d49d-4e35-aeb3-d16a35e151f4"/>
+            <receiver uuidComponent="c-0ba0daea-00ec-4393-800e-b8af441008c4"/>
+            <properties/>
+        </mediators>
+        <mediators xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:type="halfDuplexMediator" uuid="c-e856d174-1d99-4479-bc88-112cc710c76b-c-aad13aa8-b1f2-45b3-9e21-2088a7c23200">
+            <sender uuidComponent="c-e856d174-1d99-4479-bc88-112cc710c76b"/>
+            <receiver uuidComponent="c-c9c9f448-98b6-499f-83ca-12d72f021f21"/>
+            <properties/>
+        </mediators>
+        <mediators xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:type="halfDuplexMediator" uuid="c-7f888a39-65b1-4778-9de6-10f319dc6c96-c-3d615f6d-f2ae-4b06-82a5-5b0d27551ba4">
+            <sender uuidComponent="c-7f888a39-65b1-4778-9de6-10f319dc6c96"/>
+            <receiver uuidComponent="c-3d615f6d-f2ae-4b06-82a5-5b0d27551ba4"/>
+            <properties/>
+        </mediators>
+        <mediators xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:type="halfDuplexMediator" uuid="c-7f888a39-65b1-4778-9de6-10f319dc6c96-c-3bb601e0-5b5d-499a-8bc4-64c624188896">
+            <sender uuidComponent="c-7f888a39-65b1-4778-9de6-10f319dc6c96"/>
+            <receiver uuidComponent="c-7e6bd9d3-c1c6-4b40-a5f2-28a1c596bbfa"/>
+            <properties/>
+        </mediators>
+        <mediators xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:type="halfDuplexMediator" uuid="c-7e6bd9d3-c1c6-4b40-a5f2-28a1c596bbfa-c-2e532bcb-6d1a-4437-8211-0e1985c423e7">
+            <sender uuidComponent="c-7e6bd9d3-c1c6-4b40-a5f2-28a1c596bbfa"/>
+            <receiver uuidComponent="c-afcd1e09-9f2b-40ff-95e5-ef75e48bc9f8"/>
+            <properties/>
+        </mediators>
+        <mediators xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:type="halfDuplexMediator" uuid="c-c273df49-b831-4a75-88f3-dec2dd8e1b01-c-e05fc930-06bc-45cb-b0f5-3fc3d3740bc9">
+            <sender uuidComponent="c-c273df49-b831-4a75-88f3-dec2dd8e1b01"/>
+            <receiver uuidComponent="c-0e2fc889-f24a-42b6-a651-dbe471e51d02"/>
+            <properties/>
+        </mediators>
+        <mediators xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:type="halfDuplexMediator" uuid="c-3d615f6d-f2ae-4b06-82a5-5b0d27551ba4-c-e856d174-1d99-4479-bc88-112cc710c76b">
+            <sender uuidComponent="c-3d615f6d-f2ae-4b06-82a5-5b0d27551ba4"/>
+            <receiver uuidComponent="c-e856d174-1d99-4479-bc88-112cc710c76b"/>
+            <properties/>
+        </mediators>
+        <mediators xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:type="halfDuplexMediator" uuid="c-989a528b-d49d-4e35-aeb3-d16a35e151f4-c-9ec76128-2992-412c-9f90-3a51b3472a67">
+            <sender uuidComponent="c-989a528b-d49d-4e35-aeb3-d16a35e151f4"/>
+            <receiver uuidComponent="c-749b523f-4f40-46fb-a738-309499eda941"/>
+            <properties/>
+        </mediators>
+        <mediators xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:type="halfDuplexMediator" uuid="c-7f888a39-65b1-4778-9de6-10f319dc6c96-c-3f1a8263-26fd-4b0c-abf5-b9660cdbaf8d">
+            <sender uuidComponent="c-7f888a39-65b1-4778-9de6-10f319dc6c96"/>
+            <receiver uuidComponent="c-c273df49-b831-4a75-88f3-dec2dd8e1b01"/>
+            <properties/>
+        </mediators>
+        <mediators xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:type="halfDuplexMediator" uuid="c-c273df49-b831-4a75-88f3-dec2dd8e1b01-c-936bacc9-15b0-48bf-b494-33f105ae3593">
+            <sender uuidComponent="c-c273df49-b831-4a75-88f3-dec2dd8e1b01"/>
+            <receiver uuidComponent="c-45d86653-83ed-4366-a23c-dada143ec920"/>
+            <properties/>
+        </mediators>
+        <mediators xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:type="halfDuplexMediator" uuid="c-7e6bd9d3-c1c6-4b40-a5f2-28a1c596bbfa-c-9ec76128-2992-412c-9f90-3a51b3472a67">
+            <sender uuidComponent="c-7e6bd9d3-c1c6-4b40-a5f2-28a1c596bbfa"/>
+            <receiver uuidComponent="c-adc32f9b-595f-4228-816b-d4c0092fad1b"/>
+            <properties/>
+        </mediators>
+        <mediators xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:type="halfDuplexMediator" uuid="c-f9784550-e070-4132-ac27-90975f7e3c80-c-7f888a39-65b1-4778-9de6-10f319dc6c96">
+            <sender uuidComponent="c-f9784550-e070-4132-ac27-90975f7e3c80"/>
+            <receiver uuidComponent="c-7f888a39-65b1-4778-9de6-10f319dc6c96"/>
+            <properties/>
+        </mediators>
+        <mediators xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:type="halfDuplexMediator" uuid="c-e856d174-1d99-4479-bc88-112cc710c76b-c-fcdee3ee-4e4c-4f99-a482-973265aaecf2">
+            <sender uuidComponent="c-e856d174-1d99-4479-bc88-112cc710c76b"/>
+            <receiver uuidComponent="c-a1b1107f-c70d-42eb-919b-fc4d7afed902"/>
+            <properties/>
+        </mediators>
+        <mediators xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:type="halfDuplexMediator" uuid="c-3d615f6d-f2ae-4b06-82a5-5b0d27551ba4-c-61359b49-6ada-4c20-a336-01dde7f51689">
+            <sender uuidComponent="c-3d615f6d-f2ae-4b06-82a5-5b0d27551ba4"/>
+            <receiver uuidComponent="c-1c1ed58f-18a0-4c9d-a43d-b42af8d72aa0"/>
+            <properties/>
+        </mediators>
+        <mediators xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:type="halfDuplexMediator" uuid="c-3369e736-2c7a-4ea8-a72f-2281ef08d381-c-acc87d57-2e58-42e7-8e9e-c3c0393e3f61">
+            <sender uuidComponent="c-3369e736-2c7a-4ea8-a72f-2281ef08d381"/>
+            <receiver uuidComponent="c-acc87d57-2e58-42e7-8e9e-c3c0393e3f61"/>
+            <properties>
+                <entry>
+                    <key>issuer_id</key>
+                    <value xmlns:xs="http://www.w3.org/2001/XMLSchema" xsi:type="xs:string">Issuer1</value>
+                </entry>
+            </properties>
+        </mediators>
+        <mediators xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:type="halfDuplexMediator" uuid="c-e0f7d035-6c07-4c0d-ac32-e5a8525545c2-c-e05fc930-06bc-45cb-b0f5-3fc3d3740bc9">
+            <sender uuidComponent="c-e0f7d035-6c07-4c0d-ac32-e5a8525545c2"/>
+            <receiver uuidComponent="c-170e09a6-c50a-40c1-9310-7b7c2acaf80d"/>
+            <properties/>
+        </mediators>
+    </mediators>
+    <startPoints>
+        <startPoints>
+            <time>0317193211</time>
+            <event>SMART_CARD_INSERTED</event>
+        </startPoints>
+        <startPoints>
+            <time>0318225202</time>
+            <event>SMART_CARD_INSERTED</event>
+        </startPoints>
+        <startPoints>
+            <time>0318225200</time>
+            <event>SMART_CARD_INSERTED</event>
+        </startPoints>
+        <startPoints>
+            <time>0318225235</time>
+            <event>REMOTE_DATA_COLLECTION</event>
+        </startPoints>
+    </startPoints>
+    <events/>
+    <link_strat_component>
+        <entry>
+            <key>c-c273df49-b831-4a75-88f3-dec2dd8e1b01</key>
+            <value>fr.ensicaen.simulator_ep.ep.strategies.fo.issuer.FOIssuerStrategy</value>
+        </entry>
+        <entry>
+            <key>c-7e6bd9d3-c1c6-4b40-a5f2-28a1c596bbfa</key>
+            <value>fr.ensicaen.simulator_ep.ep.strategies.fo.acquirer.FOAcquirerStrategy</value>
+        </entry>
+        <entry>
+            <key>c-7f888a39-65b1-4778-9de6-10f319dc6c96</key>
+            <value>fr.ensicaen.simulator_ep.ep.strategies.fo.FOStrategy</value>
+        </entry>
+        <entry>
+            <key>c-989a528b-d49d-4e35-aeb3-d16a35e151f4</key>
+            <value>fr.ensicaen.simulator_ep.ep.strategies.fo.acquirer.FOAcquirerStrategy</value>
+        </entry>
+        <entry>
+            <key>c-749b523f-4f40-46fb-a738-309499eda941</key>
+            <value>fr.ensicaen.simulator_ep.ep.strategies.fo.acquirer.FOAcquirerAuthorizationStrategy</value>
+        </entry>
+        <entry>
+            <key>c-a1b1107f-c70d-42eb-919b-fc4d7afed902</key>
+            <value>fr.ensicaen.simulator_ep.ep.strategies.card.CardChipStrategy</value>
+        </entry>
+        <entry>
+            <key>c-45d86653-83ed-4366-a23c-dada143ec920</key>
+            <value>fr.ensicaen.simulator.model.strategies.NullStrategy</value>
+        </entry>
+        <entry>
+            <key>c-acc87d57-2e58-42e7-8e9e-c3c0393e3f61</key>
+            <value>fr.ensicaen.simulator_ep.ep.strategies.fo.FOStrategy</value>
+        </entry>
+        <entry>
+            <key>c-3d615f6d-f2ae-4b06-82a5-5b0d27551ba4</key>
+            <value>fr.ensicaen.simulator_ep.ep.strategies.ept.EPTStrategy</value>
+        </entry>
+        <entry>
+            <key>c-0e2fc889-f24a-42b6-a651-dbe471e51d02</key>
+            <value>fr.ensicaen.simulator_ep.ep.strategies.fo.issuer.FOIssuerAuthorizationStrategy</value>
+        </entry>
+        <entry>
+            <key>c-afcd1e09-9f2b-40ff-95e5-ef75e48bc9f8</key>
+            <value>fr.ensicaen.simulator_ep.ep.strategies.fo.acquirer.FOAcquirerRemoteDataCollectionStrategy</value>
+        </entry>
+        <entry>
+            <key>c-3369e736-2c7a-4ea8-a72f-2281ef08d381</key>
+            <value>fr.ensicaen.simulator_ep.ep.strategies.network.GenericNetworkStrategy</value>
+        </entry>
+        <entry>
+            <key>c-e0f7d035-6c07-4c0d-ac32-e5a8525545c2</key>
+            <value>fr.ensicaen.simulator_ep.ep.strategies.fo.issuer.FOIssuerStrategy</value>
+        </entry>
+        <entry>
+            <key>c-adc32f9b-595f-4228-816b-d4c0092fad1b</key>
+            <value>fr.ensicaen.simulator_ep.ep.strategies.fo.acquirer.FOAcquirerAuthorizationStrategy</value>
+        </entry>
+        <entry>
+            <key>c-0ba0daea-00ec-4393-800e-b8af441008c4</key>
+            <value>fr.ensicaen.simulator_ep.ep.strategies.fo.acquirer.FOAcquirerRemoteDataCollectionStrategy</value>
+        </entry>
+        <entry>
+            <key>c-91ebee81-231b-4cb9-ab2f-40cb1315acd5</key>
+            <value>fr.ensicaen.simulator_ep.ep.strategies.ept.EPTChipsetStrategy</value>
+        </entry>
+        <entry>
+            <key>c-f9784550-e070-4132-ac27-90975f7e3c80</key>
+            <value>fr.ensicaen.simulator_ep.ep.strategies.network.GenericRouterStrategy</value>
+        </entry>
+        <entry>
+            <key>c-86028bc8-161c-40ac-8b63-8e20f9fd31ae</key>
+            <value>fr.ensicaen.simulator_ep.ep.strategies.ept.EPTSmartCardReaderStrategy</value>
+        </entry>
+        <entry>
+            <key>c-170e09a6-c50a-40c1-9310-7b7c2acaf80d</key>
+            <value>fr.ensicaen.simulator_ep.ep.strategies.fo.issuer.FOIssuerAuthorizationStrategy</value>
+        </entry>
+        <entry>
+            <key>c-e856d174-1d99-4479-bc88-112cc710c76b</key>
+            <value>fr.ensicaen.simulator_ep.ep.strategies.card.CardStrategy</value>
+        </entry>
+    </link_strat_component>
+    <uiData>
+        <entry>
+            <key>c-c273df49-b831-4a75-88f3-dec2dd8e1b01</key>
+            <value xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:type="componentWrapper">
+                <x>30.0</x>
+                <y>30.0</y>
+                <width>380.0</width>
+                <height>135.0</height>
+                <collapsed>false</collapsed>
+            </value>
+        </entry>
+        <entry>
+            <key>c-7f888a39-65b1-4778-9de6-10f319dc6c96</key>
+            <value xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:type="componentWrapper">
+                <x>50.0</x>
+                <y>370.0</y>
+                <width>840.0</width>
+                <height>195.0</height>
+                <collapsed>false</collapsed>
+            </value>
+        </entry>
+        <entry>
+            <key>c-989a528b-d49d-4e35-aeb3-d16a35e151f4</key>
+            <value xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:type="componentWrapper">
+                <x>430.0</x>
+                <y>30.0</y>
+                <width>380.0</width>
+                <height>135.0</height>
+                <collapsed>false</collapsed>
+            </value>
+        </entry>
+        <entry>
+            <key>c-0e2fc889-f24a-42b6-a651-dbe471e51d02</key>
+            <value xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:type="componentWrapper">
+                <x>30.0</x>
+                <y>30.0</y>
+                <width>150.0</width>
+                <height>75.0</height>
+                <collapsed>true</collapsed>
+            </value>
+        </entry>
+        <entry>
+            <key>c-3d615f6d-f2ae-4b06-82a5-5b0d27551ba4</key>
+            <value xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:type="componentWrapper">
+                <x>50.0</x>
+                <y>210.0</y>
+                <width>890.0</width>
+                <height>135.0</height>
+                <collapsed>false</collapsed>
+            </value>
+        </entry>
+        <entry>
+            <key>c-0b752554-f9fa-4a4f-9623-923f71b9a96b</key>
+            <value xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:type="componentWrapper">
+                <x>710.0</x>
+                <y>30.0</y>
+                <width>150.0</width>
+                <height>75.0</height>
+                <collapsed>true</collapsed>
+            </value>
+        </entry>
+        <entry>
+            <key>c-3369e736-2c7a-4ea8-a72f-2281ef08d381-c-acc87d57-2e58-42e7-8e9e-c3c0393e3f61</key>
+            <value xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:type="mediatorWrapper"/>
+        </entry>
+        <entry>
+            <key>c-3369e736-2c7a-4ea8-a72f-2281ef08d381</key>
+            <value xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:type="componentWrapper">
+                <x>1050.0</x>
+                <y>620.0</y>
+                <width>150.0</width>
+                <height>75.0</height>
+                <collapsed>true</collapsed>
+            </value>
+        </entry>
+        <entry>
+            <key>c-de3823e4-5687-4e66-a6c1-206e4b85c6be</key>
+            <value xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:type="componentWrapper">
+                <x>200.0</x>
+                <y>30.0</y>
+                <width>150.0</width>
+                <height>75.0</height>
+                <collapsed>true</collapsed>
+            </value>
+        </entry>
+        <entry>
+            <key>c-adc32f9b-595f-4228-816b-d4c0092fad1b</key>
+            <value xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:type="componentWrapper">
+                <x>30.0</x>
+                <y>30.0</y>
+                <width>150.0</width>
+                <height>75.0</height>
+                <collapsed>true</collapsed>
+            </value>
+        </entry>
+        <entry>
+            <key>c-0ba0daea-00ec-4393-800e-b8af441008c4</key>
+            <value xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:type="componentWrapper">
+                <x>200.0</x>
+                <y>30.0</y>
+                <width>150.0</width>
+                <height>75.0</height>
+                <collapsed>true</collapsed>
+            </value>
+        </entry>
+        <entry>
+            <key>c-91ebee81-231b-4cb9-ab2f-40cb1315acd5</key>
+            <value xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:type="componentWrapper">
+                <x>200.0</x>
+                <y>30.0</y>
+                <width>150.0</width>
+                <height>75.0</height>
+                <collapsed>true</collapsed>
+            </value>
+        </entry>
+        <entry>
+            <key>c-3d615f6d-f2ae-4b06-82a5-5b0d27551ba4-c-e856d174-1d99-4479-bc88-112cc710c76b</key>
+            <value xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:type="mediatorWrapper"/>
+        </entry>
+        <entry>
+            <key>c-f9784550-e070-4132-ac27-90975f7e3c80-c-7f888a39-65b1-4778-9de6-10f319dc6c96</key>
+            <value xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:type="mediatorWrapper"/>
+        </entry>
+        <entry>
+            <key>c-7f888a39-65b1-4778-9de6-10f319dc6c96-c-3d615f6d-f2ae-4b06-82a5-5b0d27551ba4</key>
+            <value xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:type="mediatorWrapper"/>
+        </entry>
+        <entry>
+            <key>c-e856d174-1d99-4479-bc88-112cc710c76b</key>
+            <value xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:type="componentWrapper">
+                <x>50.0</x>
+                <y>50.0</y>
+                <width>380.0</width>
+                <height>135.0</height>
+                <collapsed>false</collapsed>
+            </value>
+        </entry>
+        <entry>
+            <key>c-7e6bd9d3-c1c6-4b40-a5f2-28a1c596bbfa</key>
+            <value xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:type="componentWrapper">
+                <x>430.0</x>
+                <y>30.0</y>
+                <width>380.0</width>
+                <height>135.0</height>
+                <collapsed>false</collapsed>
+            </value>
+        </entry>
+        <entry>
+            <key>c-749b523f-4f40-46fb-a738-309499eda941</key>
+            <value xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:type="componentWrapper">
+                <x>30.0</x>
+                <y>30.0</y>
+                <width>150.0</width>
+                <height>75.0</height>
+                <collapsed>true</collapsed>
+            </value>
+        </entry>
+        <entry>
+            <key>c-a1b1107f-c70d-42eb-919b-fc4d7afed902</key>
+            <value xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:type="componentWrapper">
+                <x>200.0</x>
+                <y>30.0</y>
+                <width>150.0</width>
+                <height>75.0</height>
+                <collapsed>true</collapsed>
+            </value>
+        </entry>
+        <entry>
+            <key>c-45d86653-83ed-4366-a23c-dada143ec920</key>
+            <value xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:type="componentWrapper">
+                <x>200.0</x>
+                <y>30.0</y>
+                <width>150.0</width>
+                <height>75.0</height>
+                <collapsed>true</collapsed>
+            </value>
+        </entry>
+        <entry>
+            <key>c-acc87d57-2e58-42e7-8e9e-c3c0393e3f61</key>
+            <value xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:type="componentWrapper">
+                <x>50.0</x>
+                <y>580.0</y>
+                <width>840.0</width>
+                <height>195.0</height>
+                <collapsed>false</collapsed>
+            </value>
+        </entry>
+        <entry>
+            <key>c-77a32118-979a-4b71-bd92-708b504f7925</key>
+            <value xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:type="componentWrapper">
+                <x>540.0</x>
+                <y>30.0</y>
+                <width>150.0</width>
+                <height>75.0</height>
+                <collapsed>true</collapsed>
+            </value>
+        </entry>
+        <entry>
+            <key>c-c9c9f448-98b6-499f-83ca-12d72f021f21</key>
+            <value xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:type="componentWrapper">
+                <x>30.0</x>
+                <y>30.0</y>
+                <width>150.0</width>
+                <height>75.0</height>
+                <collapsed>true</collapsed>
+            </value>
+        </entry>
+        <entry>
+            <key>c-afcd1e09-9f2b-40ff-95e5-ef75e48bc9f8</key>
+            <value xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:type="componentWrapper">
+                <x>200.0</x>
+                <y>30.0</y>
+                <width>150.0</width>
+                <height>75.0</height>
+                <collapsed>true</collapsed>
+            </value>
+        </entry>
+        <entry>
+            <key>c-e0f7d035-6c07-4c0d-ac32-e5a8525545c2</key>
+            <value xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:type="componentWrapper">
+                <x>30.0</x>
+                <y>30.0</y>
+                <width>380.0</width>
+                <height>135.0</height>
+                <collapsed>false</collapsed>
+            </value>
+        </entry>
+        <entry>
+            <key>c-1c1ed58f-18a0-4c9d-a43d-b42af8d72aa0</key>
+            <value xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:type="componentWrapper">
+                <x>370.0</x>
+                <y>30.0</y>
+                <width>150.0</width>
+                <height>75.0</height>
+                <collapsed>true</collapsed>
+            </value>
+        </entry>
+        <entry>
+            <key>c-f9784550-e070-4132-ac27-90975f7e3c80</key>
+            <value xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:type="componentWrapper">
+                <x>1050.0</x>
+                <y>400.0</y>
+                <width>150.0</width>
+                <height>75.0</height>
+                <collapsed>true</collapsed>
+            </value>
+        </entry>
+        <entry>
+            <key>c-86028bc8-161c-40ac-8b63-8e20f9fd31ae</key>
+            <value xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:type="componentWrapper">
+                <x>30.0</x>
+                <y>30.0</y>
+                <width>150.0</width>
+                <height>75.0</height>
+                <collapsed>true</collapsed>
+            </value>
+        </entry>
+        <entry>
+            <key>c-170e09a6-c50a-40c1-9310-7b7c2acaf80d</key>
+            <value xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:type="componentWrapper">
+                <x>30.0</x>
+                <y>30.0</y>
+                <width>150.0</width>
+                <height>75.0</height>
+                <collapsed>true</collapsed>
+            </value>
+        </entry>
+        <entry>
+            <key>c-f9784550-e070-4132-ac27-90975f7e3c80-c-3369e736-2c7a-4ea8-a72f-2281ef08d381</key>
+            <value xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:type="mediatorWrapper"/>
+        </entry>
+    </uiData>
+</scenarioData>

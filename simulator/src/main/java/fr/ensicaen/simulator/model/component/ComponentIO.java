@@ -29,7 +29,7 @@ public class ComponentIO extends Component implements IInputOutput {
 	@Override
 	public IResponse notifyMessage(Mediator m, String data) {
 		if (!"send".equals(Thread.currentThread().getStackTrace()[2].getMethodName())) {
-			log.error("Invalid call of input method, use mediator instead.");
+			log.warn("Invalid call of input method, use mediator instead.");
 		}
 
 		// log.debug("[" + this.getType() + "] IN: '" + data + "'");

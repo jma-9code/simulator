@@ -27,11 +27,11 @@ public class ComponentI extends Component implements IInput {
 
 	@Override
 	public VoidResponse notifyMessage(Mediator m, String data) {
-		// Guardian.getInstance().addMemento(this, saveState());
-		// log.debug("[" + this.getName() + "] IN: " + data + " from [" +
-		// c.getName() + "]");
+		if (!"send".equals(Thread.currentThread().getStackTrace()[2].getMethodName())) {
+			log.warn("Invalid call of input method, use mediator instead.");
+		}
+
 		this.strategy.processMessage(this, m, data);
-		// Guardian.getInstance().addMemento(this, saveState());
 
 		return VoidResponse.build();
 	}

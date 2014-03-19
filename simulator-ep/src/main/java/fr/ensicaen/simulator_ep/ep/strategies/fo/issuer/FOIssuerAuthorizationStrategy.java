@@ -20,7 +20,6 @@ import fr.ensicaen.simulator.model.response.VoidResponse;
 import fr.ensicaen.simulator.model.strategies.IStrategy;
 import fr.ensicaen.simulator.simulator.Context;
 import fr.ensicaen.simulator.tools.LogUtils;
-import fr.ensicaen.simulator_ep.utils.ISO7816Tools;
 import fr.ensicaen.simulator_ep.utils.ISO8583Exception;
 import fr.ensicaen.simulator_ep.utils.ISO8583Tools;
 
@@ -53,7 +52,7 @@ public class FOIssuerAuthorizationStrategy implements IStrategy<ComponentIO> {
 			log.debug(LogUtils.MARKER_COMPONENT_INFO, "FO Issuer authorization receive the ARQC from the FO acquierer");
 			authorizationAnswer = ISO8583Tools.read(data);
 			authorizationAnswer.setMTI("0110");
-			authorizationAnswer.set(7, ISO7816Tools.writeDATETIME(Context.getInstance().getTime()));
+			authorizationAnswer.set(7, ISO8583Tools.getDate_MMJJhhmmss());
 			// FO utilisation du champs acceptance afin de definir la strategie
 			// d'approbation ou non de l'auth
 			int auth_approval = Integer.parseInt(frontOfficeIssuer.getProperties().get("acceptance"));

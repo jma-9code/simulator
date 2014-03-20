@@ -52,7 +52,7 @@ public class ComponentWrapper implements Serializable {
 		this.component = c;
 
 		// get graph icon
-		this.iconPath = GUIUtils.getGraphIconPath(component.getName());
+		this.iconPath = GUIUtils.getGraphIconPath(component);
 	}
 
 	@Override
@@ -66,8 +66,7 @@ public class ComponentWrapper implements Serializable {
 	}
 
 	public String getCollapsedStyle() {
-		return iconPath != null && !iconPath.isEmpty() ? "image;image="
-				+ iconPath : "group;whiteSpace=wrap";
+		return iconPath != null && !iconPath.isEmpty() ? "image;image=file:///" + iconPath : "group;whiteSpace=wrap";
 	}
 
 	public String getSenderStyle() {

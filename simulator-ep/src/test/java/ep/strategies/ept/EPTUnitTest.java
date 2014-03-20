@@ -83,7 +83,7 @@ public class EPTUnitTest {
 		fakeSmartCard = new ComponentIO("Card", ComponentEP.CARD.ordinal());
 
 		/* ******** Définition du TPE ******** BEGIN */
-		ept = new ComponentIO("Electronic Payment Terminal", ComponentEP.ELETRONIC_TERMINAL_PAYMENT.ordinal());
+		ept = new ComponentIO("Electronic Payment Terminal", ComponentEP.ELETRONIC_PAYMENT_TERMINAL.ordinal());
 		ept.setStrategy(new EPTStrategy());
 
 		/* Enfant : lecteur de carte */

@@ -74,7 +74,7 @@ public class CardTest {
 		card.addChild(magstrippe);
 		card.addChild(chip);
 
-		ept = new ComponentIO("ept", ComponentEP.ELETRONIC_TERMINAL_PAYMENT.ordinal());
+		ept = new ComponentIO("ept", ComponentEP.ELETRONIC_PAYMENT_TERMINAL.ordinal());
 
 		card.setStrategy(new CardStrategy());
 		chip.setStrategy(new CardChipStrategy());

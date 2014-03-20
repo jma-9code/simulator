@@ -19,6 +19,7 @@ import fr.ensicaen.simulator.model.factory.MediatorFactory;
 import fr.ensicaen.simulator.model.factory.MediatorFactory.EMediator;
 import fr.ensicaen.simulator.model.mediator.Mediator;
 import fr.ensicaen.simulator.model.properties.PropertyDefinition;
+import fr.ensicaen.simulator.model.properties.listener.PropertyListener;
 import fr.ensicaen.simulator.model.response.DataResponse;
 import fr.ensicaen.simulator.model.response.IResponse;
 import fr.ensicaen.simulator.model.response.VoidResponse;
@@ -100,6 +101,7 @@ public class EPTUnitTest {
 		chipset.getProperties().put("protocol_list", "ISO7816 ISO8583 CB2A-T");
 		chipset.getProperties().put("protocol_prefered", "ISO7816");
 		chipset.getProperties().put("pin_enter", "1234");
+		chipset.getProperties().put("amount", "80.0");
 		ept.addChild(chipset);
 
 		/* Enfant : imprimante */
@@ -117,6 +119,28 @@ public class EPTUnitTest {
 		factory.getMediator(ept, fakeSmartCard, EMediator.HALFDUPLEX);
 
 		generateMsg();
+
+		// fake auto fill properties
+		Context.getInstance().setPropertyListener(new PropertyListener() {
+
+			@Override
+			public String onRequiredRead(String key, String value) {
+				switch (key) {
+					case "amount":
+						return "80.0";
+					case "pin_enter":
+						return "1234";
+					default:
+						return "";
+				}
+			}
+
+			@Override
+			public String onNotRequiredRead(String key, String value) {
+				// TODO Auto-generated method stub
+				return null;
+			}
+		});
 	}
 
 	public void generateMsg() throws ISOException {
@@ -134,7 +158,8 @@ public class EPTUnitTest {
 		card_ch.set(ISO7816Tools.FIELD_AMOUNT, "0000008000");
 		card_ch.set(ISO7816Tools.FIELD_PINVERIFICATION, "1");
 		card_ch.set(ISO7816Tools.FIELD_CARDAGREEMENT, "1");
-		card_sc.set(ISO7816Tools.FIELD_PAN, "4976710025642130");
+		card_ch.set(ISO7816Tools.FIELD_PAN, "4976710025642130");
+		card_ch.set(ISO7816Tools.FIELD_PINDATA, "1234");
 		// card_ch.set(ISO7816Tools.FIELD_RRN, "320012000001");
 		// card_ch.set(ISO7816Tools.FIELD_STAN, "000004");
 		card_ch.set(ISO7816Tools.FIELD_DATETIME, "1008170100");

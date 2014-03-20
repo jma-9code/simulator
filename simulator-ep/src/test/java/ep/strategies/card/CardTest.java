@@ -66,6 +66,7 @@ public class CardTest {
 		chip.getProperties().put("ceil", "400");
 		chip.getProperties().put("approvalcode", "07B56=");
 		chip.getProperties().put("state", "OFF");
+		chip.getProperties().put("ptc", "1");
 
 		magstrippe = new ComponentIO("magstrippe");
 		magstrippe.getProperties().put("iso2", "59859595985888648468454684");
@@ -172,7 +173,7 @@ public class CardTest {
 				}
 				catch (Exception e) {
 					// TODO Auto-generated catch block
-					// e.printStackTrace();
+					e.printStackTrace();
 					Assert.assertFalse(true);
 				}
 

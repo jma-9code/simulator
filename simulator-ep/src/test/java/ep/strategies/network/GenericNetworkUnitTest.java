@@ -7,7 +7,6 @@ import java.util.List;
 
 import org.jpos.iso.ISOException;
 import org.jpos.iso.ISOMsg;
-import org.jpos.iso.packager.GenericPackager;
 import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;
@@ -34,6 +33,7 @@ import fr.ensicaen.simulator_ep.ep.strategies.network.GenericNetworkStrategy;
 import fr.ensicaen.simulator_ep.utils.CB2AValues;
 import fr.ensicaen.simulator_ep.utils.ComponentEP;
 import fr.ensicaen.simulator_ep.utils.ISO7816Tools;
+import fr.ensicaen.simulator_ep.utils.ISO8583Tools;
 
 public class GenericNetworkUnitTest {
 
@@ -102,10 +102,8 @@ public class GenericNetworkUnitTest {
 			@Override
 			public void processEvent(ComponentIO _this, String event) {
 				// auth request test
-				ISOMsg authorizationRequest = new ISOMsg();
+				ISOMsg authorizationRequest = ISO8583Tools.create();
 				try {
-					authorizationRequest.setPackager(new GenericPackager(getClass().getResource("/8583.xml")
-							.toExternalForm()));
 					authorizationRequest.setMTI("0100");
 					authorizationRequest.set(2, "4670210000000000"); // PAN
 					authorizationRequest.set(4, "10000"); // 100€
@@ -175,11 +173,8 @@ public class GenericNetworkUnitTest {
 			@Override
 			public void processEvent(ComponentIO _this, String event) {
 				// auth request test
-				ISOMsg authorizationRequest = new ISOMsg();
+				ISOMsg authorizationRequest = ISO8583Tools.create();
 				try {
-
-					authorizationRequest.setPackager(new GenericPackager(getClass().getResource("/8583.xml")
-							.toExternalForm()));
 					authorizationRequest.setMTI("0100");
 					authorizationRequest.set(2, "4670210000000000"); // PAN
 					authorizationRequest.set(4, "10000"); // 100€
@@ -264,11 +259,8 @@ public class GenericNetworkUnitTest {
 			@Override
 			public IResponse processMessage(ComponentIO _this, Mediator mediator, String data) {
 				// auth request test
-				ISOMsg authorizationRequest = new ISOMsg();
+				ISOMsg authorizationRequest = ISO8583Tools.create();
 				try {
-
-					authorizationRequest.setPackager(new GenericPackager(getClass().getResource("/8583.xml")
-							.toExternalForm()));
 					authorizationRequest.unpack(data.getBytes());
 
 					authorizationRequest.set(39, CB2AValues.Field39.TRANSACTION_APPROVED);
@@ -345,11 +337,8 @@ public class GenericNetworkUnitTest {
 			@Override
 			public void processEvent(ComponentIO _this, String event) {
 				// auth request test
-				ISOMsg authorizationRequest = new ISOMsg();
+				ISOMsg authorizationRequest = ISO8583Tools.create();
 				try {
-
-					authorizationRequest.setPackager(new GenericPackager(getClass().getResource("/8583.xml")
-							.toExternalForm()));
 					authorizationRequest.setMTI("0100");
 					authorizationRequest.set(2, "4670210000000000"); // PAN
 					authorizationRequest.set(4, "10000"); // 100€

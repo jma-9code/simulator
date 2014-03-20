@@ -1,6 +1,5 @@
 package fr.ensicaen.simulator_ep.utils;
 
-import java.net.URISyntaxException;
 import java.text.DecimalFormat;
 import java.text.DecimalFormatSymbols;
 import java.text.NumberFormat;
@@ -18,18 +17,14 @@ public class ISO7816Tools {
 	public synchronized static GenericPackager getPackager() {
 		if (packager == null) {
 			try {
-				packager = new GenericPackager(ISO8583Tools.class
-						.getResource("/" + ProtocolEP.ISO7816.toString() + ".xml").toURI().getPath());
+				packager = new GenericPackager(ISO8583Tools.class.getResource(
+						"/" + ProtocolEP.ISO7816.toString() + ".xml").toExternalForm());
 			}
 			catch (ISOException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
-			catch (URISyntaxException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
-			;
+
 			return packager;
 		}
 		return packager;

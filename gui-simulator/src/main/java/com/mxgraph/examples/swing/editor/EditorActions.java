@@ -1817,7 +1817,7 @@ public class EditorActions {
 					final fr.ensicaen.simulator.model.component.Component component = ((ComponentWrapper) selectedCell
 							.getValue()).getComponent();
 
-					logger.info("Acquisition carte à puce");
+					logger.info("Acquisition carte a puce");
 					System.setProperty("sun.security.smartcardio.t0GetResponse", "false");
 					final RMCGUI inst = new RMCGUI(RMCGUI.MODE_API);
 					inst.setLocationRelativeTo(null);
@@ -1830,6 +1830,8 @@ public class EditorActions {
 								for(Entry<String,String> entry : vals.entrySet()) {
 									component.getProperties().put(entry.getKey(), entry.getValue());
 								}
+								// PTC Initialize
+								component.getProperties().put("ptc", "03");
 							}
 		                }
 		            });

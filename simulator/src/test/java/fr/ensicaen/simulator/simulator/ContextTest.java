@@ -17,7 +17,7 @@ import fr.ensicaen.simulator.model.component.IOutput;
 import fr.ensicaen.simulator.model.factory.MediatorFactory;
 import fr.ensicaen.simulator.model.factory.MediatorFactory.EMediator;
 import fr.ensicaen.simulator.model.mediator.Mediator;
-import fr.ensicaen.simulator.model.mediator.PipedMediator;
+import fr.ensicaen.simulator.model.mediator.dynamic.PipedMediator;
 import fr.ensicaen.simulator.model.properties.PropertyDefinition;
 import fr.ensicaen.simulator.model.response.IResponse;
 import fr.ensicaen.simulator.model.strategies.IStrategy;

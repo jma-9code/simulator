@@ -1,4 +1,4 @@
-package fr.ensicaen.simulator.model.mediator;
+package fr.ensicaen.simulator.model.mediator.explicit;
 
 import java.util.concurrent.BrokenBarrierException;
 
@@ -7,6 +7,7 @@ import org.slf4j.LoggerFactory;
 
 import fr.ensicaen.simulator.model.component.IInput;
 import fr.ensicaen.simulator.model.component.IOutput;
+import fr.ensicaen.simulator.model.mediator.Mediator;
 import fr.ensicaen.simulator.model.mediator.listener.MediatorListener;
 import fr.ensicaen.simulator.model.response.IResponse;
 import fr.ensicaen.simulator.model.response.VoidResponse;

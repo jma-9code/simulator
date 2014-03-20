@@ -10,8 +10,8 @@ import fr.ensicaen.simulator.model.component.ComponentIO;
 import fr.ensicaen.simulator.model.component.ComponentO;
 import fr.ensicaen.simulator.model.factory.MediatorFactory;
 import fr.ensicaen.simulator.model.factory.MediatorFactory.EMediator;
-import fr.ensicaen.simulator.model.mediator.HalfDuplexMediator;
 import fr.ensicaen.simulator.model.mediator.Mediator;
+import fr.ensicaen.simulator.model.mediator.explicit.HalfDuplexMediator;
 import fr.ensicaen.simulator_ep.ep.strategies.card.CardStrategy;
 import fr.ensicaen.simulator_ep.ep.strategies.ept.EPTStrategy;
 

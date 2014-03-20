@@ -18,12 +18,12 @@ import fr.ensicaen.simulator.model.component.Component;
 import fr.ensicaen.simulator.model.component.IOutput;
 import fr.ensicaen.simulator.model.dao.ScenarioData;
 import fr.ensicaen.simulator.model.factory.MediatorFactory;
-import fr.ensicaen.simulator.model.mediator.ForwardMediator;
-import fr.ensicaen.simulator.model.mediator.HalfDuplexMediator;
 import fr.ensicaen.simulator.model.mediator.Mediator;
-import fr.ensicaen.simulator.model.mediator.PipedMediator;
-import fr.ensicaen.simulator.model.mediator.ReverseHalfDuplexMediator;
-import fr.ensicaen.simulator.model.mediator.SimplexMediator;
+import fr.ensicaen.simulator.model.mediator.dynamic.ForwardMediator;
+import fr.ensicaen.simulator.model.mediator.dynamic.PipedMediator;
+import fr.ensicaen.simulator.model.mediator.dynamic.ReverseHalfDuplexMediator;
+import fr.ensicaen.simulator.model.mediator.explicit.HalfDuplexMediator;
+import fr.ensicaen.simulator.model.mediator.explicit.SimplexMediator;
 import fr.ensicaen.simulator.model.properties.listener.DefaultPropertyListenerImpl;
 import fr.ensicaen.simulator.model.properties.listener.PropertyListener;
 import fr.ensicaen.simulator.model.strategies.IStrategy;
@@ -303,9 +303,15 @@ public class Context implements SimulatorListener {
 					|| cur instanceof PipedMediator) {
 				continue;
 			}
-			if (cur.getSender().equals(c) || cur.getReceiver().equals(c)) {
-				ret.add(cur);
+			try {
+				if (cur.getSender().equals(c) || cur.getReceiver().equals(c)) {
+					ret.add(cur);
+				}
 			}
+			catch (NullPointerException e) {
+				//
+			}
+
 		}
 		return ret;
 	}
@@ -634,6 +640,18 @@ public class Context implements SimulatorListener {
 	@Override
 	public void simulationEnded() {
 		inExecution = false;
+	}
+
+	@Override
+	public void startPointStarted() {
+		// TODO Auto-generated method stub
+
+	}
+
+	@Override
+	public void startPointEnded() {
+		// TODO Auto-generated method stub
+
 	}
 
 }

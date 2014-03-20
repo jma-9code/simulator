@@ -127,11 +127,14 @@ public class CardChipStrategy implements IStrategy<ComponentIO> {
 		rp.set(ISO7816Tools.FIELD_AMOUNT, amount);
 		rp.set(ISO7816Tools.FIELD_DATETIME, datetime);
 		rp.set(ISO7816Tools.FIELD_PAN, pan);
-		
+
 		if (rpcode.equals("00") && apcode_tpe != null && !apcode_tpe.isEmpty()) {
 			rp.set(ISO7816Tools.FIELD_APPROVALCODE, apcode_cb);
 			rp.set(ISO7816Tools.FIELD_RESPONSECODE, rpcode);
 			chip.getProperties().put(datetime, new String(rp.pack()));
+		}
+		else if (rpcode.equals("69")) {
+			log.warn("chip pin/ceil check fail");
 		}
 		else {
 			log.warn("chip can't verify the approval code or not connection with the FO (approvalcode from ept="
@@ -157,6 +160,7 @@ public class CardChipStrategy implements IStrategy<ComponentIO> {
 		String pinData = data.getString(ISO7816Tools.FIELD_PINDATA);
 		String pan = chip.getProperties().get("pan");
 		String protocol = chip.getProperties().get(ISO7816Tools.FIELD_POSID + "-" + posID);
+		int ptc = Integer.parseInt(chip.getProperties().get("ptc"));
 		// String transactID = data.getString(ISO7816Tools.FIELD_RRN);
 		// String stan =
 		// ISO7816Tools.generateSTAN(data.getString(ISO7816Tools.FIELD_STAN));
@@ -176,10 +180,14 @@ public class CardChipStrategy implements IStrategy<ComponentIO> {
 		else {
 			rp.set(ISO7816Tools.FIELD_CARDAGREEMENT, "1");
 		}
-		if (pinData.equals(chip.getProperties().get("pin"))) {
+
+		// verif pin try counter and pin code
+		if (ptc > 0 && pinData.equals(chip.getProperties().get("pin"))) {
 			rp.set(ISO7816Tools.FIELD_PINVERIFICATION, "1");
 		}
 		else {
+			// decrease pin try counter
+			chip.getProperties().put("ptc", "" + ((ptc > 0) ? (ptc - 1) : ptc));
 			rp.set(ISO7816Tools.FIELD_PINVERIFICATION, "0");
 		}
 

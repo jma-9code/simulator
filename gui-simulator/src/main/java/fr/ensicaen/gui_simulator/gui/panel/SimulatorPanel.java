@@ -43,6 +43,8 @@ import fr.ensicaen.simulator.model.component.Component;
 import fr.ensicaen.simulator.model.factory.MediatorFactory;
 import fr.ensicaen.simulator.model.factory.listener.MediatorFactoryListener;
 import fr.ensicaen.simulator.model.mediator.Mediator;
+import fr.ensicaen.simulator.model.mediator.dynamic.ForwardMediator;
+import fr.ensicaen.simulator.model.mediator.dynamic.PipedMediator;
 import fr.ensicaen.simulator.model.mediator.listener.MediatorListener;
 import fr.ensicaen.simulator.simulator.AsyncSimulator;
 import fr.ensicaen.simulator.simulator.Context;
@@ -133,13 +135,6 @@ public class SimulatorPanel extends JTabbedPane implements
 			public void actionPerformed(ActionEvent e) {
 				if (btnLaunch.getText().equalsIgnoreCase("launch")) {
 					try {
-						// ajout des listeners des mediateurs statiques
-						for (Mediator m : Context.getInstance().getMediators()) {
-							m.addListener(himself);
-						}
-						// ajout d'un listener pour recuperer les mediateurs
-						// dynamiques
-						MediatorFactory.getInstance().addListener(himself);
 						sim.start();
 					} catch (SimulatorException e1) {
 						e1.printStackTrace();
@@ -238,12 +233,20 @@ public class SimulatorPanel extends JTabbedPane implements
 
 	@Override
 	public void simulationStarted() {
+		// ajout des listeners des mediateurs
+		for (Mediator m : Context.getInstance().getMediators()) {
+			m.addListener(himself);
+		}
+		// ajout d'un listener pour recuperer les mediateurs
+		// dynamiques
+		MediatorFactory.getInstance().addListener(himself);
+
 		Simulator.pausable();
 		bge_frame.getGraphComponent().getGraph().getSelectionModel()
 				.addListener(mxEvent.CHANGE, this);
 		btnOneStep.setEnabled(true);
 		btnLaunch.setText("Skip");
-		restoreCellColor();
+
 	}
 
 	@Override
@@ -252,7 +255,6 @@ public class SimulatorPanel extends JTabbedPane implements
 		btnLaunch.setText("Launch");
 		bge_frame.getGraphComponent().getGraph().getSelectionModel()
 				.removeListener(this);
-		restoreCellColor();
 	}
 
 	/**
@@ -275,6 +277,30 @@ public class SimulatorPanel extends JTabbedPane implements
 			}
 		}
 		bge_frame.getGraphComponent().refresh();
+	}
+
+	public void recCreateEdge(Mediator m) {
+		mxGraph graph = bge_frame.getGraphComponent().getGraph();
+		if (m instanceof PipedMediator) {
+			recCreateEdge(((PipedMediator) m).getM1());
+			recCreateEdge(((PipedMediator) m).getM2());
+		} else if (m instanceof ForwardMediator) {
+			recCreateEdge(((ForwardMediator) m).getOrigin());
+		} else {
+			Map<String, Object> map = new HashMap<>();
+			map.put(m.getUuid(), new MediatorWrapper(m));
+			// retrieve cells
+			mxCell cell_sender = SimulatorGUIBridge.findVertex(
+					(Component) m.getSender(), graph);
+			mxCell cell_receiver = SimulatorGUIBridge.findVertex(
+					(Component) m.getReceiver(), graph);
+			mxCell cell_mediator = SimulatorGUIBridge.createEdge(m, map, graph);
+			graph.addEdge(cell_mediator, null, cell_sender, cell_receiver, null);
+			// useStyle
+			cell_mediator.setStyle(((MediatorWrapper) cell_mediator.getValue())
+					.getUseStyle());
+
+		}
 	}
 
 	@Override
@@ -307,6 +333,7 @@ public class SimulatorPanel extends JTabbedPane implements
 		// concerned mediator
 		if (cell_mediator == null) {
 			Map<String, Object> map = new HashMap<>();
+			// recCreateEdge(m);
 			map.put(m.getUuid(), new MediatorWrapper(m));
 			cell_mediator = SimulatorGUIBridge.createEdge(m, map, graph);
 			graph.addEdge(cell_mediator, null, cell_sender, cell_receiver, null);
@@ -361,5 +388,17 @@ public class SimulatorPanel extends JTabbedPane implements
 			}
 		}
 
+	}
+
+	@Override
+	public void startPointStarted() {
+		restoreCellColor();
+		System.out.println("new start pt");
+	}
+
+	@Override
+	public void startPointEnded() {
+		restoreCellColor();
+		System.out.println("end start pt");
 	}
 }

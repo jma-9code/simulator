@@ -18,6 +18,13 @@ import fr.ensicaen.simulator.model.component.IInput;
 import fr.ensicaen.simulator.model.component.IOutput;
 import fr.ensicaen.simulator.model.dao.jaxbadapter.InputAdapter;
 import fr.ensicaen.simulator.model.dao.jaxbadapter.OutputAdapter;
+import fr.ensicaen.simulator.model.mediator.dynamic.ForwardMediator;
+import fr.ensicaen.simulator.model.mediator.dynamic.PipedMediator;
+import fr.ensicaen.simulator.model.mediator.dynamic.ReverseHalfDuplexMediator;
+import fr.ensicaen.simulator.model.mediator.explicit.HalfDuplexMediator;
+import fr.ensicaen.simulator.model.mediator.explicit.SimplexMediator;
+import fr.ensicaen.simulator.model.mediator.implicit.ChildHalfDuplexMediator;
+import fr.ensicaen.simulator.model.mediator.implicit.ChildSimplexMediator;
 import fr.ensicaen.simulator.model.mediator.listener.MediatorListener;
 import fr.ensicaen.simulator.model.properties.PropertiesPlus;
 import fr.ensicaen.simulator.model.response.IResponse;
@@ -69,6 +76,15 @@ public abstract class Mediator implements Serializable {
 	 */
 	public void addListener(MediatorListener list) {
 		listeners.add(list);
+	}
+
+	/**
+	 * Suppression d'un listener
+	 * 
+	 * @param list
+	 */
+	public void removeListener(MediatorListener list) {
+		listeners.remove(list);
 	}
 
 	/**

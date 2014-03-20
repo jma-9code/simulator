@@ -14,11 +14,11 @@ import com.mxgraph.model.mxCell;
 import com.mxgraph.model.mxGeometry;
 import com.mxgraph.util.mxPoint;
 
-import fr.ensicaen.simulator.model.mediator.ForwardMediator;
-import fr.ensicaen.simulator.model.mediator.HalfDuplexMediator;
 import fr.ensicaen.simulator.model.mediator.Mediator;
-import fr.ensicaen.simulator.model.mediator.PipedMediator;
-import fr.ensicaen.simulator.model.mediator.SimplexMediator;
+import fr.ensicaen.simulator.model.mediator.dynamic.ForwardMediator;
+import fr.ensicaen.simulator.model.mediator.dynamic.PipedMediator;
+import fr.ensicaen.simulator.model.mediator.explicit.HalfDuplexMediator;
+import fr.ensicaen.simulator.model.mediator.explicit.SimplexMediator;
 
 @XmlRootElement
 @XmlAccessorType(XmlAccessType.FIELD)

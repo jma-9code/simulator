@@ -63,6 +63,8 @@ public class EPTChipsetStrategy implements IStrategy<ComponentIO> {
 		ctx.subscribeEvent(_this, "SMART_CARD_INSERTED");
 		ctx.subscribeEvent(_this, "REMOTE_DATA_COLLECTION");
 
+		((ComponentIO) _this).getProperties().put("pin_enter", null, true);
+		((ComponentIO) _this).getProperties().put("amount", null, true);
 	}
 
 	@Override
@@ -92,35 +94,51 @@ public class EPTChipsetStrategy implements IStrategy<ComponentIO> {
 					log.info(LogUtils.MARKER_COMPONENT_INFO, "EPT receive the response for authentification holder");
 					sdata = ISO7816Tools.read(res.getData());
 
-					// auth request to bank (TPE -> Bank and bank -> TPE)
-					boolean fo_connection = false;
-					try {
-						log.info(LogUtils.MARKER_COMPONENT_INFO, "EPT try to join the FO, and send an authorization...");
-						Mediator mFrontOffice = Context.getInstance().getFirstMediator(_this,
-								ComponentEP.FRONT_OFFICE.ordinal());
-						mFrontOffice.setProtocol(ProtocolEP.ISO8583.toString());
-						msg = generateAuthorizationRequest(_this, sdata);
-						res = (DataResponse) mFrontOffice.send(_this, new String(msg.pack()));
-						log.info(LogUtils.MARKER_COMPONENT_INFO, "EPT receive authorization from the FO");
-						sdata = ISO8583Tools.read(res.getData());
-						fo_connection = !sdata.getValue(39).equals(CB2AValues.Field39.UNREACHABLE_CARD_ISSUER)
-								&& !sdata.getValue(39).equals(CB2AValues.Field39.UNKNOWN_CARD_ISSUER);
+					// verification du pin/ceil OK ?
+					boolean card_OK = true;
+					if (Integer.parseInt(sdata.getString(ISO7816Tools.FIELD_PINVERIFICATION)) != 1) {
+						log.info(LogUtils.MARKER_COMPONENT_INFO, "EPT PIN check error");
+						card_OK = false;
 					}
-					catch (ContextException e) {
-						log.warn(LogUtils.MARKER_COMPONENT_INFO, "EPT has not succeeded to reach the FO", e);
+					if (Integer.parseInt(sdata.getString(ISO7816Tools.FIELD_CARDAGREEMENT)) != 1) {
+						log.info(LogUtils.MARKER_COMPONENT_INFO, "EPT exceeding the ceiling");
+						card_OK = false;
 					}
+					if (!card_OK) {
+						msg = prepareCheckFail(_this, sdata);
+						m.send(_this, new String(msg.pack()));
+					}
+					else {
+						// auth request to bank (TPE -> Bank and bank -> TPE)
+						boolean fo_connection = false;
+						try {
+							log.info(LogUtils.MARKER_COMPONENT_INFO,
+									"EPT try to join the FO, and send an authorization...");
+							Mediator mFrontOffice = Context.getInstance().getFirstMediator(_this,
+									ComponentEP.FRONT_OFFICE.ordinal());
+							mFrontOffice.setProtocol(ProtocolEP.ISO8583.toString());
+							msg = generateAuthorizationRequest(_this, sdata);
+							res = (DataResponse) mFrontOffice.send(_this, new String(msg.pack()));
+							log.info(LogUtils.MARKER_COMPONENT_INFO, "EPT receive authorization from the FO");
+							sdata = ISO8583Tools.read(res.getData());
+							fo_connection = !sdata.getValue(39).equals(CB2AValues.Field39.UNREACHABLE_CARD_ISSUER)
+									&& !sdata.getValue(39).equals(CB2AValues.Field39.UNKNOWN_CARD_ISSUER);
+						}
+						catch (ContextException e) {
+							log.warn(LogUtils.MARKER_COMPONENT_INFO, "EPT has not succeeded to reach the FO", e);
+						}
 
-					// ARPC
-					// no connection with fo ? use previous msg
-					msg = prepareARPC(_this, sdata, fo_connection);
-					log.info(LogUtils.MARKER_COMPONENT_INFO, "EPT send ARPC to the card");
-					res = (DataResponse) m.send(_this, new String(msg.pack()));
-					log.info(LogUtils.MARKER_COMPONENT_INFO, "EPT receive the final agreement");
-					sdata = ISO7816Tools.read(res.getData());
+						// ARPC
+						// no connection with fo ? use previous msg
+						msg = prepareARPC(_this, sdata, fo_connection);
+						log.info(LogUtils.MARKER_COMPONENT_INFO, "EPT send ARPC to the card");
+						res = (DataResponse) m.send(_this, new String(msg.pack()));
+						log.info(LogUtils.MARKER_COMPONENT_INFO, "EPT receive the final agreement");
+						sdata = ISO7816Tools.read(res.getData());
 
-					// final agreement
-					manageFinalAgrement(_this, sdata);
-
+						// final agreement
+						manageFinalAgrement(_this, sdata);
+					}
 				}
 				catch (ContextException e) {
 					log.error("Context error", e);
@@ -149,7 +167,7 @@ public class EPTChipsetStrategy implements IStrategy<ComponentIO> {
 					// telecollecte
 					Mediator m = Context.getInstance().getFirstMediator(_this,
 							ComponentEP.FO_ACQUIRER_REMOTE_DATA_COLLECTION.ordinal());
-
+					m.setProtocol(ProtocolEP.CB2A_TLC.toString());
 					log.info(LogUtils.MARKER_COMPONENT_INFO, "Begin of remote data collection.");
 
 					// ### 1 - initialisation de la télécollecte
@@ -442,7 +460,8 @@ public class EPTChipsetStrategy implements IStrategy<ComponentIO> {
 		ret.setMTI(ISO7816Tools.convertType2CodeMsg(MessageType.CARDHOLDER_AUTH_RQ));
 		ret.set(ISO7816Tools.FIELD_POSID, _this.getProperties().get("pos_id"));
 		ret.set(ISO7816Tools.FIELD_OPCODE, "00");
-		ret.set(ISO7816Tools.FIELD_AMOUNT, ISO7816Tools.writeAMOUNT(80));
+		ret.set(ISO7816Tools.FIELD_AMOUNT,
+				ISO7816Tools.writeAMOUNT(Float.parseFloat(_this.getProperties().get("amount"))));
 		ret.set(ISO7816Tools.FIELD_PINDATA, _this.getProperties().get("pin_enter"));
 		// ret.set(ISO7816Tools.FIELD_STAN, generateNextSTAN(_this, pan));
 		// ret.set(ISO7816Tools.FIELD_RRN, generateTransactid(_this));
@@ -479,6 +498,34 @@ public class EPTChipsetStrategy implements IStrategy<ComponentIO> {
 		authorizationRequest.set(123, _this.getProperties().get("posdatacode"));
 
 		return authorizationRequest;
+	}
+
+	/**
+	 * Erreur lors de l'envoie de l'ARQC de la carte, le pin est faux || le
+	 * plafond a ete depasse. Fin de transaction.
+	 * 
+	 * @param _this
+	 * @param data
+	 * @return
+	 * @throws ISOException
+	 */
+	private ISOMsg prepareCheckFail(Component _this, ISOMsg data) throws ISOException {
+		String amount = data.getString(4);
+		String apcode = data.getString(38);
+		String rescode = data.getString(39);
+		String pan = data.getString(2);
+
+		ISOMsg ret = ISO7816Tools.create();
+		ret.setMTI(ISO7816Tools.convertType2CodeMsg(MessageType.AUTHORIZATION_RP_CRYPTO));
+		ret.set(ISO7816Tools.FIELD_POSID, _this.getProperties().get("pos_id"));
+		ret.set(ISO7816Tools.FIELD_OPCODE, "00");
+		ret.set(ISO7816Tools.FIELD_AMOUNT, amount);
+		ret.set(ISO7816Tools.FIELD_PAN, pan);
+
+		// time out, no connection with the fo
+		ret.set(ISO7816Tools.FIELD_RESPONSECODE, "69");
+		ret.set(ISO7816Tools.FIELD_DATETIME, ISO7816Tools.writeDATETIME(Context.getInstance().getTime()));
+		return ret;
 	}
 
 	/**

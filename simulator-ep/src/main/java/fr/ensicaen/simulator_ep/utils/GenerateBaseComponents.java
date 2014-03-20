@@ -14,7 +14,6 @@ import fr.ensicaen.simulator.simulator.Context;
 import fr.ensicaen.simulator_ep.ep.strategies.card.CardChipStrategy;
 import fr.ensicaen.simulator_ep.ep.strategies.card.CardStrategy;
 import fr.ensicaen.simulator_ep.ep.strategies.ept.EPTChipsetStrategy;
-import fr.ensicaen.simulator_ep.ep.strategies.ept.EPTSmartCardReaderStrategy;
 import fr.ensicaen.simulator_ep.ep.strategies.ept.EPTStrategy;
 import fr.ensicaen.simulator_ep.ep.strategies.fo.FOStrategy;
 import fr.ensicaen.simulator_ep.ep.strategies.fo.acquirer.FOAcquirerAuthorizationStrategy;
@@ -35,11 +34,11 @@ public class GenerateBaseComponents {
 
 	/* ETP */
 	private static ComponentIO ept;
-	private static ComponentIO smartCardReader;
 	private static ComponentIO chipset;
-	private static ComponentIO printer;
-	private static ComponentIO securePinPad;
-	private static ComponentIO networkInterface;
+	// private static ComponentIO printer;
+	// private static ComponentIO securePinPad;
+	// private static ComponentIO networkInterface;
+	// private static ComponentIO smartCardReader;
 
 	/* FO */
 	private static ComponentIO frontOffice;
@@ -143,7 +142,7 @@ public class GenerateBaseComponents {
 
 		// etp
 		ept.setStrategy(new EPTStrategy());
-		smartCardReader.setStrategy(new EPTSmartCardReaderStrategy());
+		// smartCardReader.setStrategy(new EPTSmartCardReaderStrategy());
 		chipset.setStrategy(new EPTChipsetStrategy());
 
 		// fo
@@ -167,19 +166,19 @@ public class GenerateBaseComponents {
 	public static void componentsProperties() {
 		/* CARD */
 		card = new ComponentIO("Card", ComponentEP.CARD.ordinal());
-		card.getProperties().put("pan", "4976710025642130");
-		card.getProperties().put("icvv", "000");
-		card.getProperties().put("type", "M");
-		card.getProperties().put("name", "Florent Moisson");
-		card.getProperties().put("date expiration", "09/15");
-		chip = new ComponentIO("Card Chip", ComponentEP.CARD_CHIP.ordinal());
+		// card.getProperties().put("pan", "4976710025642130");
+		// card.getProperties().put("icvv", "000");
+		// card.getProperties().put("type", "M");
+		// card.getProperties().put("name", "Florent Moisson");
+		// card.getProperties().put("date expiration", "09/15");
+		chip = new ComponentIO("Chip", ComponentEP.CARD_CHIP.ordinal());
 		chip.getProperties().put("protocol", "ISO7816");
 		chip.getProperties().put("pan", "4976710025642130");
-		chip.getProperties().put("bccs", "12421874");
+		chip.getProperties().put("pin", "1234");
+		chip.getProperties().put("ptc", "3");
 		chip.getProperties().put("ceil", "400");
-		chip.getProperties().put("approvalcode", "07B56=");
 		chip.getProperties().put("state", "OFF");
-		magstrippe = new ComponentIO("Card Magstrippe", ComponentEP.CARD_MAGSTRIPPE.ordinal());
+		magstrippe = new ComponentIO("Magstrippe", ComponentEP.CARD_MAGSTRIPPE.ordinal());
 		magstrippe.getProperties().put("iso2", "59859595985888648468454684");
 		card.addChild(magstrippe);
 		card.addChild(chip);
@@ -187,10 +186,11 @@ public class GenerateBaseComponents {
 		/* ETP */
 		ept = new ComponentIO("Electronic Terminal Payment", ComponentEP.ELETRONIC_TERMINAL_PAYMENT.ordinal());
 		ept.setStrategy(new EPTStrategy());
-		smartCardReader = new ComponentIO("ETP Smart Card Reader", ComponentEP.ETP_SMART_CARD_READER.ordinal());
-		smartCardReader.setStrategy(new EPTSmartCardReaderStrategy());
-		ept.addChild(smartCardReader);
-		chipset = new ComponentIO("ETP Chipset", ComponentEP.ETP_CHIPSET.ordinal());
+		// smartCardReader = new ComponentIO("ETP Smart Card Reader",
+		// ComponentEP.ETP_SMART_CARD_READER.ordinal());
+		// smartCardReader.setStrategy(new EPTSmartCardReaderStrategy());
+		// ept.addChild(smartCardReader);
+		chipset = new ComponentIO("Chipset", ComponentEP.ETP_CHIPSET.ordinal());
 		chipset.setStrategy(new EPTChipsetStrategy());
 		chipset.getProperties().put("pos_id", "0000623598");
 		chipset.getProperties().put("acceptor_id", "0000623598");
@@ -200,25 +200,25 @@ public class GenerateBaseComponents {
 		chipset.getProperties().put("protocol_prefered", "ISO7816");
 		chipset.getProperties().put("pin_enter", "1234");
 		ept.addChild(chipset);
-		printer = new ComponentIO("Printer");
-		ept.addChild(printer);
-		securePinPad = new ComponentIO("Secure pin pad");
-		ept.addChild(securePinPad);
-		networkInterface = new ComponentIO("Network interface");
-		ept.addChild(networkInterface);
+		// printer = new ComponentIO("Printer");
+		// ept.addChild(printer);
+		// securePinPad = new ComponentIO("Secure pin pad");
+		// ept.addChild(securePinPad);
+		// networkInterface = new ComponentIO("Network interface");
+		// ept.addChild(networkInterface);
 
 		/* FO */
 		frontOffice = new ComponentIO("Front Office", ComponentEP.FRONT_OFFICE.ordinal());
-		issuer = new ComponentIO("FO Issuer", ComponentEP.FO_ISSUER.ordinal());
+		issuer = new ComponentIO("Issuer", ComponentEP.FO_ISSUER.ordinal());
 		// acceptor = new ComponentIO("FO Acceptor");
-		acquirer = new ComponentIO("FO Acquirer", ComponentEP.FO_ACQUIRER.ordinal());
+		acquirer = new ComponentIO("Acquirer", ComponentEP.FO_ACQUIRER.ordinal());
 		/* Ajout des trois grandes fonctions du front Office */
 		frontOffice.addChild(issuer);
 		// frontOffice.addChild(acceptor);
 		frontOffice.addChild(acquirer);
 
 		/* Ajout des modules émetteur */
-		issuerAuthorization = new ComponentIO("FO Issuer Authorization", ComponentEP.FO_ISSUER_AUTHORIZATION.ordinal());
+		issuerAuthorization = new ComponentIO("Authorization", ComponentEP.FO_ISSUER_AUTHORIZATION.ordinal());
 		// gestionDeLaFraude = new ComponentIO("GestionDeLaFraude");
 		issuer.addChild(issuerAuthorization);
 		// issuer.addChild(gestionDeLaFraude);
@@ -288,8 +288,7 @@ public class GenerateBaseComponents {
 		// gestionnaireTelepaiement.addChild(gestionDonneesFonctionnement);
 
 		/* Ajout des modules acquéreur */
-		acquirerAuthorization = new ComponentIO("FO Acquirer Authorization",
-				ComponentEP.FO_ACQUIRER_AUTHORIZATION.ordinal());
+		acquirerAuthorization = new ComponentIO("Authorization", ComponentEP.FO_ACQUIRER_AUTHORIZATION.ordinal());
 		remoteDataCollection = new ComponentIO("Remote data collection",
 				ComponentEP.FO_ACQUIRER_REMOTE_DATA_COLLECTION.ordinal());
 

@@ -35,6 +35,7 @@ public class FOIssuerAuthorizationStrategy implements IStrategy<ComponentIO> {
 	@Override
 	public List<PropertyDefinition> getPropertyDefinitions() {
 		List<PropertyDefinition> propDefs = new ArrayList<PropertyDefinition>();
+
 		propDefs.add(new PropertyDefinition("acceptance", null, true,
 				"Stratégie d'approbation des autorisations (0 = OK, 1 = KO, 2 = Random)"));
 		return propDefs;
@@ -42,6 +43,7 @@ public class FOIssuerAuthorizationStrategy implements IStrategy<ComponentIO> {
 
 	@Override
 	public void init(IOutput _this, Context ctx) {
+		((ComponentIO) _this).getProperties().put("acceptance", null, true);
 	}
 
 	@Override

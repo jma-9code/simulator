@@ -61,6 +61,10 @@ public class Simulator {
 			}
 
 			while (ctx.hasNext()) {
+				MediatorFactory.getInstance().removeAllDynamic();
+				// notify all listener
+				for (SimulatorListener sl : listeners)
+					sl.startPointStarted();
 				// change context
 				ctx.next();
 				log.info("Context just moved to the next start point, the date is " + ctx.getTime());
@@ -79,6 +83,10 @@ public class Simulator {
 
 					throw new SimulatorException(e);
 				}
+
+				// notify all listener
+				for (SimulatorListener sl : listeners)
+					sl.startPointEnded();
 
 			}
 

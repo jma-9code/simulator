@@ -1,4 +1,4 @@
-package fr.ensicaen.simulator.model.mediator;
+package fr.ensicaen.simulator.model.mediator.explicit;
 
 import java.util.concurrent.BrokenBarrierException;
 
@@ -6,29 +6,36 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import fr.ensicaen.simulator.model.component.IInput;
+import fr.ensicaen.simulator.model.component.IInputOutput;
 import fr.ensicaen.simulator.model.component.IOutput;
+import fr.ensicaen.simulator.model.mediator.Mediator;
 import fr.ensicaen.simulator.model.mediator.listener.MediatorListener;
-import fr.ensicaen.simulator.model.properties.PropertiesPlus;
 import fr.ensicaen.simulator.model.response.DataResponse;
 import fr.ensicaen.simulator.model.response.IResponse;
 import fr.ensicaen.simulator.model.response.VoidResponse;
+import fr.ensicaen.simulator.simulator.Context;
 import fr.ensicaen.simulator.simulator.Simulator;
 import fr.ensicaen.simulator.tools.LogUtils;
 
-public class PipedMediator extends Mediator {
+/**
+ * Permet d'envoyer un message dans un canal multi-directionnel entre deux
+ * composants Rq : Utilisable uniquement entre deux composants IO
+ * 
+ * @author JM
+ * 
+ */
+public class HalfDuplexMediator extends Mediator {
 
-	private static Logger log = LoggerFactory.getLogger(PipedMediator.class);
+	private static Logger log = LoggerFactory.getLogger(HalfDuplexMediator.class);
 
-	private Mediator m1;
-	private Mediator m2;
-
-	public PipedMediator() {
+	public HalfDuplexMediator() {
 	}
 
-	public PipedMediator(Mediator m1, Mediator m2) {
-		super(m1.getSender(), m2.getReceiver());
-		this.m1 = m1;
-		this.m2 = m2;
+	public HalfDuplexMediator(IInputOutput a, IInputOutput b) {
+		super(a, b);
+
+		// auto register
+		Context.getInstance().registerMediator(this, true);
 	}
 
 	@Override
@@ -42,6 +49,7 @@ public class PipedMediator extends Mediator {
 			Simulator.barrier.await();
 		}
 		catch (BrokenBarrierException | InterruptedException e) {
+			// TODO Auto-generated catch block
 			log.debug(LogUtils.MARKER_MEDIATOR_MSG, "broken barrier for mediator : " + this);
 		}
 
@@ -54,6 +62,7 @@ public class PipedMediator extends Mediator {
 		else {
 			ret = ((IInput) this.sender).notifyMessage(this, data);
 		}
+
 		if (!(ret instanceof VoidResponse)) {
 			for (MediatorListener l : listeners) {
 				l.onSendData(this, true, ((DataResponse) ret).getData());
@@ -73,25 +82,9 @@ public class PipedMediator extends Mediator {
 		return ret;
 	}
 
-	public Mediator getM1() {
-		return m1;
-	}
-
-	public Mediator getM2() {
-		return m2;
-	}
-
-	@Override
-	public PropertiesPlus getProperties() {
-		PropertiesPlus allprop = new PropertiesPlus();
-		allprop.putAll(properties);
-		allprop.putAll(m1.getProperties());
-		allprop.putAll(m2.getProperties());
-		return allprop;
-	}
-
 	@Override
 	public String toString() {
-		return this.getClass().getSimpleName() + " - " + sender.getName() + " -> " + receiver.getName();
+		return this.getClass().getSimpleName() + " - " + sender.getName() + " <-> " + receiver.getName();
 	}
+
 }

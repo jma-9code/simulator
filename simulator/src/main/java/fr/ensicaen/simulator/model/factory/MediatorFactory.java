@@ -17,15 +17,15 @@ import fr.ensicaen.simulator.model.component.IInput;
 import fr.ensicaen.simulator.model.component.IInputOutput;
 import fr.ensicaen.simulator.model.component.IOutput;
 import fr.ensicaen.simulator.model.factory.listener.MediatorFactoryListener;
-import fr.ensicaen.simulator.model.mediator.ChildHalfDuplexMediator;
-import fr.ensicaen.simulator.model.mediator.ChildSimplexMediator;
-import fr.ensicaen.simulator.model.mediator.ForwardMediator;
-import fr.ensicaen.simulator.model.mediator.HalfDuplexMediator;
 import fr.ensicaen.simulator.model.mediator.Mediator;
 import fr.ensicaen.simulator.model.mediator.MediatorException;
-import fr.ensicaen.simulator.model.mediator.PipedMediator;
-import fr.ensicaen.simulator.model.mediator.ReverseHalfDuplexMediator;
-import fr.ensicaen.simulator.model.mediator.SimplexMediator;
+import fr.ensicaen.simulator.model.mediator.dynamic.ForwardMediator;
+import fr.ensicaen.simulator.model.mediator.dynamic.PipedMediator;
+import fr.ensicaen.simulator.model.mediator.dynamic.ReverseHalfDuplexMediator;
+import fr.ensicaen.simulator.model.mediator.explicit.HalfDuplexMediator;
+import fr.ensicaen.simulator.model.mediator.explicit.SimplexMediator;
+import fr.ensicaen.simulator.model.mediator.implicit.ChildHalfDuplexMediator;
+import fr.ensicaen.simulator.model.mediator.implicit.ChildSimplexMediator;
 
 public class MediatorFactory {
 
@@ -49,6 +49,10 @@ public class MediatorFactory {
 
 	public void addListener(MediatorFactoryListener list) {
 		listeners.add(list);
+	}
+
+	public void removeListener(MediatorFactoryListener list) {
+		listeners.remove(list);
 	}
 
 	public void reset() {

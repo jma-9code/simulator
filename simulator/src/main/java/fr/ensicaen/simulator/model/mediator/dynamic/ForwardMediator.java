@@ -1,7 +1,7 @@
 /**
  * 
  */
-package fr.ensicaen.simulator.model.mediator;
+package fr.ensicaen.simulator.model.mediator.dynamic;
 
 import java.util.concurrent.BrokenBarrierException;
 
@@ -11,7 +11,10 @@ import org.slf4j.LoggerFactory;
 import fr.ensicaen.simulator.model.component.IInput;
 import fr.ensicaen.simulator.model.component.IOutput;
 import fr.ensicaen.simulator.model.factory.MediatorFactory.EMediator;
+import fr.ensicaen.simulator.model.mediator.Mediator;
+import fr.ensicaen.simulator.model.mediator.explicit.HalfDuplexMediator;
 import fr.ensicaen.simulator.model.mediator.listener.MediatorListener;
+import fr.ensicaen.simulator.model.properties.PropertiesPlus;
 import fr.ensicaen.simulator.model.response.DataResponse;
 import fr.ensicaen.simulator.model.response.IResponse;
 import fr.ensicaen.simulator.model.response.VoidResponse;
@@ -122,5 +125,21 @@ public class ForwardMediator extends Mediator {
 	// vocation à rendre plus clair le code.
 	private static IOutput getRouter(Mediator origin) {
 		return (IOutput) origin.getReceiver();
+	}
+
+	public Mediator getOrigin() {
+		return origin;
+	}
+
+	public void setOrigin(Mediator origin) {
+		this.origin = origin;
+	}
+
+	@Override
+	public PropertiesPlus getProperties() {
+		PropertiesPlus allprop = new PropertiesPlus();
+		allprop.putAll(properties);
+		allprop.putAll(origin.getProperties());
+		return allprop;
 	}
 }

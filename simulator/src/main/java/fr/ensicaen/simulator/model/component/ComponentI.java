@@ -6,7 +6,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import fr.ensicaen.simulator.model.mediator.Mediator;
-import fr.ensicaen.simulator.model.response.VoidResponse;
+import fr.ensicaen.simulator.model.response.IResponse;
 
 @XmlRootElement
 public class ComponentI extends Component implements IInput {
@@ -26,14 +26,12 @@ public class ComponentI extends Component implements IInput {
 	}
 
 	@Override
-	public VoidResponse notifyMessage(Mediator m, String data) {
+	public IResponse notifyMessage(Mediator m, String data) {
 		if (!"send".equals(Thread.currentThread().getStackTrace()[2].getMethodName())) {
 			log.warn("Invalid call of input method, use mediator instead.");
 		}
 
-		this.strategy.processMessage(this, m, data);
-
-		return VoidResponse.build();
+		return this.strategy.processMessage(this, m, data);
 	}
 
 	@Override

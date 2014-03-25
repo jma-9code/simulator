@@ -7,6 +7,8 @@ import java.awt.event.ActionListener;
 import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.nio.file.Paths;
 
 import javax.swing.JButton;
@@ -47,7 +49,7 @@ public class HelpPanel extends JDialog implements ActionListener {
 		setModal(true);
 		setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
 		component = c;
-		// TODO Auto-generated constructor stub
+		strategy = c.getStrategy();
 		initGUI();
 		getInformations();
 	}
@@ -107,11 +109,19 @@ public class HelpPanel extends JDialog implements ActionListener {
 			} else {
 				strat = true;
 			}
+			Path docByname = Paths.get(PATH_DOC_COMPONENTS
+					+ component.getName() + ".html");
+			Path docBytype = Paths.get(PATH_DOC_COMPONENTS
+					+ component.getType() + ".html");
 
 			try {
-				tp_component.setPage(Paths
-						.get(PATH_DOC_COMPONENTS + component.getType()
-								+ ".html").toUri().toURL());
+				if (Files.exists(docByname)) {
+					tp_component.setPage(docByname.toUri().toURL());
+				} else if (Files.exists(docBytype)) {
+					tp_component.setPage(docBytype.toUri().toURL());
+				} else {
+					printTodoPage(tp_component);
+				}
 			} catch (IOException e1) {
 				printTodoPage(tp_component);
 			}

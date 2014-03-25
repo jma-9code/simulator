@@ -71,10 +71,16 @@ public class ComponentWrapper implements Serializable {
 	}
 
 	public String getSenderStyle() {
+		if (iconPath != null && !iconPath.isEmpty()) {
+			return "image;image=" + iconPath;
+		}
 		return "group;whiteSpace=wrap;fillColor=#FF463D";
 	}
 
 	public String getReceiverStyle() {
+		if (iconPath != null && !iconPath.isEmpty()) {
+			return "image;image=" + iconPath;
+		}
 		return "group;whiteSpace=wrap;fillColor=#30FF3A";
 	}
 
@@ -83,6 +89,9 @@ public class ComponentWrapper implements Serializable {
 	}
 
 	public String getNormalStyle() {
+		if (iconPath != null && !iconPath.isEmpty()) {
+			return "image;image=" + iconPath;
+		}
 		return "group;whiteSpace=wrap";
 	}
 

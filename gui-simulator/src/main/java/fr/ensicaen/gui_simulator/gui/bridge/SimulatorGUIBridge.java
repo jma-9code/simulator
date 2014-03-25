@@ -72,6 +72,8 @@ public class SimulatorGUIBridge {
 
 		graph.fireEvent(new mxEventObject(EVT_PAUSE_CTX_SYNC));
 
+		reset(graph);
+
 		for (Component c : ctx.getComponents().values()) {
 			logger.debug("Init component " + c.getInstanceName() + " to graph");
 			mxCell cell = createVertex(c, uiData);
@@ -235,5 +237,14 @@ public class SimulatorGUIBridge {
 		}
 
 		return null;
+	}
+
+	/**
+	 * Remove all component in view
+	 */
+	public static void reset(mxGraph graph) {
+		Object[] cells = graph.getChildCells(graph.getDefaultParent(), true,
+				true);
+		graph.removeCells(cells, true);
 	}
 }

@@ -1,0 +1,12 @@
+<u>Stratégie générale : </u><br />
+<br />
+La stratégie de ce composant est basée sur un traitement de message reçu selon deux paramètres : l'état d'avancement de la cinématique de paiement et le type de message reçu. La carte dispose en effet d'<i>états</i> selon l'avancement de la transaction (éteinte, canal sécurisé, porteur authentifié). En combinant un <i>état</i> et un type de message reçu, la carte est en mesure de choisir le traitement associé.<br />
+
+<br />
+<u>Détails des fonctionnalités : </u><br />
+<ul>
+	<li><b>Fonction "<i>manageSC_RQ</i>"</b> : Cette fonction permet de gérer la réception d'un message de demande d'établissement d'un canal sécurisé. Le traitement consiste en la comparaison d'un protocle préférré par le TPE avec les protocoles de communications disponibles sur la carte. Si la carte n'est pas en mesure de communiquer selon les préférences du TPE, elle répond alors par une protocle en commun parmi les listes de protocles échangées (<u>ou par un message de refus de communication</u>).</li>
+	<li><b>Fonction "<i>manageAUTH_RQ</i>"</b> : Cette fonction permet de gérer la réception d'un message demande l'authentification porteur. A l'aide d'un code opération(type de transaction), d'un montant et d'un chiffré du PIN, la carte est en mesure de donner ou non une suite positive à l'échange. Un plafond carte est utilisé ici ainsi qu'une vérification de PIN en clair.</li>
+	<li><b>Fonction "<i>manageARPC</i>"</b> : Cette fonction permet de gérer la réception d'un message d'autorisation (ARPC). La carte utilise un code d'autorisation (approval code) afin de valider que l'ARPC est correct (provenant de l'émetteur). Elle sauvegarde ensuite la transaction dans sa mémoire (Log Entry).</li>
+</ul>
+<br />

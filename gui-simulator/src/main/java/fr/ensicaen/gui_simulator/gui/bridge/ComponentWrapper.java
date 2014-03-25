@@ -66,19 +66,19 @@ public class ComponentWrapper implements Serializable {
 	}
 
 	public String getCollapsedStyle() {
-		return iconPath != null && !iconPath.isEmpty() ? "image;image="
+		return iconPath != null && !iconPath.isEmpty() ? "image;image=file:///"
 				+ iconPath : "group;whiteSpace=wrap";
 	}
 
-	public String getSenderStyle() {
-		if (iconPath != null && !iconPath.isEmpty()) {
-			return "image;image=" + iconPath;
+	public String getSenderStyle(mxCell cell) {
+		if (iconPath != null && !iconPath.isEmpty() && cell.isCollapsed()) {
+			return "image;image=file:///" + iconPath;
 		}
 		return "group;whiteSpace=wrap;fillColor=#FF463D";
 	}
 
-	public String getReceiverStyle() {
-		if (iconPath != null && !iconPath.isEmpty()) {
+	public String getReceiverStyle(mxCell cell) {
+		if (iconPath != null && !iconPath.isEmpty() && cell.isCollapsed()) {
 			return "image;image=" + iconPath;
 		}
 		return "group;whiteSpace=wrap;fillColor=#30FF3A";
@@ -88,9 +88,9 @@ public class ComponentWrapper implements Serializable {
 		return "group;whiteSpace=wrap";
 	}
 
-	public String getNormalStyle() {
-		if (iconPath != null && !iconPath.isEmpty()) {
-			return "image;image=" + iconPath;
+	public String getNormalStyle(mxCell cell) {
+		if (iconPath != null && !iconPath.isEmpty() && cell.isCollapsed()) {
+			return "image;image=file:///" + iconPath;
 		}
 		return "group;whiteSpace=wrap";
 	}

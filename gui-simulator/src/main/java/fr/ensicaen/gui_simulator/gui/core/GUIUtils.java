@@ -1,5 +1,6 @@
 package fr.ensicaen.gui_simulator.gui.core;
 
+import java.io.File;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 
@@ -28,13 +29,14 @@ public class GUIUtils {
 	 * @return
 	 */
 	public static String getGraphIconPath(Component c) {
-		String iconWithNamePath = Paths.get("icon").toAbsolutePath() + "/" + c.getName() + ".png";
-		String iconWithTypePath = Paths.get("icon").toAbsolutePath() + "/" + c.getType() + ".png";
+		String iconWithNamePath = Paths.get("icon").toAbsolutePath()
+				+ File.separator + c.getName() + ".png";
+		String iconWithTypePath = Paths.get("icon").toAbsolutePath()
+				+ File.separator + c.getType() + ".png";
 
 		if (Files.isReadable(Paths.get(iconWithNamePath))) {
 			return iconWithNamePath;
-		}
-		else if (Files.isReadable(Paths.get(iconWithTypePath))) {
+		} else if (Files.isReadable(Paths.get(iconWithTypePath))) {
 			return iconWithTypePath;
 		}
 
@@ -51,8 +53,7 @@ public class GUIUtils {
 		if (graphIconPath != null && !graphIconPath.isEmpty()) {
 			ImageIcon image = new ImageIcon(graphIconPath);
 			return new int[] { image.getIconWidth(), image.getIconHeight() };
-		}
-		else {
+		} else {
 			return new int[] { 150, 75 };
 		}
 	}

@@ -1,0 +1,11 @@
+Le composant <b>Carte</b> définit une carte physique.<br />
+C'est un composant de "haut niveau" contenant plusieurs sous composants (voir ci-après).<br />
+<br />
+La carte est un composant de type I/O (<i>Input/Output</i>) qui a donc vocation à envoyer et recevoir des messages.<br />
+<br />
+<u>Architecture du composant</u> :
+<br />
+<ul>
+	<li><b>Sous composant "chip"</b> : ce composant définit la puce de la carte. Elle contient des données et des fonctionnalités permettant le dialogue avec d'autres composants de type <i>Input</i> ou <i>Input/Output</i>. La puce contient de l'intelligence et est capable d'effectuer des opérations courantes. (<i>Dans cette implémentation la puce permet la communication avec un terminal, l'établissement d'un canal sécurisé, l'authentification porteur, l'émission d'ARQC et la réception et traitement d'ARPC.</i>)</li>
+	<li><b>Sous composant "magstripe"</b> : ce composant définit la piste magnétique de la carte (Track2). Elle contient des données publiques lisibles afin de permettre un nombre limité de traitements. C'est un composant de type <i>Output</i> (émission d'inforamtion seulement).(<i>Dans cette implémentation la piste ne permet pas la vérification de PIN.</i>)</li>
+</ul>

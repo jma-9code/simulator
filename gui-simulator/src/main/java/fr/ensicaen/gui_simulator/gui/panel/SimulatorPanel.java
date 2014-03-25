@@ -53,7 +53,8 @@ import fr.ensicaen.simulator.simulator.SimulatorFactory;
 import fr.ensicaen.simulator.simulator.exception.SimulatorException;
 import fr.ensicaen.simulator.simulator.listener.SimulatorListener;
 
-public class SimulatorPanel extends JTabbedPane implements ListSelectionListener, SimulatorListener, MediatorListener,
+public class SimulatorPanel extends JTabbedPane implements
+		ListSelectionListener, SimulatorListener, MediatorListener,
 		MediatorFactoryListener, mxIEventListener {
 
 	private JTable startPointTable;
@@ -67,8 +68,10 @@ public class SimulatorPanel extends JTabbedPane implements ListSelectionListener
 
 	public SimulatorPanel(BasicGraphEditor frame) {
 		// tab
-		addTab(mxResources.get("start_points"), new JScrollPane(initTab_startPointTable()));
-		addTab(mxResources.get("simulator"), new JScrollPane(initTab_simulatorPanel()));
+		addTab(mxResources.get("start_points"), new JScrollPane(
+				initTab_startPointTable()));
+		addTab(mxResources.get("simulator"), new JScrollPane(
+				initTab_simulatorPanel()));
 		// ajout du listener sur la simulation
 		sim.addListener(this);
 		himself = this;
@@ -84,7 +87,8 @@ public class SimulatorPanel extends JTabbedPane implements ListSelectionListener
 		// ctx.addStartPoint(new Date(), "COUCOU");
 		// ctx.addStartPoint(new Date(System.currentTimeMillis() + 3600 * 24 *
 		// 5), "LOL");
-		startPointModelTable = new StartPointJTableBridge(ctx.getUserStartPoints());
+		startPointModelTable = new StartPointJTableBridge(
+				ctx.getUserStartPoints());
 
 		// view
 		startPointTable = new JTable(startPointModelTable);
@@ -107,8 +111,12 @@ public class SimulatorPanel extends JTabbedPane implements ListSelectionListener
 		JPanel buttonsPanel = new JPanel();
 		buttonsPanel.setBackground(Color.WHITE);
 		buttonsPanel.setLayout(new FlowLayout(FlowLayout.RIGHT, 5, 5));
-		buttonsPanel.add(initButton("/com/mxgraph/examples/swing/images/new.gif", new AddEntryAction()));
-		buttonsPanel.add(initButton("/com/mxgraph/examples/swing/images/delete.gif", new DeleteEntryAction()));
+		buttonsPanel.add(initButton(
+				"/com/mxgraph/examples/swing/images/new.gif",
+				new AddEntryAction()));
+		buttonsPanel.add(initButton(
+				"/com/mxgraph/examples/swing/images/delete.gif",
+				new DeleteEntryAction()));
 		setButtonsState(0, true);
 
 		// add in parent layout
@@ -129,12 +137,10 @@ public class SimulatorPanel extends JTabbedPane implements ListSelectionListener
 				if (btnLaunch.getText().equals(mxResources.get("launch"))) {
 					try {
 						sim.start();
-					}
-					catch (SimulatorException e1) {
+					} catch (SimulatorException e1) {
 						e1.printStackTrace();
 					}
-				}
-				else {
+				} else {
 					Simulator.resume();
 					btnOneStep.setEnabled(false);
 					btnLaunch.setText(mxResources.get("launch"));
@@ -152,7 +158,8 @@ public class SimulatorPanel extends JTabbedPane implements ListSelectionListener
 	}
 
 	private JButton initButton(String iconPath, ActionListener action) {
-		JButton button = new JButton(new ImageIcon(SimulatorPanel.class.getResource(iconPath)));
+		JButton button = new JButton(new ImageIcon(
+				SimulatorPanel.class.getResource(iconPath)));
 		button.addActionListener(action);
 		button.setEnabled(false);
 
@@ -173,8 +180,7 @@ public class SimulatorPanel extends JTabbedPane implements ListSelectionListener
 			for (JButton btn : buttons) {
 				btn.setEnabled(enable);
 			}
-		}
-		else {
+		} else {
 			buttons.get(index).setEnabled(enable);
 		}
 	}
@@ -183,8 +189,7 @@ public class SimulatorPanel extends JTabbedPane implements ListSelectionListener
 	public void valueChanged(ListSelectionEvent e) {
 		if (startPointTable.getSelectedRow() != -1) {
 			setButtonsState(1, true);
-		}
-		else {
+		} else {
 			setButtonsState(1, false);
 		}
 
@@ -205,11 +210,13 @@ public class SimulatorPanel extends JTabbedPane implements ListSelectionListener
 
 		@Override
 		public void actionPerformed(ActionEvent e) {
-			int rep = JOptionPane.showConfirmDialog(SimulatorPanel.this, mxResources.get("delete_confirmation"),
-					mxResources.get("delete_confirmation_title"), JOptionPane.OK_CANCEL_OPTION,
-					JOptionPane.QUESTION_MESSAGE);
+			int rep = JOptionPane.showConfirmDialog(SimulatorPanel.this,
+					mxResources.get("delete_confirmation"),
+					mxResources.get("delete_confirmation_title"),
+					JOptionPane.OK_CANCEL_OPTION, JOptionPane.QUESTION_MESSAGE);
 			if (rep == JOptionPane.YES_OPTION) {
-				startPointModelTable.deleteRow(startPointTable.getSelectedRow());
+				startPointModelTable
+						.deleteRow(startPointTable.getSelectedRow());
 				setButtonsState(0, true);
 			}
 		}
@@ -236,7 +243,8 @@ public class SimulatorPanel extends JTabbedPane implements ListSelectionListener
 		MediatorFactory.getInstance().addListener(himself);
 
 		Simulator.pausable();
-		bge_frame.getGraphComponent().getGraph().getSelectionModel().addListener(mxEvent.CHANGE, this);
+		bge_frame.getGraphComponent().getGraph().getSelectionModel()
+				.addListener(mxEvent.CHANGE, this);
 		btnOneStep.setEnabled(true);
 		btnLaunch.setText(mxResources.get("skip"));
 		btnLaunch.revalidate();
@@ -247,22 +255,23 @@ public class SimulatorPanel extends JTabbedPane implements ListSelectionListener
 		btnOneStep.setEnabled(false);
 		btnLaunch.setText(mxResources.get("launch"));
 		btnLaunch.revalidate();
-		bge_frame.getGraphComponent().getGraph().getSelectionModel().removeListener(this);
+		bge_frame.getGraphComponent().getGraph().getSelectionModel()
+				.removeListener(this);
 	}
 
 	/**
 	 * Restore default style for all components & Remove data in mediatorwrapper
 	 */
 	private void restoreCellColor() {
-		List<mxCell> cells = SimulatorGUIBridge.findAllCell(bge_frame.getGraphComponent().getGraph());
+		List<mxCell> cells = SimulatorGUIBridge.findAllCell(bge_frame
+				.getGraphComponent().getGraph());
 
 		for (mxCell c : cells) {
 			if (c.getValue() instanceof ComponentWrapper) {
 				ComponentWrapper cw = (ComponentWrapper) c.getValue();
-				c.setStyle(cw.getNormalStyle());
+				c.setStyle(cw.getNormalStyle(c));
 
-			}
-			else if (c.getValue() instanceof MediatorWrapper) {
+			} else if (c.getValue() instanceof MediatorWrapper) {
 				MediatorWrapper cw = (MediatorWrapper) c.getValue();
 				c.setStyle(cw.getStyle());
 				// remove data in mediator
@@ -277,20 +286,21 @@ public class SimulatorPanel extends JTabbedPane implements ListSelectionListener
 		if (m instanceof PipedMediator) {
 			recCreateEdge(((PipedMediator) m).getM1());
 			recCreateEdge(((PipedMediator) m).getM2());
-		}
-		else if (m instanceof ForwardMediator) {
+		} else if (m instanceof ForwardMediator) {
 			recCreateEdge(((ForwardMediator) m).getOrigin());
-		}
-		else {
+		} else {
 			Map<String, Object> map = new HashMap<>();
 			map.put(m.getUuid(), new MediatorWrapper(m));
 			// retrieve cells
-			mxCell cell_sender = SimulatorGUIBridge.findVertex((Component) m.getSender(), graph);
-			mxCell cell_receiver = SimulatorGUIBridge.findVertex((Component) m.getReceiver(), graph);
+			mxCell cell_sender = SimulatorGUIBridge.findVertex(
+					(Component) m.getSender(), graph);
+			mxCell cell_receiver = SimulatorGUIBridge.findVertex(
+					(Component) m.getReceiver(), graph);
 			mxCell cell_mediator = SimulatorGUIBridge.createEdge(m, map, graph);
 			graph.addEdge(cell_mediator, null, cell_sender, cell_receiver, null);
 			// useStyle
-			cell_mediator.setStyle(((MediatorWrapper) cell_mediator.getValue()).getUseStyle());
+			cell_mediator.setStyle(((MediatorWrapper) cell_mediator.getValue())
+					.getUseStyle());
 
 		}
 	}
@@ -304,20 +314,22 @@ public class SimulatorPanel extends JTabbedPane implements ListSelectionListener
 
 		// retrieve cells
 		mxCell cell_sender = SimulatorGUIBridge.findVertex(
-				(!response) ? (Component) m.getSender() : (Component) m.getReceiver(), graph);
+				(!response) ? (Component) m.getSender() : (Component) m
+						.getReceiver(), graph);
 		mxCell cell_receiver = SimulatorGUIBridge.findVertex(
-				(!response) ? (Component) m.getReceiver() : (Component) m.getSender(), graph);
+				(!response) ? (Component) m.getReceiver() : (Component) m
+						.getSender(), graph);
 		mxCell cell_mediator = SimulatorGUIBridge.findEdge(m, graph);
 
 		// concerned component
 		if (cell_sender != null) {
 			ComponentWrapper cw = (ComponentWrapper) cell_sender.getValue();
-			cell_sender.setStyle(cw.getSenderStyle());
+			cell_sender.setStyle(cw.getSenderStyle(cell_sender));
 		}
 
 		if (cell_receiver != null) {
 			ComponentWrapper cw = (ComponentWrapper) cell_receiver.getValue();
-			cell_receiver.setStyle(cw.getReceiverStyle());
+			cell_receiver.setStyle(cw.getReceiverStyle(cell_receiver));
 		}
 
 		// concerned mediator
@@ -329,11 +341,13 @@ public class SimulatorPanel extends JTabbedPane implements ListSelectionListener
 			graph.addEdge(cell_mediator, null, cell_sender, cell_receiver, null);
 		}
 		// useStyle
-		cell_mediator.setStyle(((MediatorWrapper) cell_mediator.getValue()).getUseStyle());
+		cell_mediator.setStyle(((MediatorWrapper) cell_mediator.getValue())
+				.getUseStyle());
 		// add data in mediatorWrapper
 		((MediatorWrapper) cell_mediator.getValue()).setData(data);
 
-		graph.fireEvent(new mxEventObject(SimulatorGUIBridge.EVT_RESUME_CTX_SYNC));
+		graph.fireEvent(new mxEventObject(
+				SimulatorGUIBridge.EVT_RESUME_CTX_SYNC));
 		// refresh frame
 		bge_frame.getGraphComponent().refresh();
 	}
@@ -345,9 +359,11 @@ public class SimulatorPanel extends JTabbedPane implements ListSelectionListener
 
 	@Override
 	public void removeMediator(Mediator m) {
-		mxCell cell_mediator = SimulatorGUIBridge.findEdge(m, bge_frame.getGraphComponent().getGraph());
+		mxCell cell_mediator = SimulatorGUIBridge.findEdge(m, bge_frame
+				.getGraphComponent().getGraph());
 		if (cell_mediator != null) {
-			bge_frame.getGraphComponent().getGraph().removeCells(new Object[] { cell_mediator });
+			bge_frame.getGraphComponent().getGraph()
+					.removeCells(new Object[] { cell_mediator });
 
 			// refresh frame
 			bge_frame.getGraphComponent().refresh();
@@ -362,8 +378,10 @@ public class SimulatorPanel extends JTabbedPane implements ListSelectionListener
 			mxGraphSelectionModel gsm = (mxGraphSelectionModel) sender;
 			mxCell cell = (mxCell) gsm.getCell();
 			// select mediator ?
-			if (cell != null && ((mxCell) cell).getValue() instanceof MediatorWrapper) {
-				MediatorWrapper mw = (MediatorWrapper) ((mxCell) cell).getValue();
+			if (cell != null
+					&& ((mxCell) cell).getValue() instanceof MediatorWrapper) {
+				MediatorWrapper mw = (MediatorWrapper) ((mxCell) cell)
+						.getValue();
 				// contains data ?
 				if (mw.getData() != null && !mw.getData().isEmpty()) {
 					MediatorAnalysisPanel frame = new MediatorAnalysisPanel(mw);

@@ -859,6 +859,7 @@ public class BasicGraphEditor extends JPanel {
 	 * Rafraichissement de l'UI
 	 */
 	public void refreshAll() {
+
 		vRightSplit.getSimulatorPanel().refresh();
 	}
 

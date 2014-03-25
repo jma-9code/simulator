@@ -2,8 +2,6 @@ package fr.ensicaen.gui_simulator.gui.main;
 
 import java.awt.Color;
 import java.io.File;
-import java.net.URL;
-import java.text.NumberFormat;
 
 import javax.swing.UIManager;
 
@@ -25,23 +23,11 @@ import fr.ensicaen.simulator.model.dao.factory.DAOFactory;
 import fr.ensicaen.simulator.simulator.Context;
 
 public class SimulatorGUI extends BasicGraphEditor {
-	/**
-	 * 
-	 */
+
 	private static final long serialVersionUID = -4601740824088314699L;
 
-	/**
-	 * Holds the shared number formatter.
-	 * 
-	 * @see NumberFormat#getInstance()
-	 */
-	public static final NumberFormat numberFormat = NumberFormat.getInstance();
-
-	/**
-	 * Holds the URL for the icon to be used as a handle for creating new
-	 * connections. This is currently unused.
-	 */
-	public static URL url = null;
+	private ComponentPaletteBridge bridge = null;
+	private EditorPalette palette = null;
 
 	static {
 		try {
@@ -69,13 +55,13 @@ public class SimulatorGUI extends BasicGraphEditor {
 		graph.getSelectionModel().addListener(mxEvent.CHANGE, vRightSplit.getComponentPanel());
 
 		// Creates the components palette for our electronic payment application
-		EditorPalette componentsPalette = insertPalette(mxResources.get("components"));
+		palette = insertPalette(mxResources.get("components"));
 
 		// getting dao
 		DAO<Component> dao = DAOFactory.getFactory().getComponentDAO();
 
 		// bridge components
-		ComponentPaletteBridge bridge = new ComponentPaletteBridge(componentsPalette, dao, graphComponent.getGraph());
+		bridge = new ComponentPaletteBridge(palette, dao, graphComponent.getGraph());
 		bridge.refresh();
 
 		// property listener for asking popup
@@ -90,6 +76,7 @@ public class SimulatorGUI extends BasicGraphEditor {
 	public static void main(String[] args) {
 		System.out.println("Relative path : " + new File(".").getAbsolutePath());
 		try {
+			// theme windows
 			UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
 		}
 		catch (Exception e1) {
@@ -99,18 +86,24 @@ public class SimulatorGUI extends BasicGraphEditor {
 		mxSwingConstants.SHADOW_COLOR = Color.LIGHT_GRAY;
 		mxConstants.W3C_SHADOWCOLOR = "#D3D3D3";
 
-		// DAO<IStrategy> daoStrategy =
-		// DAOFactory.getFactory().getStrategyDAO();
-		// daoStrategy.create(new NullStrategy());
-		// daoStrategy.create(new CardChipStrategy());
-		// daoStrategy.create(new CardStrategy());
-		// daoStrategy.create(new EPTChipsetStrategy());
-		// daoStrategy.create(new EPTSmartCardReader());
-		// daoStrategy.create(new EPTStrategy());
-		// daoStrategy.create(new FOStrategy());
-
+		// instanciation du panel / menu bar puis creation JFrame
 		SimulatorGUI editor = new SimulatorGUI();
-		editor.createFrame(new EditorMenuBar(editor)).setVisible(true);
+		EditorMenuBar menuBar = new EditorMenuBar(editor);
+		editor.createFrame(menuBar).setVisible(true);
+	}
+
+	@Override
+	public void refreshAll() {
+		super.refreshAll();
+		bridge.refresh();
+	}
+
+	public ComponentPaletteBridge getBridge() {
+		return bridge;
+	}
+
+	public EditorPalette getPalette() {
+		return palette;
 	}
 
 }

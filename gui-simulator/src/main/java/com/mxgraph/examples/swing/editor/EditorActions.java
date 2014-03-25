@@ -1378,6 +1378,7 @@ public class EditorActions {
 								// not remove
 								editor.setCurrentFile(fc.getSelectedFile());
 								resetEditor(editor);
+								editor.refreshAll();
 							}
 							catch (Exception ex) {
 								ex.printStackTrace();

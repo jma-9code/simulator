@@ -52,7 +52,7 @@ public class ComponentWrapper implements Serializable {
 		this.component = c;
 
 		// get graph icon
-		this.iconPath = GUIUtils.getGraphIconPath(component.getName());
+		this.iconPath = GUIUtils.getGraphIconPath(component);
 	}
 
 	@Override

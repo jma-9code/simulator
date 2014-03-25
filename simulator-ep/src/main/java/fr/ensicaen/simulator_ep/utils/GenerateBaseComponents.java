@@ -183,8 +183,8 @@ public class GenerateBaseComponents {
 		card.addChild(magstrippe);
 		card.addChild(chip);
 
-		/* ETP */
-		ept = new ComponentIO("Electronic Terminal Payment", ComponentEP.ELETRONIC_TERMINAL_PAYMENT.ordinal());
+		/* EPT */
+		ept = new ComponentIO("Electronic Payment Terminal ", ComponentEP.ELETRONIC_PAYMENT_TERMINAL.ordinal());
 		ept.setStrategy(new EPTStrategy());
 		// smartCardReader = new ComponentIO("ETP Smart Card Reader",
 		// ComponentEP.ETP_SMART_CARD_READER.ordinal());

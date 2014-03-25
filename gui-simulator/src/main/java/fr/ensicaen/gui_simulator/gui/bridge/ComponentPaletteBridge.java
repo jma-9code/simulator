@@ -1,6 +1,5 @@
 package fr.ensicaen.gui_simulator.gui.bridge;
 
-import java.net.URL;
 import java.util.List;
 
 import javax.swing.ImageIcon;
@@ -24,19 +23,16 @@ public class ComponentPaletteBridge {
 
 	private ImageIcon defaultPaletteIcon;
 
-	private static Logger logger = LoggerFactory
-			.getLogger(ComponentPaletteBridge.class);
+	private static Logger logger = LoggerFactory.getLogger(ComponentPaletteBridge.class);
 
-	public ComponentPaletteBridge(EditorPalette palette, DAO<Component> dao,
-			mxGraph graph) {
+	public ComponentPaletteBridge(EditorPalette palette, DAO<Component> dao, mxGraph graph) {
 		this.palette = palette;
 		this.dao = dao;
 		this.graph = graph;
 
 		// init
 		this.defaultPaletteIcon = new ImageIcon(
-				ComponentPaletteBridge.class
-						.getResource("/com/mxgraph/examples/swing/images/rounded.png"));
+				ComponentPaletteBridge.class.getResource("/com/mxgraph/examples/swing/images/rounded.png"));
 	}
 
 	private void injectComponents() {
@@ -44,7 +40,7 @@ public class ComponentPaletteBridge {
 
 		for (Component c : components) {
 			// test if specific icons exists
-			ImageIcon paletteIcon = getPaletteIcon(c.getName());
+			ImageIcon paletteIcon = getPaletteIcon(c);
 
 			// create recursively the vertex for this component
 			mxCell cell = SimulatorGUIBridge.createVertex(c);
@@ -63,10 +59,9 @@ public class ComponentPaletteBridge {
 	 * @param name
 	 * @return
 	 */
-	private ImageIcon getPaletteIcon(String name) {
-		URL iconUrl = ComponentPaletteBridge.class.getResource("/gui/icon/"
-				+ name + ".png");
-		return (iconUrl != null) ? new ImageIcon(iconUrl) : defaultPaletteIcon;
+	private ImageIcon getPaletteIcon(Component c) {
+		String filePath = GUIUtils.getGraphIconPath(c);
+		return (filePath != null && !filePath.isEmpty()) ? new ImageIcon(filePath) : defaultPaletteIcon;
 	}
 
 	public void refresh() {

@@ -24,7 +24,7 @@ public class ISO8583Tools {
 		if (packager == null) {
 
 			try {
-				packager = new GenericPackager(ISO8583Tools.class.getResource(packagerPath).toExternalForm());
+				packager = new GenericPackager(ISO8583Tools.class.getResourceAsStream(packagerPath));
 			}
 			catch (Exception e) {
 				log.error("Error while loading packager " + packagerPath, e);

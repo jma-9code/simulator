@@ -1,6 +1,7 @@
 package fr.ensicaen.gui_simulator.gui.main;
 
 import java.awt.Color;
+import java.io.File;
 import java.net.URL;
 import java.text.NumberFormat;
 
@@ -87,6 +88,7 @@ public class SimulatorGUI extends BasicGraphEditor {
 	 * @param args
 	 */
 	public static void main(String[] args) {
+		System.out.println("Relative path : " + new File(".").getAbsolutePath());
 		try {
 			UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
 		}

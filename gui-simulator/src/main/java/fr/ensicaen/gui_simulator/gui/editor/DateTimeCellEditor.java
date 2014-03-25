@@ -55,7 +55,7 @@ public class DateTimeCellEditor extends AbstractCellEditor implements TableCellE
 		@Override
 		public String valueToString(Object value) throws ParseException {
 			SimpleDateFormat df = new SimpleDateFormat("dd/MM/yyyy HH:mm:ss");
-			if (value == null) {
+			if (value == null || !(value instanceof Date)) {
 				value = new Date(0);
 			}
 

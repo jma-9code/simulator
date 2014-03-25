@@ -1,10 +1,13 @@
 package fr.ensicaen.gui_simulator.gui.core;
 
+import java.nio.file.Files;
+import java.nio.file.Paths;
+
 import javax.swing.ImageIcon;
 
 import com.mxgraph.util.mxResources;
 
-import fr.ensicaen.gui_simulator.gui.bridge.ComponentPaletteBridge;
+import fr.ensicaen.simulator.model.component.Component;
 
 public class GUIUtils {
 	/**
@@ -24,9 +27,18 @@ public class GUIUtils {
 	 * @param name
 	 * @return
 	 */
-	public static String getGraphIconPath(String name) {
-		String iconPath = "/gui/icon/" + name + ".png";
-		return (ComponentPaletteBridge.class.getResource(iconPath) != null) ? iconPath : "";
+	public static String getGraphIconPath(Component c) {
+		String iconWithNamePath = Paths.get("icon").toAbsolutePath() + "/" + c.getName() + ".png";
+		String iconWithTypePath = Paths.get("icon").toAbsolutePath() + "/" + c.getType() + ".png";
+
+		if (Files.isReadable(Paths.get(iconWithNamePath))) {
+			return iconWithNamePath;
+		}
+		else if (Files.isReadable(Paths.get(iconWithTypePath))) {
+			return iconWithTypePath;
+		}
+
+		return "";
 	}
 
 	/**
@@ -37,7 +49,7 @@ public class GUIUtils {
 	 */
 	public static int[] getSize(String graphIconPath) {
 		if (graphIconPath != null && !graphIconPath.isEmpty()) {
-			ImageIcon image = new ImageIcon(ComponentPaletteBridge.class.getResource(graphIconPath));
+			ImageIcon image = new ImageIcon(graphIconPath);
 			return new int[] { image.getIconWidth(), image.getIconHeight() };
 		}
 		else {

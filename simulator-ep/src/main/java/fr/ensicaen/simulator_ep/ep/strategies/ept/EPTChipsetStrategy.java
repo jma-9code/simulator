@@ -213,7 +213,12 @@ public class EPTChipsetStrategy implements IStrategy<ComponentIO> {
 						// res.throwExceptionIfVoid();
 
 						// alimentation des totaux pour la consolidation
-						totalAmount += Long.parseLong(msg.getString(4));
+						try {
+							totalAmount += Long.parseLong(msg.getString(4));
+						}
+						catch (NumberFormatException e) {
+							// osef
+						}
 
 						if (!res.isVoid()) {
 							// acquittement global ? (0256 attendu)

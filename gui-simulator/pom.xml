@@ -5,6 +5,12 @@
 	<artifactId>gui-simulator-ep</artifactId>
 	<version>1.0.0</version>
 	<name>GUI Simulator</name>
+	<repositories>
+		<repository>
+			<id>local-repo</id>
+			<url>file://${basedir}/local-repo/</url>
+		</repository>
+	</repositories>
 	<build>
 		<plugins>
 			<plugin>
@@ -65,10 +71,8 @@
 		</dependency>
 		<dependency>
 			<groupId>caritte.rmc</groupId>
-			<artifactId>RMCAPI</artifactId>
-			<version>0.9</version>
-			<scope>system</scope>
-			<systemPath>${basedir}/lib/rmc.jar</systemPath>
+			<artifactId>rmc-api</artifactId>
+			<version>1.0.0</version>
 		</dependency>
 	</dependencies>
 </project>

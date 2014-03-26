@@ -3,6 +3,7 @@ package fr.ensicaen.gui_simulator.gui.main;
 import java.awt.Color;
 import java.io.File;
 
+import javax.swing.JOptionPane;
 import javax.swing.UIManager;
 
 import com.mxgraph.examples.swing.editor.BasicGraphEditor;
@@ -74,7 +75,6 @@ public class SimulatorGUI extends BasicGraphEditor {
 	 * @param args
 	 */
 	public static void main(String[] args) {
-		System.out.println("Relative path : " + new File(".").getAbsolutePath());
 		try {
 			// theme windows
 			UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
@@ -83,13 +83,26 @@ public class SimulatorGUI extends BasicGraphEditor {
 			e1.printStackTrace();
 		}
 
-		mxSwingConstants.SHADOW_COLOR = Color.LIGHT_GRAY;
-		mxConstants.W3C_SHADOWCOLOR = "#D3D3D3";
+		String relativePath = new File(".").getAbsolutePath();
+		System.out.println("Relative path : " + relativePath);
 
-		// instanciation du panel / menu bar puis creation JFrame
-		SimulatorGUI editor = new SimulatorGUI();
-		EditorMenuBar menuBar = new EditorMenuBar(editor);
-		editor.createFrame(menuBar).setVisible(true);
+		// controle contexte d'execution
+		if (!new File("./library").exists()) {
+			JOptionPane
+					.showMessageDialog(
+							null,
+							"Aucun dossier library détecté, initialisez votre bibliothèque ou lancez l'application depuis une console. \n\nChemin relatif : "
+									+ relativePath);
+		}
+		else {
+			mxSwingConstants.SHADOW_COLOR = Color.LIGHT_GRAY;
+			mxConstants.W3C_SHADOWCOLOR = "#D3D3D3";
+
+			// instanciation du panel / menu bar puis creation JFrame
+			SimulatorGUI editor = new SimulatorGUI();
+			EditorMenuBar menuBar = new EditorMenuBar(editor);
+			editor.createFrame(menuBar).setVisible(true);
+		}
 	}
 
 	@Override

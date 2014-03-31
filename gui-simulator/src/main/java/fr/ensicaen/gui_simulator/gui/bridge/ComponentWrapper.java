@@ -79,7 +79,7 @@ public class ComponentWrapper implements Serializable {
 
 	public String getReceiverStyle(mxCell cell) {
 		if (iconPath != null && !iconPath.isEmpty() && cell.isCollapsed()) {
-			return "image;image=" + iconPath;
+			return "image;image=file:///" + iconPath;
 		}
 		return "group;whiteSpace=wrap;fillColor=#30FF3A";
 	}
